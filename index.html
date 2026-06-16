@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Rojobore · Guía oficial de la Chiquitanía boliviana</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    :root {
+      /* PALETA AVENTURA OSCURA */
+      --bg: #0D1117;
+      --bg2: #161B22;
+      --card: #1C2333;
+      --card2: #21262D;
+      --neon: #39FF14;          /* verde neón */
+      --neon-dim: #1a8a09;
+      --gold: #FFD700;
+      --gold-dim: #b59a00;
+      --accent: #39FF14;
+      --accent2: #2dd410;
+      --text: #E6EDF3;
+      --text-soft: #8B949E;
+      --border: #30363D;
+      --radius: 16px;
+      --sidebar-w: 70px;
+      --sidebar-w-open: 220px;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font: 'DM Sans', system-ui, sans-serif;
+
+      /* COLORES POR SECCIÓN */
+      --c-turismo: #39FF14;
+      --c-turismo-bg: rgba(57,255,20,0.08);
+      --c-hoteles: #FF2D55;
+      --c-hoteles-bg: rgba(255,45,85,0.09);
+      --c-restaurantes: #A855F7;
+      --c-restaurantes-bg: rgba(168,85,247,0.09);
+      --c-transporte: #38BDF8;
+      --c-transporte-bg: rgba(56,189,248,0.09);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.45;height:100%;width:100%;overflow:hidden;}
+
+    /* Scrollbar oscuro */
+    ::-webkit-scrollbar{width:5px;height:5px;}
+    ::-webkit-scrollbar-track{background:var(--bg2);}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      position:fixed; left:0; top:0; bottom:0;
+      width:var(--sidebar-w);
+      background:rgba(13,17,23,0.97);
+      backdrop-filter:blur(20px);
+      z-index:2000;
+      display:flex; flex-direction:column; align-items:center;
+      padding:1rem 0; gap:0;
+      transition:width 0.3s cubic-bezier(.4,0,.2,1);
+      overflow:hidden;
+      border-right:1px solid rgba(57,255,20,0.15);
+    }
+    .sidebar.open { width:var(--sidebar-w-open); align-items:flex-start; }
+    .sidebar-logo {
+      font-family:var(--font-display); font-size:1.1rem;
+      color:var(--neon); font-weight:900; letter-spacing:0.03em;
+      white-space:nowrap; padding:0.4rem 0 1.2rem; width:100%;
+      text-align:center; overflow:hidden;
+      text-shadow: 0 0 20px rgba(57,255,20,0.5);
+    }
+    .sidebar.open .sidebar-logo { padding-left:1.2rem; text-align:left; font-size:1.3rem; }
+    .sidebar-toggle {
+      width:40px; height:40px;
+      background:rgba(57,255,20,0.1);
+      border:1px solid rgba(57,255,20,0.3);
+      border-radius:10px; color:var(--neon); font-size:1rem;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      margin-bottom:1rem; flex-shrink:0; transition:background 0.2s;
+    }
+    .sidebar-toggle:hover { background:rgba(57,255,20,0.25); }
+    .sidebar.open .sidebar-toggle { margin-left:1rem; }
+    .sidebar-nav { flex:1; width:100%; display:flex; flex-direction:column; gap:0.3rem; padding:0 0.5rem; }
+    .sidebar-item {
+      display:flex; align-items:center; gap:0.8rem;
+      padding:0.75rem 0.75rem; border-radius:12px; cursor:pointer;
+      color:rgba(255,255,255,0.45); font-size:0.82rem; font-weight:500;
+      transition:all 0.2s; white-space:nowrap; border:1px solid transparent;
+    }
+    .sidebar-item:hover { background:rgba(57,255,20,0.08); color:rgba(255,255,255,0.85); border-color:rgba(57,255,20,0.2); }
+    .sidebar-item.active { background:rgba(57,255,20,0.15); color:var(--neon); border-color:rgba(57,255,20,0.4); }
+    .sidebar-item.active .sidebar-icon { filter: drop-shadow(0 0 6px var(--neon)); }
+    .sidebar-icon { font-size:1.1rem; flex-shrink:0; width:24px; text-align:center; }
+    .sidebar-label { opacity:0; transition:opacity 0.2s; pointer-events:none; }
+    .sidebar.open .sidebar-label { opacity:1; }
+    .sidebar-bottom { width:100%; padding:0.5rem; border-top:1px solid rgba(255,255,255,0.06); }
+    .sidebar-plan-btn {
+      background:linear-gradient(135deg, rgba(57,255,20,0.2) 0%, rgba(255,215,0,0.15) 100%);
+      border-color:rgba(57,255,20,0.4) !important;
+      color:var(--neon) !important;
+      font-weight:700 !important;
+    }
+    .sidebar-user { display:flex; align-items:center; gap:0.6rem; padding:0.6rem 0.5rem; border-radius:10px; font-size:0.72rem; color:rgba(255,255,255,0.4); cursor:pointer; }
+    .sidebar-user:hover { color:rgba(255,255,255,0.7); }
+    .sidebar-user-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0; transition:opacity 0.2s; }
+    .sidebar.open .sidebar-user-name { opacity:1; }
+
+    /* ===== MAIN LAYOUT ===== */
+    .app-main { position:fixed; inset:0; left:var(--sidebar-w); transition:left 0.3s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column; }
+    body.sidebar-open .app-main { left:var(--sidebar-w-open); }
+
+    /* ===== HERO ===== */
+    .hero-full {
+      position:absolute; inset:0;
+      background:url('https://lh3.googleusercontent.com/place-photos/AJRVUZONoB-ZKELjLo3bOPKZ7LDXi20-UuLnTtsI5c42Dx9RH_-_9-WEd_zG9nPGhCd0JussJUldkXQjQbLjqTDiN58AjmG_s8ZVX0M_q31v9KP3tWTtG_Q-y_zabLNUzVtFwM2O-u7ob0dK0vSGwQ=s4800-w800-h600') center/cover no-repeat;
+      display:flex; align-items:flex-end; color:#fff; overflow:hidden;
+    }
+    .hero-full::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(13,17,23,0.4) 0%, rgba(13,17,23,0.85) 100%);
+    }
+    /* Neón scan line */
+    .hero-full::after {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(57,255,20,0.015) 2px, rgba(57,255,20,0.015) 4px);
+      z-index:1;
+    }
+    .clouds-container { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+    .cloud { position:absolute; background:rgba(57,255,20,0.06); border-radius:50%; box-shadow:0 0 40px rgba(57,255,20,0.05); filter:blur(6px); animation:floatCloud linear infinite; }
+    .cloud::before,.cloud::after{content:'';position:absolute;background:inherit;border-radius:50%;}
+    .cloud::before{width:60%;height:60%;top:-30%;left:20%;}
+    .cloud::after{width:40%;height:40%;top:-20%;left:50%;}
+    @keyframes floatCloud{0%{transform:translateX(0);}100%{transform:translateX(100vw);}}
+    .hero-content { position:relative; z-index:2; width:100%; padding:1.5rem 2rem 2.5rem; text-align:center; }
+    .hero-title {
+      font-family:var(--font-display); font-weight:900;
+      font-size:clamp(3rem,8vw,5.5rem);
+      background:linear-gradient(180deg, #FFFFFF 0%, var(--neon) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      filter:drop-shadow(0 0 30px rgba(57,255,20,0.4)) drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+      letter-spacing:-0.01em;
+    }
+    .hero-sub { font-size:1.1rem; margin:0.5rem 0 2rem; color:rgba(255,255,255,0.8); text-shadow:0 4px 10px rgba(0,0,0,0.6); font-weight:300; letter-spacing:0.1em; text-transform:uppercase; font-size:0.85rem; }
+    .hero-buttons { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+    .btn-hero {
+      flex:1; min-width:160px; padding:1rem 1.8rem; border-radius:30px;
+      font-weight:700; font-size:0.88rem; cursor:pointer; border:none;
+      transition:0.2s; display:flex; align-items:center; justify-content:center;
+      gap:0.5rem; backdrop-filter:blur(8px); font-family:var(--font); letter-spacing:0.05em;
+      text-transform:uppercase;
+    }
+    .btn-explore { background:var(--neon); color:#0D1117; box-shadow:0 8px 30px rgba(57,255,20,0.4); }
+    .btn-plan { background:rgba(255,215,0,0.15); color:var(--gold); border:1px solid rgba(255,215,0,0.4); box-shadow:0 8px 25px rgba(255,215,0,0.15); }
+    .btn-hero:hover { transform:translateY(-2px); filter:brightness(1.1); }
+    .user-bar { position:absolute; top:1rem; right:1rem; z-index:10; display:flex; gap:0.5rem; align-items:center; }
+    .user-chip { background:rgba(57,255,20,0.15); border:1px solid rgba(57,255,20,0.3); padding:0.4rem 0.8rem; border-radius:20px; font-size:0.7rem; font-weight:600; color:var(--neon); }
+    .btn-logout { background:none; border:1px solid rgba(255,255,255,0.3); padding:0.2rem 0.5rem; border-radius:12px; font-size:0.6rem; cursor:pointer; color:rgba(255,255,255,0.6); }
+
+    /* ===== PANEL HEADER COLORES POR SECCIÓN ===== */
+    .panel-header-turismo { background:linear-gradient(135deg, #0a1a05 0%, #0d2a08 100%); border-bottom:1px solid rgba(57,255,20,0.3); }
+    .panel-header-hoteles { background:linear-gradient(135deg, #1a0508 0%, #2a0510 100%); border-bottom:1px solid rgba(255,45,85,0.4); }
+    .panel-header-restaurantes { background:linear-gradient(135deg, #130a1f 0%, #1c0a2e 100%); border-bottom:1px solid rgba(168,85,247,0.4); }
+    .panel-header-transporte { background:linear-gradient(135deg, #051018 0%, #081822 100%); border-bottom:1px solid rgba(56,189,248,0.4); }
+    .panel-header-mapa { background:linear-gradient(135deg, #070d14 0%, #0c1520 100%); border-bottom:1px solid rgba(56,189,248,0.3); }
+
+    /* ===== PANEL BODY ===== */
+    #section-panel { background:var(--bg); }
+    .panel-list-wrap { flex:1; overflow-y:auto; overflow-x:hidden; padding:1rem; -webkit-overflow-scrolling:touch; }
+
+    /* Card base oscura */
+    .item-row {
+      display:flex !important; flex-direction:column !important;
+      height:auto !important; min-height:0 !important; align-self:start !important;
+      background:var(--card); border:1.5px solid var(--border);
+      border-radius:14px; overflow:hidden;
+      transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.3); cursor:pointer;
+    }
+    .item-row:hover { transform:translateY(-3px); }
+    .item-row.t-turismo:hover { border-color:var(--c-turismo); box-shadow:0 8px 24px rgba(57,255,20,0.2); }
+    .item-row.t-hoteles:hover { border-color:var(--c-hoteles); box-shadow:0 8px 24px rgba(255,45,85,0.2); }
+    .item-row.t-restaurantes:hover { border-color:var(--c-restaurantes); box-shadow:0 8px 24px rgba(168,85,247,0.2); }
+    .item-row.t-transporte:hover { border-color:var(--c-transporte); box-shadow:0 8px 24px rgba(56,189,248,0.2); }
+    .item-row.selected.t-turismo { border-color:var(--c-turismo); background:rgba(57,255,20,0.06); }
+    .item-row.selected.t-hoteles { border-color:var(--c-hoteles); background:rgba(255,45,85,0.06); }
+    .item-row.selected.t-restaurantes { border-color:var(--c-restaurantes); background:rgba(168,85,247,0.06); }
+    .item-row.selected.t-transporte { border-color:var(--c-transporte); background:rgba(56,189,248,0.06); }
+
+    /* DRAWER */
+    #detailDrawer { position:fixed; right:0; top:0; bottom:0; width:min(440px,100vw); background:var(--card); z-index:2500; transform:translateX(100%); transition:transform 0.35s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column; box-shadow:-8px 0 40px rgba(0,0,0,0.5); }
+    #drawerOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2400; }
+
+    /* Drawer header colores */
+    .drawer-header-turismo { background:linear-gradient(135deg, #0a1a05, #0f2a09); border-bottom:2px solid rgba(57,255,20,0.4); }
+    .drawer-header-hoteles { background:linear-gradient(135deg, #1a0508, #2e0912); border-bottom:2px solid rgba(255,45,85,0.5); }
+    .drawer-header-restaurantes { background:linear-gradient(135deg, #130a1f, #200d35); border-bottom:2px solid rgba(168,85,247,0.5); }
+    .drawer-header-transporte { background:linear-gradient(135deg, #051018, #0c1a28); border-bottom:2px solid rgba(56,189,248,0.5); }
+
+    /* ===== REGISTRO RENOVADO ===== */
+    .reg-overlay {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.88);
+      backdrop-filter:blur(12px);
+      z-index:4000; display:flex; align-items:center; justify-content:center;
+    }
+    .reg-overlay.hidden { display:none; }
+    .reg-card {
+      background:var(--card2); border-radius:20px;
+      width:92%; max-width:460px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(57,255,20,0.15);
+      animation:fadeInUp 0.5s ease; overflow:hidden;
+    }
+    @keyframes fadeInUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .reg-hero-img {
+      width:100%; height:180px;
+      background:url('https://lh3.googleusercontent.com/place-photos/AJRVUZONoB-ZKELjLo3bOPKZ7LDXi20-UuLnTtsI5c42Dx9RH_-_9-WEd_zG9nPGhCd0JussJUldkXQjQbLjqTDiN58AjmG_s8ZVX0M_q31v9KP3tWTtG_Q-y_zabLNUzVtFwM2O-u7ob0dK0vSGwQ=s4800-w800-h600') center/cover no-repeat;
+      position:relative;
+    }
+    .reg-hero-img::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(180deg, transparent 30%, var(--card2) 100%);
+    }
+    .reg-hero-label {
+      position:absolute; bottom:0; left:0; right:0; z-index:1;
+      padding:0.6rem 1.2rem; text-align:center;
+      font-family:var(--font-display); color:#fff; font-size:1.05rem; font-weight:700;
+      text-shadow:0 2px 8px rgba(0,0,0,0.8);
+    }
+    .reg-body { padding:1.5rem 1.8rem 2rem; }
+    .reg-header { text-align:center; margin-bottom:1.5rem; }
+    .reg-header h2 { font-family:var(--font-display); font-weight:700; font-size:1.3rem; color:var(--text); margin-bottom:0.3rem; }
+    .reg-header p { font-size:0.82rem; color:var(--text-soft); line-height:1.5; }
+    .reg-tabs { display:flex; background:var(--bg2); border-radius:12px; padding:3px; margin-bottom:1.2rem; }
+    .reg-tab { flex:1; padding:0.5rem; border:none; background:transparent; border-radius:9px; font-family:var(--font); font-size:0.78rem; font-weight:600; cursor:pointer; color:var(--text-soft); transition:0.2s; }
+    .reg-tab.active { background:var(--card); color:var(--neon); box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+    .reg-form { display:flex; flex-direction:column; gap:0.9rem; }
+    .input-group { position:relative; }
+    .input-group .input-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-soft); font-size:0.9rem; pointer-events:none; }
+    .input-group input {
+      width:100%; padding:0.85rem 1rem 0.85rem 2.8rem; border-radius:10px;
+      border:1.5px solid var(--border); font-family:var(--font); font-size:0.88rem;
+      background:var(--bg2); transition:all 0.2s ease; color:var(--text);
+    }
+    .input-group input:focus { outline:none; border-color:var(--neon); box-shadow:0 0 0 3px rgba(57,255,20,0.1); }
+    .input-group input::placeholder { color:var(--text-soft); }
+    .btn-register {
+      width:100%; background:var(--neon); color:#0D1117; border:none;
+      padding:1rem; border-radius:10px; font-weight:700; font-size:0.95rem;
+      cursor:pointer; letter-spacing:0.05em; text-transform:uppercase;
+      transition:all 0.3s ease; box-shadow:0 6px 20px rgba(57,255,20,0.3);
+      margin-top:0.3rem; font-family:var(--font);
+    }
+    .btn-register:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(57,255,20,0.4); }
+    .btn-register.login-btn { background:transparent; color:var(--neon); border:1.5px solid var(--neon); box-shadow:none; }
+    .btn-register.login-btn:hover { background:rgba(57,255,20,0.1); }
+    .reg-footer { text-align:center; margin-top:1rem; font-size:0.72rem; color:var(--text-soft); }
+    .reg-footer span { color:var(--neon); font-weight:500; cursor:pointer; }
+
+    /* ===== MODALES ===== */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; display:flex; align-items:flex-end; justify-content:center; }
+    .modal-overlay.hidden { display:none; }
+    .modal-sheet { background:var(--card2); border-radius:20px 20px 0 0; padding:1.2rem 1rem; width:100%; max-width:600px; max-height:88vh; overflow-y:auto; animation:slideUp 0.35s ease; border:1px solid var(--border); border-bottom:none; }
+    @keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+    @media(min-width:600px){.modal-sheet{border-radius:20px;margin-bottom:2rem;max-height:82vh;border-bottom:1px solid var(--border);}}
+    .modal-close { float:right; background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--text-soft); }
+    .modal-sheet h3 { color:var(--text); font-family:var(--font-display); }
+
+    /* Choice modal */
+    .choice-modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3500; display:flex; align-items:center; justify-content:center; }
+    .choice-modal.hidden { display:none; }
+    .choice-card { background:var(--card2); border-radius:20px; padding:2rem 1.5rem; width:90%; max-width:400px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.5); border:1px solid var(--border); }
+    .choice-card h3 { font-family:var(--font-display); color:var(--text); margin-bottom:0.4rem; }
+    .choice-card p { font-size:0.75rem; color:var(--text-soft); margin-bottom:1.2rem; }
+    .choice-btn { display:block; width:100%; padding:1rem; border-radius:14px; font-weight:600; font-size:0.82rem; cursor:pointer; margin-bottom:0.6rem; transition:0.2s; font-family:var(--font); text-align:left; }
+    .choice-btn.auto { background:rgba(57,255,20,0.1); border:1.5px solid rgba(57,255,20,0.4); color:var(--neon); }
+    .choice-btn.manual { background:rgba(255,215,0,0.1); border:1.5px solid rgba(255,215,0,0.4); color:var(--gold); }
+    .choice-btn.sorpresa { background:rgba(168,85,247,0.1); border:1.5px solid rgba(168,85,247,0.4); color:#c084fc; }
+    .choice-btn:hover { transform:translateX(4px); filter:brightness(1.15); }
+    .choice-cancel { background:none; border:none; font-size:0.7rem; cursor:pointer; color:var(--text-soft); margin-top:0.5rem; font-family:var(--font); }
+
+    /* INPUTS EN MODALES */
+    input[type=number], select, textarea {
+      width:100%; padding:0.55rem 0.7rem; border-radius:8px;
+      border:1px solid var(--border); font-family:var(--font); font-size:0.8rem;
+      background:var(--bg2); margin:0.3rem 0; display:block; color:var(--text);
+    }
+    input[type=number]:focus, select:focus, textarea:focus { outline:none; border-color:var(--neon); }
+    select option { background:var(--bg2); }
+
+    /* Botones en modales */
+    .btn-hero-modal {
+      width:100%; padding:0.9rem; border-radius:10px; font-weight:700;
+      font-size:0.85rem; cursor:pointer; border:none; margin-top:0.4rem;
+      font-family:var(--font); text-transform:uppercase; letter-spacing:0.05em;
+      transition:all 0.2s;
+    }
+    .btn-modal-green { background:var(--neon); color:#0D1117; }
+    .btn-modal-gold { background:var(--gold); color:#0D1117; }
+    .btn-modal-purple { background:#a855f7; color:#fff; }
+    .btn-hero-modal:hover { transform:translateY(-2px); filter:brightness(1.1); }
+
+    /* Tabs plan */
+    .tab-book { display:flex; gap:0; background:var(--bg2); border-radius:12px 12px 0 0; overflow:hidden; margin-bottom:0.5rem; }
+    .tab-btn { flex:1; padding:0.8rem 0.4rem; border:none; background:transparent; font-weight:600; font-size:0.7rem; color:var(--text-soft); cursor:pointer; border-radius:0; display:flex; flex-direction:column; align-items:center; gap:0.2rem; font-family:var(--font); transition:0.2s; }
+    .tab-btn.active { background:var(--card); color:var(--neon); }
+
+    /* Result boxes */
+    .result-box { background:var(--bg2); border-radius:10px; padding:0.8rem; margin-top:0.5rem; font-size:0.75rem; line-height:1.8; border:1px solid var(--border); color:var(--text); }
+    .result-box hr { border-color:var(--border); margin:0.4rem 0; }
+    .result-total { background:linear-gradient(135deg, rgba(57,255,20,0.15), rgba(255,215,0,0.1)); border:1px solid rgba(57,255,20,0.3); border-radius:10px; padding:0.8rem; text-align:center; margin-top:0.5rem; }
+    .result-total .big { font-size:1.5rem; font-weight:900; color:var(--neon); text-shadow:0 0 20px rgba(57,255,20,0.4); }
+    .btn-send { display:flex; align-items:center; gap:0.4rem; width:100%; justify-content:center; padding:0.7rem; border-radius:10px; font-weight:700; font-size:0.75rem; cursor:pointer; border:none; margin-top:0.4rem; transition:0.15s; font-family:var(--font); text-transform:uppercase; letter-spacing:0.04em; }
+    .btn-send.email { background:rgba(57,255,20,0.15); color:var(--neon); border:1px solid rgba(57,255,20,0.3); }
+    .btn-send.whatsapp { background:#25D366; color:#fff; }
+    .btn-send:hover { filter:brightness(1.15); transform:translateY(-1px); }
+
+    /* Route bar */
+    .route-bar { display:flex; gap:0.4rem; padding:0.6rem; flex-wrap:wrap; align-items:center; background:var(--bg2); border-radius:10px; border:1px solid var(--border); }
+    .route-bar select, .route-bar button { padding:0.4rem 0.6rem; font-size:0.72rem; border-radius:8px; border:1px solid var(--border); font-family:var(--font); background:var(--card); cursor:pointer; color:var(--text); }
+    .route-bar button { background:var(--neon); color:#0D1117; font-weight:700; border:none; }
+    .tarifa-info { padding:0.35rem 0.6rem; font-size:0.72rem; text-align:center; background:rgba(57,255,20,0.08); border-radius:8px; color:var(--neon); font-weight:600; border:1px solid rgba(57,255,20,0.2); }
+
+    /* Toast */
+    .toast { position:fixed; top:15px; left:50%; transform:translateX(-50%); background:var(--neon); color:#0D1117; padding:0.5rem 1.2rem; border-radius:20px; font-weight:700; font-size:0.75rem; z-index:9999; display:none; box-shadow:0 6px 20px rgba(57,255,20,0.4); }
+    .whatsapp-float { position:fixed; bottom:20px; right:20px; background:#25D366; width:46px; height:46px; border-radius:50%; color:#fff; font-size:1.2rem; box-shadow:0 6px 20px rgba(37,211,102,0.5); cursor:pointer; z-index:99; border:none; display:flex; align-items:center; justify-content:center; }
+    .map-container { height:200px; border-radius:8px; margin:0.5rem 0; border:1px solid var(--border); }
+
+    /* Actividades grid */
+    .actividades-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:0.4rem; max-height:180px; overflow-y:auto; margin:0.4rem 0; }
+    .actividad-chip { display:flex; align-items:center; gap:0.3rem; font-size:0.65rem; padding:0.3rem 0.5rem; border-radius:8px; background:var(--card); border:1px solid var(--border); cursor:pointer; font-family:var(--font); color:var(--text); }
+    .actividad-chip input { width:auto; margin:0; }
+
+    /* Review */
+    .review-box { margin-top:0.8rem; background:var(--bg2); padding:0.7rem; border-radius:8px; border:1px solid var(--border); }
+    .stars span { font-size:1.2rem; cursor:pointer; color:var(--border); transition:0.2s; }
+    .stars span.active { color:var(--gold); }
+
+    /* RULETA ANIMACIÓN */
+    .roulette-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:5000; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1.5rem; }
+    .roulette-overlay.hidden { display:none; }
+    .roulette-items { display:flex; flex-direction:column; gap:0.5rem; align-items:center; }
+    .roulette-item { font-size:1.1rem; font-weight:700; color:var(--text-soft); font-family:var(--font-display); transition:0.1s; }
+    .roulette-item.spinning { animation:spin-flash 0.1s infinite; }
+    .roulette-item.locked { color:var(--neon); text-shadow:0 0 20px rgba(57,255,20,0.6); font-size:1.3rem; }
+    .roulette-item.locked-gold { color:var(--gold); text-shadow:0 0 20px rgba(255,215,0,0.6); }
+    .roulette-item.locked-purple { color:#c084fc; text-shadow:0 0 20px rgba(192,132,252,0.6); }
+    .roulette-item.locked-blue { color:var(--c-transporte); text-shadow:0 0 20px rgba(56,189,248,0.6); }
+    @keyframes spin-flash { 0%{opacity:1} 50%{opacity:0.3} 100%{opacity:1} }
+    .roulette-title { font-family:var(--font-display); font-size:1.5rem; color:var(--neon); text-shadow:0 0 30px rgba(57,255,20,0.5); letter-spacing:0.1em; }
+
+    /* TABS DE MUNICIPIO */
+    .municipio-tab-btn {
+      padding:0.5rem 1rem; border-radius:20px; border:2px solid var(--border);
+      cursor:pointer; font-family:var(--font); font-size:0.75rem; font-weight:700;
+      background:var(--card); color:var(--text-soft); transition:all 0.2s; white-space:nowrap;
+    }
+    .municipio-tab-btn.active-t { border-color:var(--c-turismo); color:var(--c-turismo); background:rgba(57,255,20,0.08); }
+    .municipio-tab-btn.active-h { border-color:var(--c-hoteles); color:var(--c-hoteles); background:rgba(255,45,85,0.08); }
+    .municipio-tab-btn.active-r { border-color:var(--c-restaurantes); color:var(--c-restaurantes); background:rgba(168,85,247,0.08); }
+    .municipio-tab-btn.active-b { border-color:var(--c-transporte); color:var(--c-transporte); background:rgba(56,189,248,0.08); }
+
+    /* Cards grid */
+    #panelList { display:grid; grid-template-columns:repeat(2,1fr); grid-auto-rows:auto; gap:1.5rem; align-items:start; align-content:start; padding:1rem 1rem 3rem; }
+    @media(max-width:500px){ #panelList { grid-template-columns:1fr; } }
+    @media(max-width:768px){
+      :root { --sidebar-w:56px; --sidebar-w-open:200px; }
+    }
+
+    /* Scroll btn */
+    #scrollDownBtn { display:none; position:absolute; bottom:20px; right:20px; width:46px; height:46px; background:var(--neon); color:#0D1117; border:none; border-radius:50%; font-size:1.2rem; cursor:pointer; box-shadow:0 4px 16px rgba(57,255,20,0.4); z-index:100; align-items:center; justify-content:center; transition:background 0.2s; font-weight:900; }
+
+    /* Mapa panel */
+    #panelMapWrap { display:none; width:340px; flex-shrink:0; position:relative; border-right:1px solid var(--border); }
+    #panelMap, #fullMapContainer { height:100%; width:100%; }
+
+    /* Leaflet oscuro */
+    .leaflet-container { background:#0D1117 !important; }
+    .leaflet-tile { filter:brightness(0.7) saturate(0.5) hue-rotate(5deg); }
+    .leaflet-popup-content-wrapper { background:var(--card2); color:var(--text); border:1px solid var(--border); }
+    .leaflet-popup-tip { background:var(--card2); }
+
+    /* Detalle drawer body */
+    #drawerBody { flex:1; overflow-y:auto; padding:1.2rem; display:flex; flex-direction:column; gap:0.9rem; background:var(--bg2); }
+    .drawer-info-box { background:var(--card); border-radius:12px; padding:0.85rem; display:flex; flex-direction:column; gap:0.5rem; border:1px solid var(--border); }
+    .drawer-info-box .info-row { font-size:0.82rem; display:flex; gap:0.6rem; color:var(--text); }
+    .drawer-tip { border-radius:12px; padding:0.75rem; border-left:3px solid var(--gold); background:rgba(255,215,0,0.05); }
+    .drawer-tip .tip-label { font-size:0.75rem; font-weight:700; color:var(--gold); margin-bottom:3px; }
+    .drawer-tip .tip-text { font-size:0.8rem; color:var(--text-soft); }
+    .drawer-price-box { background:var(--card); border-radius:12px; padding:0.85rem; border:1px solid var(--border); }
+    .drawer-price-big { font-size:1.5rem; font-weight:900; }
+    .drawer-tag { display:inline-block; padding:4px 10px; border-radius:20px; font-size:0.72rem; font-weight:600; }
+    .tag-t { background:rgba(57,255,20,0.15); color:var(--c-turismo); border:1px solid rgba(57,255,20,0.3); }
+    .tag-h { background:rgba(255,45,85,0.15); color:var(--c-hoteles); border:1px solid rgba(255,45,85,0.3); }
+    .tag-r { background:rgba(168,85,247,0.15); color:var(--c-restaurantes); border:1px solid rgba(168,85,247,0.3); }
+    .tag-b { background:rgba(56,189,248,0.15); color:var(--c-transporte); border:1px solid rgba(56,189,248,0.3); }
+    .drawer-btn { flex:1; padding:0.8rem; border-radius:10px; border:none; font-weight:700; font-size:0.82rem; cursor:pointer; font-family:var(--font); transition:0.2s; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:0.4rem; text-align:center; }
+    .drawer-btn:hover { transform:translateY(-2px); filter:brightness(1.1); }
+    .drawer-btn-t { background:var(--c-turismo); color:#0D1117; }
+    .drawer-btn-t.sel { background:rgba(57,255,20,0.2); color:var(--c-turismo); border:1.5px solid var(--c-turismo); }
+    .drawer-btn-h { background:var(--c-hoteles); color:#fff; }
+    .drawer-btn-h.sel { background:rgba(255,45,85,0.2); color:var(--c-hoteles); border:1.5px solid var(--c-hoteles); }
+    .drawer-btn-r { background:var(--c-restaurantes); color:#fff; }
+    .drawer-btn-r.sel { background:rgba(168,85,247,0.2); color:var(--c-restaurantes); border:1.5px solid var(--c-restaurantes); }
+    .drawer-btn-b { background:var(--c-transporte); color:#0D1117; }
+    .drawer-btn-b.sel { background:rgba(56,189,248,0.2); color:var(--c-transporte); border:1.5px solid var(--c-transporte); }
+    .drawer-btn-maps { background:rgba(66,133,244,0.2); color:#4285F4; border:1px solid rgba(66,133,244,0.3); }
+    .drawer-btn-wa { background:#25D366; color:#fff; }
+    .drawer-btn-fb { background:rgba(24,119,242,0.2); color:#1877F2; border:1px solid rgba(24,119,242,0.3); font-weight:900; }
+
+    /* Count badge */
+    .panel-count-badge { font-size:0.7rem; padding:0.25rem 0.7rem; border-radius:20px; }
+    .badge-t { background:rgba(57,255,20,0.15); color:var(--c-turismo); }
+    .badge-h { background:rgba(255,45,85,0.15); color:var(--c-hoteles); }
+    .badge-r { background:rgba(168,85,247,0.15); color:var(--c-restaurantes); }
+    .badge-b { background:rgba(56,189,248,0.15); color:var(--c-transporte); }
+
+    /* mapa full */
+    #section-mapa { position:absolute; inset:0; display:none; flex-direction:column; }
+  </style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- ===== REGISTRO ===== -->
+<div class="reg-overlay" id="regOverlay">
+  <div class="reg-card">
+    <div class="reg-hero-img">
+      <div class="reg-hero-label">Santuario Mariano de la Torre · Chochís</div>
+    </div>
+    <div class="reg-body">
+      <div class="reg-header">
+        <h2>Bienvenido a Rojobore</h2>
+        <p>Tu guía de la Chiquitanía boliviana</p>
+      </div>
+      <div class="reg-tabs">
+        <button class="reg-tab active" onclick="switchRegTab('register')">Crear cuenta</button>
+        <button class="reg-tab" onclick="switchRegTab('login')">Ya tengo cuenta</button>
+      </div>
+      <!-- REGISTRO -->
+      <div id="reg-form-register" class="reg-form">
+        <div class="input-group">
+          <span class="input-icon">👤</span>
+          <input type="text" id="regName" placeholder="Nombre completo">
+        </div>
+        <div class="input-group">
+          <span class="input-icon">📧</span>
+          <input type="email" id="regEmail" placeholder="Correo electrónico">
+        </div>
+        <div class="input-group">
+          <span class="input-icon">📱</span>
+          <input type="tel" id="regPhone" placeholder="WhatsApp (ej: +591 71607412)">
+        </div>
+        <button class="btn-register" onclick="registerUser()">Registrarme gratis</button>
+      </div>
+      <!-- LOGIN -->
+      <div id="reg-form-login" class="reg-form" style="display:none;">
+        <div class="input-group">
+          <span class="input-icon">📧</span>
+          <input type="email" id="loginEmail" placeholder="Correo electrónico registrado">
+        </div>
+        <button class="btn-register login-btn" onclick="loginUser()">Ingresar</button>
+      </div>
+      <div class="reg-footer">Al registrarte aceptas nuestros <span>términos</span> y <span>política de privacidad</span>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ROULETTE ===== -->
+<div class="roulette-overlay hidden" id="rouletteOverlay">
+  <div class="roulette-title">GENERANDO RUTA SORPRESA</div>
+  <div class="roulette-items">
+    <div class="roulette-item spinning" id="rou-transport">🚌 ...</div>
+    <div class="roulette-item spinning" id="rou-hotel">🏨 ...</div>
+    <div class="roulette-item spinning" id="rou-rest">🍽️ ...</div>
+    <div class="roulette-item spinning" id="rou-act">🎟️ ...</div>
+  </div>
+  <div id="rou-status" style="color:var(--text-soft);font-size:0.8rem;"></div>
+</div>
+
+<!-- ===== CHOICE MODAL ===== -->
+<div class="choice-modal hidden" id="choiceModal">
+  <div class="choice-card">
+    <h3>Planificar mi viaje</h3>
+    <p>Elige cómo quieres organizar tu aventura</p>
+    <button class="choice-btn auto" onclick="openPlanModal()">Automático · Optimiza tu presupuesto</button>
+    <button class="choice-btn manual" onclick="openCalcModal()">Manual · Basado en tus selecciones</button>
+    <button class="choice-btn sorpresa" onclick="runRoulette()">Ruta Sorpresa · Déjate sorprender</button>
+    <button class="choice-cancel" onclick="closeChoiceModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ===== PLAN MODAL ===== -->
+<div class="modal-overlay hidden" id="planModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModals()">✕</button>
+    <h3 style="margin-bottom:0.8rem;">Plan automático inteligente</h3>
+    <input type="number" id="planBudget" value="2500" min="1000" placeholder="Presupuesto (Bs)">
+    <div style="display:flex;gap:0.5rem;margin:0.4rem 0;">
+      <select id="planPeople"><option value="1">1 persona</option><option value="2" selected>2 personas</option><option value="3">3 personas</option><option value="4">4 personas</option></select>
+      <select id="planDays"><option value="1">1 día</option><option value="2" selected>2 días</option><option value="3">3 días</option><option value="4">4 días</option></select>
+    </div>
+    <div style="font-weight:600;font-size:0.72rem;color:var(--text-soft);margin:0.5rem 0 0.3rem;">Ruta con vehículo propio (opcional)</div>
+    <div class="route-bar">
+      <select id="planOrigin"><option value="">Origen</option><option value="santa-cruz">Santa Cruz</option><option value="cochabamba">Cochabamba</option><option value="la-paz">La Paz</option><option value="sucre">Sucre</option><option value="tarija">Tarija</option><option value="potosi">Potosí</option><option value="oruro">Oruro</option><option value="trinidad">Trinidad</option></select>
+      <select id="planDest"><option value="">Destino</option><option value="roboré">Roboré</option><option value="chochis">Chochís</option><option value="aguascalientes">Aguas Calientes</option></select>
+      <button onclick="calcularPlanRoute()">Calcular</button>
+    </div>
+    <div id="planRouteInfo" class="tarifa-info" style="margin:0.3rem 0;">Selecciona origen y destino</div>
+    <button class="btn-hero-modal btn-modal-green" onclick="generateQuickPlan()">Generar plan</button>
+    <div id="planResult"></div>
+  </div>
+</div>
+
+<!-- ===== CALC MANUAL MODAL ===== -->
+<div class="modal-overlay hidden" id="calcModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModals()">✕</button>
+    <h3 style="margin-bottom:0.8rem;">Calculadora manual</h3>
+    <div style="display:flex;gap:0.5rem;margin:0.4rem 0;"><input type="number" id="calcPeople" value="2" min="1" placeholder="Personas"><input type="number" id="calcDays" value="2" min="1" placeholder="Días"></div>
+    <select id="calcTransport" onchange="onTransportChange()"><option value="0">-- Transporte --</option></select>
+    <div id="calcMapWrapper" style="display:none;">
+      <div class="route-bar" style="margin-top:0.4rem;">
+        <button onclick="getUserLocation()">Mi ubicación</button>
+        <select id="calcOriginSelect"><option value="">Origen manual</option><option value="santa-cruz">Santa Cruz</option><option value="cochabamba">Cochabamba</option><option value="la-paz">La Paz</option><option value="sucre">Sucre</option><option value="tarija">Tarija</option><option value="potosi">Potosí</option><option value="oruro">Oruro</option><option value="trinidad">Trinidad</option></select>
+        <select id="calcDestSelect"><option value="">Destino turístico</option></select>
+        <button onclick="calcularCalcRoute()">Calcular</button>
+      </div>
+      <div class="map-container" id="calcMapContainer"></div>
+      <div id="calcRouteInfo" class="tarifa-info">Selecciona origen y destino</div>
+    </div>
+    <select id="calcHotel"><option value="0">-- Hotel --</option></select>
+    <select id="calcRestaurante"><option value="0">-- Restaurante --</option></select>
+    <div style="font-weight:600;font-size:0.72rem;color:var(--text-soft);margin:0.5rem 0 0.2rem;">Actividades (máx. 5)</div>
+    <div class="actividades-grid" id="actividadesCheckboxes"></div>
+    <button class="btn-hero-modal btn-modal-gold" onclick="calculateWithSelections()">Calcular desglose</button>
+    <div id="calcResult"></div>
+  </div>
+</div>
+
+<!-- ===== SORPRESA RESULT MODAL ===== -->
+<div class="modal-overlay hidden" id="surpriseModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModals()">✕</button>
+    <h3 style="color:#c084fc;margin-bottom:0.8rem;">Tu Ruta Sorpresa</h3>
+    <div id="surpriseResult"></div>
+  </div>
+</div>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">R</div>
+  <button class="sidebar-toggle" onclick="toggleSidebar()" title="Menú">☰</button>
+  <nav class="sidebar-nav">
+    <div class="sidebar-item active" onclick="showSection('hero')" id="nav-hero">
+      <span class="sidebar-icon">⌂</span>
+      <span class="sidebar-label">Inicio</span>
+    </div>
+    <div class="sidebar-item" onclick="showSection('turismo')" id="nav-turismo">
+      <span class="sidebar-icon" style="color:var(--c-turismo);">◈</span>
+      <span class="sidebar-label">Turismo</span>
+    </div>
+    <div class="sidebar-item" onclick="showSection('hoteles')" id="nav-hoteles">
+      <span class="sidebar-icon" style="color:var(--c-hoteles);">◈</span>
+      <span class="sidebar-label">Hoteles</span>
+    </div>
+    <div class="sidebar-item" onclick="showSection('restaurantes')" id="nav-restaurantes">
+      <span class="sidebar-icon" style="color:var(--c-restaurantes);">◈</span>
+      <span class="sidebar-label">Restaurantes</span>
+    </div>
+    <div class="sidebar-item" onclick="showSection('transporte')" id="nav-transporte">
+      <span class="sidebar-icon" style="color:var(--c-transporte);">◈</span>
+      <span class="sidebar-label">Transporte</span>
+    </div>
+    <div class="sidebar-item" onclick="showSection('mapa')" id="nav-mapa">
+      <span class="sidebar-icon">⊕</span>
+      <span class="sidebar-label">Mapa</span>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="sidebar-item sidebar-plan-btn" onclick="openChoiceModalSafe()">
+      <span class="sidebar-icon">✦</span>
+      <span class="sidebar-label">Planificar viaje</span>
+    </div>
+    <div class="sidebar-user" id="sidebarUser" style="display:none;">
+      <span>●</span>
+      <span class="sidebar-user-name" id="sidebarUserName">Usuario</span>
+      <span class="sidebar-label" style="font-size:0.6rem;cursor:pointer;color:#f87;" onclick="logout()">Salir</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="app-main" id="appMain">
+
+  <!-- HERO -->
+  <div id="section-hero" style="position:absolute;inset:0;transition:opacity 0.3s;">
+    <div class="hero-full">
+      <div class="clouds-container" id="cloudsContainer"></div>
+      <div class="user-bar" id="userBar" style="display:none;">
+        <span class="user-chip" id="userName">Usuario</span>
+        <button class="btn-logout" onclick="logout()">Salir</button>
+      </div>
+      <div class="hero-content">
+        <div class="hero-title">Rojobore</div>
+        <p class="hero-sub">Chiquitanía · Bolivia · Aventura</p>
+        <div class="hero-buttons">
+          <button class="btn-hero btn-explore" onclick="showSection('turismo')">Explorar lugares</button>
+          <button class="btn-hero btn-plan" onclick="openChoiceModalSafe()">Planificar viaje</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL CATEGORÍAS -->
+  <div id="section-panel" style="position:absolute;inset:0;display:none;flex-direction:column;">
+    <div id="panelHeaderBar" style="padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;flex-shrink:0;">
+      <div id="panelTitleText" style="font-family:var(--font-display);font-size:1.15rem;font-weight:700;flex:1;color:#fff;"></div>
+      <span id="panelCount" class="panel-count-badge"></span>
+    </div>
+    <div id="panelBody" style="display:flex;flex:1;overflow:hidden;min-height:0;position:relative;">
+      <div id="panelMapWrap">
+        <div id="panelMap"></div>
+      </div>
+      <div class="panel-list-wrap" id="panelListWrap">
+        <div id="panelList"></div>
+      </div>
+      <button id="scrollDownBtn" onclick="scrollPanelDown()">↓</button>
+    </div>
+  </div>
+
+  <!-- DRAWER DETALLE -->
+  <div id="detailDrawer">
+    <div id="drawerHeader" style="padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;flex-shrink:0;">
+      <div id="drawerImgThumb" style="width:48px;height:48px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0;border:2px solid rgba(255,255,255,0.15);"></div>
+      <div style="flex:1;min-width:0;">
+        <div id="drawerTitle" style="color:#fff;font-family:var(--font-display);font-size:1rem;font-weight:700;line-height:1.2;"></div>
+        <div id="drawerSub" style="color:rgba(255,255,255,0.55);font-size:0.72rem;margin-top:2px;"></div>
+      </div>
+      <button onclick="closeDrawer()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+    </div>
+    <div id="drawerImg" style="height:200px;background-size:cover;background-position:center;flex-shrink:0;"></div>
+    <div id="drawerBody"></div>
+  </div>
+  <div id="drawerOverlay" onclick="closeDrawer()"></div>
+
+  <!-- MAPA FULL -->
+  <div id="section-mapa" style="position:absolute;inset:0;display:none;flex-direction:column;">
+    <div class="panel-header-mapa" style="padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;flex-shrink:0;">
+      <span style="color:var(--c-transporte);font-size:1.2rem;">⊕</span>
+      <h2 style="font-family:var(--font-display);color:#fff;font-size:1.15rem;">Mapa de Roboré</h2>
+    </div>
+    <div id="fullMapContainer" style="flex:1;"></div>
+  </div>
+
+</div>
+
+<button class="whatsapp-float" onclick="contactSupport()">💬</button>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ===================== DATOS ACTUALIZADOS =====================
+const lugaresTuristicos = [
+  { id:1, item:"Balneario Municipal El Chorro", municipio:"Roboré", precioLocal:10, precioExtranjero:20, rating:4.5, horario:"08:00-18:00", descripcion:"Balneario municipal con piscinas naturales de agua cristalina.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFQPhHMGCCn48M4BkPYvUoe1H5xZVhW4THzOyu2GUzusahqvrklQyjz2XYncSgcuPzjLhIBCvai9AoRc4hJBh4AdU44vtZQn2g5L3O6x-i9kDK5s38l_bq-dwRLABYYjsTLA2LOhQ=w408-h306-k-no", lat:-18.3328, lng:-59.7583, googleMaps:"https://maps.app.goo.gl/eeZzYqQRrB1Qtw4n8", distancia:"Centro de Roboré", transporte:"Caminando 5 min", dificultad:"Fácil", experiencia:"Relax, familiar", servicios:"Vestidores, baños, quioscos", recomendacion:"Llevar traje de baño y protector solar" },
+  { id:2, item:"Las Pampas", municipio:"Roboré", precioLocal:15, precioExtranjero:30, rating:4.3, horario:"06:00-17:00", descripcion:"Sabana chiquitana con avistamiento de aves.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFX1oxpyxW4T8nYX81lAf0UPUQ7IUJ8F7ivlIeJTiNpfeGR7LLKuSouhRFTtGd6qg17JdmDEMc0EHl9JMEvNpDwruoWGFatlAobliemGwefyRoozuuvCNuoS9Jggfiobqwea4UA=w408-h306-k-no", lat:-18.345, lng:-59.77, googleMaps:"https://maps.app.goo.gl/bCKPCNzh1Vxf9Upt9", distancia:"12 km al norte", transporte:"Taxi o bicicleta", dificultad:"Moderada", experiencia:"Naturaleza, aventura", servicios:"Guías locales", recomendacion:"Calzado cómodo, agua, binoculares" },
+  { id:3, item:"Las Pozas", municipio:"Roboré", precioLocal:15, precioExtranjero:25, rating:4.4, horario:"08:00-17:00", descripcion:"Piscinas naturales entre rocas.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGEt-_dT1SsUea7sE9VLJwD1Mm834w6zlqcIwpGWleAOERJLyFMzg-29WtJPFcW1G4ey9ZrbdU6w94nO4V0Q8Qo3VIlVvDDJtLeL2RvcKNz67h2RsuYosCh8d8mBFMeY0_xCk91i3FbChTE=w408-h541-k-no", lat:-18.31, lng:-59.72, googleMaps:"https://maps.app.goo.gl/GkrpywT8gemHU9zW9", distancia:"15 km de Roboré", transporte:"Vehículo o moto", dificultad:"Fácil", experiencia:"Naturaleza, relax", servicios:"Sin infraestructura", recomendacion:"Llevar agua y protector solar" },
+  { id:4, item:"Cuevas de Miserendino", municipio:"Roboré", precioLocal:20, precioExtranjero:35, rating:4.5, horario:"08:00-16:00", descripcion:"Cuevas con estalactitas.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAHEX4-Ti-_keT5pNEFyotza7dw3RezudlKpQph-m2PIZgLuBOHoRHZzFlvcBwmGZjm__G0UvuZpb38v_qlCpvJJeew-yCcr07WC6sYKd2e734n61-F0w7nsMR5Itt7XZ6tMOJlN=w408-h272-k-no", lat:-18.35, lng:-59.78, googleMaps:"https://maps.app.goo.gl/wjC6vqGf1DF4ozdk8", distancia:"25 km de Roboré", transporte:"4x4, caminata 1 km", dificultad:"Moderada", experiencia:"Aventura, exploración", servicios:"Sin servicios", recomendacion:"Linterna, calzado cerrado" },
+  { id:5, item:"El Chorro de San Luis", municipio:"Roboré", precioLocal:20, precioExtranjero:40, rating:4.8, horario:"07:00-17:00", descripcion:"Cascada de 30 m en cañadón rocoso.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGl_Bhfh50hqXPTp7ikuhnjOEkH1SCMNHW5K0_DQSqCddaiHlq1ms8S-ys0Y7CsKIizoezPVUw-8bQdzMhXznUG6KA8gp1-0QgkjBNdFBFklSIM2m5-4nmS5gj4dY2C6eLFXu5s=w408-h306-k-no", lat:-18.36, lng:-59.79, googleMaps:"https://maps.app.goo.gl/b8bAEAvv1Get6S136", distancia:"22 km al sur", transporte:"4x4, últimos 3 km a pie", dificultad:"Moderada", experiencia:"Aventura, naturaleza", servicios:"Sin servicios", recomendacion:"Calzado antideslizante" },
+  { id:6, item:"Los Totaizales", municipio:"Roboré", precioLocal:25, precioExtranjero:45, rating:4.6, horario:"08:00-16:00", descripcion:"Pozas naturales entre rocas milenarias.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAF2Tn-lNbAS0RCqXV0qzYTvX01uOKT-l3L6HbC9Nrkfg4c9ERXje31WY1FGNfaNkEqGc4D9DGe3L24oWEU1ifk34nwhZ4Q-mIt0b4YiOLQI8q874NKY0hOQW8pzpOqb6eHtXuM=w408-h725-k-no", lat:-18.37, lng:-59.81, googleMaps:"https://maps.app.goo.gl/C1EZQikEALSQmiCx5", distancia:"18 km al oeste", transporte:"Vehículo 4x4", dificultad:"Moderada", experiencia:"Aventura, naturaleza", servicios:"Sin infraestructura", recomendacion:"Calzado para agua" },
+  { id:7, item:"Santuario Mariano de la Torre", municipio:"Chochís", precioLocal:20, precioExtranjero:50, rating:4.4, horario:"09:00-17:00", descripcion:"Complejo histórico y religioso en rocas.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAHizS51L_FKvs1HIHrPehsQksr2GcEpxQgCv5LWKwV8NSFfwnrtLM9G8CeQW64TCuPyJJ3Uen4lqSUV0Pi67ndc1GRc-mqKOMZov3a91-WNE-uPd9Hvrg2-RrlADULgTAv3unHT=w408-h306-k-no", lat:-18.15, lng:-60.03, googleMaps:"https://maps.app.goo.gl/dYkvkNKyMkcYGGJQ7", distancia:"30 km de Roboré", transporte:"Bus o taxi", dificultad:"Fácil", experiencia:"Cultural, religioso", servicios:"Baños, estacionamiento", recomendacion:"Ropa adecuada" },
+  { id:8, item:"Cascada de los Helechos", municipio:"Chochís", precioLocal:15, precioExtranjero:30, rating:4.3, horario:"07:00-17:00", descripcion:"Cascada rodeada de helechos gigantes.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEj1NgSFeEXHjxohC1Mbiks4HhBXsRnvhWgGM5bThr1DsH_DedpxxJ-jV8Th3v35iXQwgLuy8tNNQBdAhl6cMc2XdtecQKeOC6aqznkHGMCfB7QD0W8oJ1dTh1JJqJorm_ZJE-O2A=w408-h725-k-no", lat:-18.16, lng:-60.04, googleMaps:"https://maps.app.goo.gl/RwPbSHwzPqWC8xLy9", distancia:"8 km de Chochís", transporte:"Caminata 30 min", dificultad:"Moderada", experiencia:"Naturaleza, aventura", servicios:"Sin servicios", recomendacion:"Calzado antideslizante" },
+  { id:9, item:"Cascada de Yororoba", municipio:"Aguas Calientes", precioLocal:15, precioExtranjero:30, rating:4.2, horario:"07:00-17:00", descripcion:"Caída de agua con piscinas naturales.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAE_m8-sLtC3VAvlNY-yZ6mrpzrApj6JXtlpXo7eHX2yI45SqErDfN2-TgSCGpv4aTbLaUiKuFZP4BePVXmAC9gT4u66pfgGbmsCALLlioEMu7HEFno_WZI7UgdtOCgIWdH6W4AsUl5pnww=w408-h306-k-no", lat:-18.37, lng:-59.81, googleMaps:"https://maps.app.goo.gl/SBSekZhz5LY1iroV7", distancia:"40 km de Roboré", transporte:"Vehículo 4x4", dificultad:"Moderada", experiencia:"Aventura, naturaleza", servicios:"Ninguno", recomendacion:"Agua, protector solar" },
+  { id:10, item:"Centro Turístico Los Hervores", municipio:"Roboré", precioLocal:30, precioExtranjero:50, rating:4.0, horario:"08:00-18:00", descripcion:"Aguas termales con pozas relajantes.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAHG_Pw3zZBVkx5wU__Nc8RWn9DQFLydAP_UICwZREx3zgGrzefnaWkDkur4MXeYq2637GIcxLjBB6rQ8nT6T3LnGgz4xqAa97xuJb4Zh2KSHOQTet7_j_ehSc3CoCb7IGqSvLiZSsGR2kDW=w408-h725-k-no", lat:-18.33, lng:-59.76, googleMaps:"https://maps.app.goo.gl/u93mMAXRXRNiLjgDA", distancia:"10 km de Roboré", transporte:"Taxi o vehículo particular", dificultad:"Fácil", experiencia:"Relax, salud", servicios:"Baños, vestidores, piscinas", recomendacion:"Llevar traje de baño y toalla" },
+  { id:11, item:"Cascada Velo de Novia", municipio:"Chochís", precioLocal:15, precioExtranjero:40, rating:4.9, horario:"08:00-17:00", descripcion:"Cascada icónica con forma de velo.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGiLM9YmS-gggCYh86Hja8G4_taHZBGR8dBW0kBE106FNvPoUX3m7CkPF7FDKtA0KxL1A2ttbfY9XBiiDlwVtgdw-FhD-XuI0NgYBjyaJnvMieuJb3ycEQq7cLsetWhM0lgbCIL=w408-h725-k-no", lat:-18.16, lng:-60.04, googleMaps:"https://maps.app.goo.gl/QPo1Yjott9w5k2zV7", distancia:"5 km de Chochís", transporte:"Caminata 20 min", dificultad:"Moderada", experiencia:"Naturaleza, aventura", servicios:"Sin servicios", recomendacion:"Calzado antideslizante" }
+];
+
+const hoteles = [
+  { id:12, nombre:"Hotel Las Lajas", ubicacion:"Roboré", precioNoche:200, wifi:true, piscina:true, desayuno:true, capacidad:2, rating:4.3, tipo:"3 estrellas", servicios:"Piscina, restaurante, estacionamiento.", imagen:"https://lh3.googleusercontent.com/gps-proxy/ALd4DhFLxSNXb1YaD8mgKjXMqulsbTtcqEWlR_Lo2BEOfGH9z1hbliQBxstJQRdvXJlhWQd2ghFlZjli9HiIAPux6bkvSQKl5PhQwTfRXd5ofIbCTCtmeASuJLmGiuWmqC_j7tdlkFFcblRtqvpxL6UeVEfzdkrLWyH8bQAjnQ-QsuwZX-vvH9dbF8xD=w408-h272-k-no", telefono:"+59176001234", googleMaps:"https://maps.app.goo.gl/neR3rPj9ZkXPMbE98", facebook:"https://www.facebook.com/Hotel.LasLajas/" },
+  { id:13, nombre:"Hotel Descanso Chiquitano", ubicacion:"Roboré", precioNoche:150, wifi:true, piscina:false, desayuno:true, capacidad:2, rating:4.0, tipo:"Económico", servicios:"Jardín, comedor.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAE5mJA2OedYG4CmLVbpG5cQHpHMnPPFOE3mxcGBbqGzXo6AtQWke6175ABDn35QjGNaxwkvQC9aeGy7uMEGh1vMlx406BsWfpabVh_ZI--Mae5eiYXsGojhfdQZbhkIxHCRlgOM=w408-h306-k-no", telefono:"+59178554321", googleMaps:"https://maps.app.goo.gl/NatPTTiQkqBcvpfK7", facebook:"https://www.facebook.com/hotel.descansochiquitano/" },
+  { id:14, nombre:"Hotel Mami Vilma", ubicacion:"Roboré", precioNoche:120, wifi:true, piscina:false, desayuno:true, capacidad:2, rating:3.9, tipo:"Posada", servicios:"Cocina compartida.", imagen:"https://lh3.googleusercontent.com/gps-proxy/ALd4DhHogxYULNXevpOqC01qVJnWW7NQhSVNiaC-jv0eU_V-AfWMqb0elJwuCbdBnqtzuk4N-UD3t7PeauK8saxis70SQjfs7Ocjzs_G4X_JWfCNfu86cPPfEABpknHRD8NA6f55feYPcSMB2-ZEKHSa70YlpRC5OMiG1PSQuRCnrvolPFswtBhoLxlq=w408-h300-k-no", telefono:"+59171343435", googleMaps:"https://maps.app.goo.gl/2gwypMXVUMZVF1e36", facebook:"https://www.facebook.com/HotelMamiVilma/" },
+  { id:15, nombre:"La Casona de Don Pepe", ubicacion:"Roboré", precioNoche:320, wifi:true, piscina:true, desayuno:true, capacidad:4, rating:4.6, tipo:"Familiar", servicios:"TV cable, garaje, jardín.", imagen:"https://lh3.googleusercontent.com/gps-proxy/ALd4DhEpG8Z-KRQQ1ljXRz6rtAjr3bSON28cJXX4mIQelU9XgPigP5_XpGa3nS3zT08evG-qdEY8Fm3k3smcNiasP4vlY6SrwQ3glufPptiJ6HcLHB8ndOr-DD5oFM-7mKOkF1EXXFSCPmeAyGMAQN6jXrWfgtDLHs1RPgtvI53VRB7c7JERHtAis_Xr=w416-h240-k-no", telefono:"+59173456789", googleMaps:"https://maps.app.goo.gl/tKRT98Q3gZGhvZvBA", facebook:"https://www.facebook.com/HotelLaCasonaDeDonPepe/" },
+  { id:16, nombre:"Hotel Safari Club Roboré", ubicacion:"Roboré", precioNoche:250, wifi:true, piscina:true, desayuno:true, capacidad:2, rating:4.4, tipo:"3 estrellas", servicios:"Piscina, bar, restaurante.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGPAuyERjoNaZf5IFKOyaSxFQA4mk8Jq7qTzUK2Aus9IN65IU9q6YyWLfOCXvVZONPUonidsdLCjIlqAMT1ofaIyO9juuFMvEQ-27E25d16uWIr894RktvD8oCSngjeYlOjRtvveA7-fts=w408-h306-k-no", telefono:"+59175678901", googleMaps:"https://maps.app.goo.gl/ZXipZ9qWqWpFR3Le9" },
+  { id:17, nombre:"Hotel y Camping Santiago de Chiquitos", ubicacion:"Chochís", precioNoche:100, wifi:false, piscina:false, desayuno:false, capacidad:2, rating:4.1, tipo:"Camping/Hostal", servicios:"Zona de camping, baños compartidos.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAE7TsMH6v-iQw5amAT34znsn5i7Oz9i5VuE5cC89ylAjgLskuUTlWgJEX_ytsvdch32Xhcg59EQJYRPlppejcrnW6wne7ZiogPLaAgWRjpy9KX3oBDItuCvaGQCNiiO0HcLahbeNpw7lzNn=w408-h408-k-no", telefono:"+59174567890", googleMaps:"https://maps.app.goo.gl/jTobGXjorHqieto4A", facebook:"https://www.facebook.com/HotelSantiagoDeChiquitoa/" },
+  { id:18, nombre:"Hotel Las Parabas", ubicacion:"Roboré", precioNoche:180, wifi:true, piscina:false, desayuno:true, capacidad:2, rating:4.2, tipo:"Económico", servicios:"Aire acondicionado, TV.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFKdOy8DfWt81k-lodLEIKabOQi36tPBJ3CDbqUMNbtY1hVmdD6QPwfSLH_mt340S2FieA05sYqQrA-i1VWx4coVdZ9XA-ZKdGOTyR3y83t_m3D5lpRIs3lrYndvAl-g9SnO14_IjHjwpuF=w408-h272-k-no", telefono:"+59176789012", googleMaps:"https://maps.app.goo.gl/KRbrR8rGa1fkum5y8", facebook:"https://www.facebook.com/people/Parabas/100085465175855/" },
+  { id:19, nombre:"Hotel La Masía", ubicacion:"Aguas Calientes", precioNoche:250, wifi:true, piscina:true, desayuno:true, capacidad:3, rating:4.5, tipo:"4 estrellas", servicios:"Spa, gimnasio, restaurante.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFGfS40LTIREtdkr4H_l3ACmmVYHcYWx75LAp2wLLlNfIPNPDH7f3HThp1uAMOY31n8E7sBJTz8NUDEjMMBBaJetPx4WXPbBVyg_p2J2FByc87XJZ1g1WSDCc9tmHhfUL8pFMTW=w408-h306-k-no", telefono:"+59177890123", googleMaps:"https://maps.app.goo.gl/iqjbRG3TvvQAoGWk7", facebook:"https://www.facebook.com/AguasCalientesLaMasia/" },
+  { id:20, nombre:"Hotel Ruta 4 Aguas Calientes", ubicacion:"Aguas Calientes", precioNoche:150, wifi:true, piscina:false, desayuno:true, capacidad:2, rating:4.0, tipo:"Económico", servicios:"Estacionamiento, restaurante.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGIhToMw3ogIxOCMoH3MIZih5_RC5Zmd-CAUIhccp55jqOU8uD-kIhyBlbeSDkRiVGEwLw0ITTZuhXiC0slC73KbYDHqvvXDSQuqfDenXWmtfPMPa_AfJOUlByyTAMMHAv8zPAngA=w408-h306-k-no", telefono:"+59178901234", googleMaps:"https://maps.app.goo.gl/Kobi5TwsPCCsUWY97" },
+  { id:21, nombre:"Cabaña Campo Verde", ubicacion:"Aguas Calientes", precioNoche:200, wifi:true, piscina:false, desayuno:false, capacidad:4, rating:4.3, tipo:"Cabaña", servicios:"Cocina equipada, parrilla.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAHp58TT3CSa_573jTx7A2CIxr1bhe43N4igcPOFrMMlHI4T7xaDp-TebQd8nLOvioZuE0irc-LvnW1bL92zBOGqivQ0CuDYZk6qjD9DSRzauP5VrGy_v95X33thQHLEVzEqfum0L573T1nU=w408-h306-k-no", telefono:"+59179012345", googleMaps:"https://maps.app.goo.gl/L9dUuQ4G3LzEF1at6", facebook:"https://www.facebook.com/CabanasAguasCalientes/" },
+  { id:22, nombre:"Chochís Cabañas", ubicacion:"Chochís", precioNoche:200, wifi:true, piscina:false, desayuno:false, capacidad:4, rating:4.2, tipo:"Cabaña", servicios:"Cocina equipada, estacionamiento.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEjWyogIYVmQotWXAxmYHxuLxv5d7WKykqNeVW5skJVOIughDnVMoqilt9LazQpiyXnidmW_bI-C0D2lCKa7fEWJhYmPMm1pPvSFlqqfECWbbuqi-j2FqUkUzG8XFAnGN_u=w853-h240-k-no", telefono:"+59170123456", googleMaps:"https://maps.app.goo.gl/KxSguc71aPZMbcJi8", facebook:"https://www.facebook.com/Chochiscab/" },
+  { id:23, nombre:"Hotel Peregrino", ubicacion:"Chochís", precioNoche:130, wifi:true, piscina:false, desayuno:true, capacidad:2, rating:4.0, tipo:"Posada", servicios:"Jardín, terraza.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAE5opL9yUxVLNeSbk8LQA_izwXnd5SAn692JAkg6DDf6XADWQdQQtJijH1dHHj9pC_JKIAD2vZcoKacq7BKsYcJ5s79rQweAvPLCdv9rW7WH0pZjJRX0jARhO7Ck-ufuFWnG92sTs0vqGY=w408-h306-k-no", telefono:"+59171234567", googleMaps:"https://maps.app.goo.gl/NNpwj8YauTiHDkrp7", facebook:"https://www.facebook.com/p/Hotel-Peregrino-Chochis-61584150656849/" },
+  { id:25, nombre:"Hotel Pacheco", ubicacion:"Roboré", precioNoche:160, wifi:true, piscina:false, desayuno:true, capacidad:2, rating:3.9, tipo:"Económico", servicios:"Aire acondicionado, TV.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAHSVpoIOBnNxyqjYC9l4SkXV0GHVEqHFHoQko16FwI93iaFQFLjTFjULGWdJ6AtMhwHU9jsPxiHQzosDsR3T1wwzZnLj_AlbIuY3E9wNUzwugHek-FQERost83OGAvZTad7086=w426-h240-k-no", telefono:"+59172345678", googleMaps:"https://maps.app.goo.gl/e83bsc1BhajY4PDo6" }
+];
+
+const restaurantes = [
+  { id:50, item:"Restaurant El Molino", ubicacion:"Roboré", precioDesayuno:30, precioAlmuerzo:60, precioCena:55, tipo:"Carnes", horario:"07:00-22:00", especialidad:"Especialidad en carnes a la parrilla.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGeeDkIyq4XvPrd99er6X8OY57iw5iLNmwlNCb4TpjpcD8Wz6AbM_MMfkplaEK2CbYv5G8Dl0NM7hA_LNhJbR6lNrBAFlJJLo-YhCyX2WuupDkM-yPvGHDs2jo5Xh3c6dz6Zm1JAg=w408-h306-k-no", googleMaps:"https://maps.app.goo.gl/mZjkzFyzHXaBVXbU8", facebook:"https://www.facebook.com/ElMolinoRobore/", direccion:"Calle Bolívar esq. Sucre, Roboré", capacidad:"60 personas", recomendacion:"Probá el churrasco de lomo. Ambiente familiar." },
+  { id:51, item:"Café París", ubicacion:"Roboré", precioDesayuno:25, precioAlmuerzo:45, precioCena:40, tipo:"Cafetería", horario:"07:30-21:00", especialidad:"Café de especialidad y repostería.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAHtS5ZAOqYjIzZCvhalIa_WDF8d-rTMaTXooPBcU-rboS0eAImV94lYr5cCnBXfs2-38CtMjqz8ST4OyvOWlxeTnwTUCAux4SBg9zyv0YrcnAuIwCxWp7w6GrLz4k8tlTeAiRZH=w426-h240-k-no", googleMaps:"https://maps.app.goo.gl/fijQCwRvSmC1d41b8", facebook:"https://www.facebook.com/people/Café-París/100063216401687/", direccion:"Calle principal, Roboré", capacidad:"30 personas", recomendacion:"Café de altura y croissants. Ambiente acogedor." },
+  { id:52, item:"Deleite Café Roboré", ubicacion:"Roboré", precioDesayuno:20, precioAlmuerzo:40, precioCena:35, tipo:"Cafetería", horario:"07:00-20:00", especialidad:"Café y postres artesanales.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAG3SrU-QdaGSKtmAnAqn_5BByhKbx6nnIaoUV0H86ZlInCie8ybaSVm4UmhG-NBwmzlUmxNiKT3lSWioTffMbWEiO39SHPr7HhVqlrVvdfAzdiX7LK9MUUX4wBMDut5tBesKqN4=w408-h725-k-no", googleMaps:"https://maps.app.goo.gl/WUmEr6r8cf2WkH1UA", facebook:"https://www.facebook.com/DeleitecafeRobore/", direccion:"Zona céntrica, Roboré", capacidad:"20 personas", recomendacion:"Tarta de limón y capuchino. Lugar tranquilo." },
+  { id:53, item:"El Messón!", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:50, precioCena:45, tipo:"Familiar", horario:"07:30-21:30", especialidad:"Comida casera y platos típicos.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAHrJF02MbAGAdmIdhp4qnO8Mx_dMPoej8oik5ZTF9i4wwjLGKRl5tXNWxgTF2Wvz_fmUbhkVQrtEfWHXr-SEdLpIVREmgpuMZh5lK3g88ly7fh0DnP1taGXGMJfLsQdICokNSmd=w408-h306-k-no", googleMaps:"https://maps.app.goo.gl/utAivAh4FNRTmnFv9", facebook:"https://www.facebook.com/people/El-Messon-Robore/100083345618656/", direccion:"Av. Principal, Roboré", capacidad:"40 personas", recomendacion:"Plato del día y jugos naturales. Atención rápida." },
+  { id:54, item:"Restaurant Los Lomitos", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:55, precioCena:50, tipo:"Parrilla", horario:"08:00-22:00", especialidad:"Lomitos y carnes a la parrilla.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAHfQCvaWg588xKhUUqDd7QYD-pw1K55UbpUq4X0LTETy555XVg2RIJyyZEMx99AqAJABVqyK4EzT9ZBGUzOchQrxEPSvDIIjqKx-ZkObiCjK6sf-GDyMKOQjVom3jgI-W1vve22nA=w408-h339-k-no", googleMaps:"https://maps.app.goo.gl/j5LARzHgYq2qmTQU7", facebook:"https://www.facebook.com/people/Los-lomitos-tatay-en-roboré/100070199386114/", direccion:"Calle Comercio, Roboré", capacidad:"35 personas", recomendacion:"Lomito jugoso con papas fritas. Buena relación precio-calidad." },
+  { id:55, item:"Hotel Restaurant Cruz Blanca", ubicacion:"Roboré", precioDesayuno:30, precioAlmuerzo:65, precioCena:60, tipo:"Hotelero", horario:"07:00-22:00", especialidad:"Menú internacional y platos regionales.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEo8LGBSP7T-V0TI-LGANybBsimEeP4S6X_ZCdz7j7tTsgMG-R2RS2eR0qm4sD49XPfDWl5RfqzYqhblGT09YCzJZ8tKHQuvs_NOq-NXed-qO4_JR2UN2QvJN0UPfboYNQsYXvu=w408-h725-k-no", googleMaps:"https://maps.app.goo.gl/uEFQBm5uLT1JSXQS9", facebook:"https://www.facebook.com/HotelCruzBlancaRobore/", direccion:"Calle principal, Roboré", capacidad:"50 personas", recomendacion:"Cena formal con variedad de platos. Buen servicio." },
+  { id:56, item:"El Sazón de Mimín", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:35, precioCena:30, tipo:"Casera", horario:"07:00-19:00", especialidad:"Comida casera tradicional.", wifi:false, imagen:"https://tse4.mm.bing.net/th/id/OIP.wM_dOInx84R72zTre0SkkAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", googleMaps:"https://maps.app.goo.gl/JeBeuXr3Kr8WG63g7", facebook:"https://www.facebook.com/Restaurante.Mimin/", direccion:"Zona sur, Roboré", capacidad:"25 personas", recomendacion:"Sopa de maní todos los días. Comida como en casa." },
+  { id:57, item:"A LO GRILL", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:50, precioCena:45, tipo:"Parrilla", horario:"11:00-23:00", especialidad:"Parrilladas y cortes de carne.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFgnGX4ridvVh23wAn-NYDPJxJUnNXqKiBZ_ipRWNcE2nzIcAH9kY24sD_driLJjjmd8FaK-skfvfLs8V5UvQl6rxEAkNCOXQzRqvMXuKpeC3809EvJRvicnOPYTFKAU_AxWxA=w408-h306-k-no", googleMaps:"https://maps.app.goo.gl/ouaTCatojBZ73Qzi9", facebook:"https://www.facebook.com/people/A-lo-Grill-Robore/100084755334417/", direccion:"Calle sin salida, Roboré", capacidad:"30 personas", recomendacion:"Parrillada mixta con guarnición. Ambiente juvenil." },
+  { id:58, item:"Pacumutos - El Pila", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:40, precioCena:35, tipo:"Rápida", horario:"10:00-21:00", especialidad:"Pacumutos (brochetas) y comida rápida.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEJaBeVGzkhKF7GipSgFBqOJxCgwqnkGY4KT4nr4EmMrNOSOsq510cTGa6vMpIS04GABGSy2p56dlJywx5gwlbScFJDTHtdo1RV-mYSHkKNWA9I9Xr8Y91Y-EnIrUilpMfsPQLH=w408-h432-k-no", googleMaps:"https://maps.app.goo.gl/6zJjpMpd9JGisCpRA", facebook:"", direccion:"Calle del estudiante, Roboré", capacidad:"20 personas", recomendacion:"Brochetas de carne y pollo. Rápido y sabroso." },
+  { id:59, item:"Saborcitos Abu Ta Ta", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:30, precioCena:25, tipo:"Comedor", horario:"07:00-18:00", especialidad:"Comida casera y meriendas.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAE9yT6o_lsALsbzxf_Me2vp5ctFFbr4zjXJo0Mrm-pBIgabTUZypeUw0fcudAa-e-pnV-K3O_sosrWuDPh1_CXZsQeJYDhaE1ahYbA8X9Jcv_fzMOdKzI5CSKaNqq3fPch7Va6B=w408-h408-k-no", googleMaps:"https://maps.app.goo.gl/oH6TLXRMtjsaPrr9A", facebook:"https://www.facebook.com/people/Saborcitos-AbuTata/100063776271614/", direccion:"Calle Sucre, Roboré", capacidad:"20 personas", recomendacion:"Comida económica y sabrosa. Ideal para almuerzo rápido." },
+  { id:60, item:"Chicken Mania", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:45, precioCena:40, tipo:"Rápida", horario:"11:00-22:00", especialidad:"Pollo frito y hamburguesas.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAE-ssSaylBVLmYEpL15JbLPtCeEytT5d3aLhC0I_88DRSqYoeUpz3jmPzHg5ZPuhQTfS2S394T7cH1Arptqj2LOewwiiBScyOhE03wTJxBjL9d2S3wo6Vt9W92N3LACbfmP-4s=w408-h725-k-no", googleMaps:"https://maps.app.goo.gl/M3iCPkLVZhzRgTxe7", facebook:"https://www.facebook.com/chickenmaniaec/", direccion:"Esquina plaza, Roboré", capacidad:"20 personas", recomendacion:"Pollo crujiente y papas fritas. Para jóvenes." },
+  { id:61, item:"Repostería Japonesa Roboré", ubicacion:"Roboré", precioDesayuno:25, precioAlmuerzo:35, precioCena:30, tipo:"Repostería", horario:"08:00-20:00", especialidad:"Postres japoneses y café.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSDuI9hpJmaBa6yLjPt0zDw1GnTvdbtAwQQUYlJGOAvPThxfEausc_ZL75SvHsR2zXUqxLPfDw1-bfos9uRLPBkX1X1cdtxDhgD2hwlb8dAsDWeLRbcvVVBe67cwJNO2codkNB=w408-h306-k-no", googleMaps:"https://maps.app.goo.gl/cLCTVpeZnAf5pzRi6", facebook:"https://www.facebook.com/ReposteriaJaponesaRobore/", direccion:"Centro, Roboré", capacidad:"15 personas", recomendacion:"Mochis y pastel de matcha. Algo diferente y delicioso." },
+  { id:62, item:'Restauran "La Clave"', ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:45, precioCena:40, tipo:"Familiar", horario:"07:00-21:00", especialidad:"Platos típicos y menú del día.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEd_ZueuQthZzW4zjVPevE9jwW5bMXURqdosAhDRadvJZPj_5MRbxKnDBaNh-9VNQc8vKyfpa85Odl_OgoE_W3L8Pqpc4-iiHruVaENh5jGLuta2fwlbwLBVSoU0pYqNk6Xwenu=w546-h240-k-no", googleMaps:"https://maps.app.goo.gl/YKknAPxVYca5ZKio9", facebook:"", direccion:"Calle Bolívar, Roboré", capacidad:"30 personas", recomendacion:"Menú económico y completo. Buena sazón." },
+  { id:63, item:"Sabores C&L", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:40, precioCena:35, tipo:"Casera", horario:"07:30-20:00", especialidad:"Comida casera y snacks.", wifi:false, imagen:"https://tse3.mm.bing.net/th/id/OIP.Q_Ku9yBZe0mVKjLvNJXvvgAAAA?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", googleMaps:"https://maps.app.goo.gl/hZUMu4AaegAivVjS6", facebook:"https://www.facebook.com/people/Sabores-CL-Roboré/100050914211169/", direccion:"Zona norte, Roboré", capacidad:"25 personas", recomendacion:"Comida casera rápida. Buena atención." },
+  { id:64, item:"Snack Barriga Llena", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:30, precioCena:25, tipo:"Snack", horario:"08:00-19:00", especialidad:"Snacks, jugos y meriendas.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGy67ZGK7dxk5ACm33-_v8FGROcnTLTNhwG6LF6u7QXxmhUTC7P8ARoZO7MkSyy1-BINbRjMNa6aX3WqZT_Zsr2bvXh_LcLLlT2UfZGwO-NutppWkoWhXHwO7FJ1g189YckKT9Z8g=w408-h544-k-no", googleMaps:"https://maps.app.goo.gl/tpjE1yiAmriGwUE66", facebook:"https://www.facebook.com/Barrigallenacorazoncontento07/", direccion:"Frente al mercado, Roboré", capacidad:"15 personas", recomendacion:"Jugos naturales y sándwiches. Económico y rápido." },
+  { id:65, item:"Restaurante Pescadería Ruiz", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:55, precioCena:50, tipo:"Pescados", horario:"08:00-21:00", especialidad:"Pescados y mariscos frescos.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGz1QygErWPcnYYM0tuGg_tyNEjrIg4Z6eON3a4xX_roCGt9qeCU3LXFHR8TJsUkcsV_Z72CbchqC1BwD23epXtfnyWkF0K5vWDajs2GE5x30SMQoQWTpovglzE-TDc_XiPFbh4eIj3JvE=w426-h240-k-no", googleMaps:"https://maps.app.goo.gl/9kjYpsEqrjsCsx6M6", facebook:"https://www.facebook.com/people/Pescaderia-RUIZ/61560413805202/", direccion:"Calle del río, Roboré", capacidad:"25 personas", recomendacion:"Pacú frito con yuca. Pescado fresco del día." }
+];
+
+const transportes = [
+  { id:40, empresa:"Trans Quijarreño", tipo:"Bus", precio:100, horario:"08:00/20:00", ruta:"Santa Cruz–Roboré", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFZWGMFTmhJY6GdjrO5xV-GkbImPFz9DpKCpCq6Zq_93azk3om7POsowUjFQhcUYQI2N0RCVOnHApDFXqmhAVpSZmxbIBRAo79NDgL01Fw3oawcQR3xdU91Wjr-US0haz6oNWVA4A=w426-h240-k-no", telefono:"+59168580990", esVehiculoPropio:false, googleMaps:"https://maps.app.goo.gl/ULPfQsNYiMTefsar9", facebook:"https://www.facebook.com/TransQuijarreno/", compraOnline:"https://www.ticketsbolivia.com.bo/empresa/trans-quijarreno.php" },
+  { id:41, empresa:"Trans Bolivia (La Pionera)", tipo:"Bus", precio:120, horario:"09:30/21:30", ruta:"Santa Cruz–Roboré", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAHol_PRCD21M8ohknqJxL0rh9tyyQcp-1uYRJ9eBubyaslzF08HFi7YAndb8U-OX_PPlkTGKDOIcTvMUd3CgpG5d9SexQS0M1hmHguOlym1VpL87hzMrItM_JJRpwILKPv7ejRHGA=w426-h240-k-no", telefono:"+59172124096", esVehiculoPropio:false, googleMaps:"https://maps.app.goo.gl/kfcEZ6Fm8Pnhgtd47", facebook:"https://www.facebook.com/p/Trans-Bolivia-La-Pionera-100075942687519/", compraOnline:"https://www.ticketsbolivia.com.bo/empresa/pionera-trans-bolivia.php" },
+  { id:42, empresa:"Transportes Bol - Huracán", tipo:"Bus", precio:110, horario:"07:00/19:00", ruta:"Santa Cruz–Roboré", imagen:"https://scontent.fvvi1-2.fna.fbcdn.net/v/t39.30808-6/422400757_410453721327860_2835089413338839193_n.png?stp=dst-png&cstp=mx820x312&ctp=s820x312&_nc_cat=106&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=INPrbxzMfbEQ7kNvwG-pOtW&_nc_oc=AdrSAXciJGvdlm5P2Pmol42UG4qPFaaOiVkFyDCaPM99LEMr2VpdCpUTYQE09-KrS14&_nc_zt=23&_nc_ht=scontent.fvvi1-2.fna&_nc_gid=0LKVg7mGxQra8is-OJHCng&_nc_ss=7b289&oh=00_Af_5vMtHIQZ8H53XRoPSEJYlIKF_9tlziEoVvL_lWY7luw&oe=6A2B8498", telefono:"+59175678901", esVehiculoPropio:false, googleMaps:"https://maps.app.goo.gl/PVSNn3YXr7vCYAxS8", facebook:"https://www.facebook.com/Buseshuracan/", compraOnline:"https://www.ticketsbolivia.com.bo/empresa/expreso-huracan.php" },
+  { id:43, empresa:"Ferroviaria Oriental", tipo:"Tren", precio:80, horario:"Según itinerario", ruta:"Santa Cruz–Roboré", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFTdhBzSM7pSMe-jcfMf7Un2gWIa-Ukqw95SWfGXetRfHHydqExq2r86tJZNtM8XM2aQorYPgVAy1hCoqQq_FsP0eDsgoMcdxFljEzEX48QJVKiJmxLBwNAGKC71TNrTggx_QFItA=w427-h240-k-no", telefono:"+59178901234", esVehiculoPropio:false, googleMaps:"https://maps.app.goo.gl/cnXQeXfTwQgMQMLm9", facebook:"https://www.facebook.com/FerroviariaOriental/", compraOnline:"https://www.ticketsbolivia.com.bo/pasajes-en-tren/ferroviaria-oriental.php" },
+  { id:461, empresa:"Vehículo propio → Roboré", tipo:"Auto propio", precio:0, horario:"Libre", ruta:"Santa Cruz → Roboré", imagen:"https://carnovo.com/wp-content/uploads/2018/08/cupra-leon-sportstourer.jpg", telefono:"N/A", esVehiculoPropio:true, kmIda:400, kmIyV:800, litros:80, costoBs:424, destinoKey:"roboré" },
+  { id:462, empresa:"Vehículo propio → Chochís", tipo:"Auto propio", precio:0, horario:"Libre", ruta:"Santa Cruz → Chochís", imagen:"https://carnovo.com/wp-content/uploads/2018/08/cupra-leon-sportstourer.jpg", telefono:"N/A", esVehiculoPropio:true, kmIda:430, kmIyV:860, litros:86, costoBs:456, destinoKey:"chochis" },
+  { id:463, empresa:"Vehículo propio → Aguas Calientes", tipo:"Auto propio", precio:0, horario:"Libre", ruta:"Santa Cruz → Aguas Calientes", imagen:"https://carnovo.com/wp-content/uploads/2018/08/cupra-leon-sportstourer.jpg", telefono:"N/A", esVehiculoPropio:true, kmIda:450, kmIyV:900, litros:90, costoBs:477, destinoKey:"aguascalientes" }
+];
+
+// Ciudades y destinos para rutas
+const ciudadesBolivia = {
+  "santa-cruz":{nombre:"Santa Cruz",lat:-17.7833,lng:-63.1821},
+  "cochabamba":{nombre:"Cochabamba",lat:-17.4139,lng:-66.1653},
+  "la-paz":{nombre:"La Paz",lat:-16.5,lng:-68.15},
+  "sucre":{nombre:"Sucre",lat:-19.0474,lng:-65.2596},
+  "tarija":{nombre:"Tarija",lat:-21.5355,lng:-64.7296},
+  "potosi":{nombre:"Potosí",lat:-19.5836,lng:-65.7531},
+  "oruro":{nombre:"Oruro",lat:-17.9833,lng:-67.15},
+  "trinidad":{nombre:"Trinidad",lat:-14.8333,lng:-64.9}
+};
+const destinosRuta = {
+  "roboré":{nombre:"Roboré",lat:-18.3328,lng:-59.7583},
+  "chochis":{nombre:"Chochís",lat:-18.15,lng:-60.03},
+  "aguascalientes":{nombre:"Aguas Calientes",lat:-18.25,lng:-59.55}
+};
+// Destinos turísticos individuales para mapa auto
+const lugaresConCoord = lugaresTuristicos.filter(l=>l.lat);
+
+const TARIFA_POR_KM = 2.5; // Bs/km combustible aprox
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzdm-jNrmwODTWSPGo3bSmULaetDaEfONZ9DkA2Q9bIorTd5rMY1oab7oUTd0gD0KCo/exec';
+const ROBORE_LAT = -18.3328, ROBORE_LNG = -59.7583;
+
+let selectedItems = { turismo:[], restaurante:null, hotel:null, transporte:null };
+let currentUser = JSON.parse(localStorage.getItem('rojobore_user')||'null');
+let calcMap = null, calcRouteLine = null;
+let userMarker = null;
+let planRutaDist = 0, planRutaTarifa = 0;
+let calcRutaDist = 0, calcRutaTarifa = 0;
+let calcRutaIda = true; // siempre ida y vuelta
+let panelMap = null, fullMap = null;
+let panelMarkers = [];
+let currentPanelSection = '';
+
+// ==================== REGISTRO / LOGIN ====================
+function switchRegTab(tab){
+  document.querySelectorAll('.reg-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.reg-tab[onclick*="'+tab+'"]').classList.add('active');
+  document.getElementById('reg-form-register').style.display = tab==='register'?'flex':'none';
+  document.getElementById('reg-form-login').style.display = tab==='login'?'flex':'none';
+}
+
+window.registerUser = function(){
+  const n=document.getElementById('regName').value.trim(),e=document.getElementById('regEmail').value.trim(),p=document.getElementById('regPhone').value.trim();
+  if(!n||!e||!p) return showToast('Completa todos los campos');
+  // Check email en localStorage
+  const existing = JSON.parse(localStorage.getItem('rojobore_users_list')||'[]');
+  if(existing.find(u=>u.email===e)){
+    showToast('Ese correo ya está registrado. Usa "Ya tengo cuenta".');
+    switchRegTab('login');
+    document.getElementById('loginEmail').value = e;
+    return;
+  }
+  currentUser={name:n,email:e,phone:p};
+  existing.push(currentUser);
+  localStorage.setItem('rojobore_users_list', JSON.stringify(existing));
+  localStorage.setItem('rojobore_user',JSON.stringify(currentUser));
+  sendToSheets({type:'new_user',userName:n,userEmail:e,userPhone:p});
+  document.getElementById('regOverlay').classList.add('hidden');
+  updateUserUI();
+  showToast('Bienvenido ' + n.split(' ')[0] + '!');
+};
+
+window.loginUser = function(){
+  const e=document.getElementById('loginEmail').value.trim();
+  if(!e) return showToast('Ingresa tu correo');
+  const existing = JSON.parse(localStorage.getItem('rojobore_users_list')||'[]');
+  const found = existing.find(u=>u.email===e);
+  if(!found){ showToast('Correo no encontrado. Regístrate primero.'); return; }
+  currentUser = found;
+  localStorage.setItem('rojobore_user',JSON.stringify(currentUser));
+  document.getElementById('regOverlay').classList.add('hidden');
+  updateUserUI();
+  showToast('Hola de nuevo, ' + found.name.split(' ')[0] + '!');
+};
+
+function logout(){currentUser=null;localStorage.removeItem('rojobore_user');updateUserUI();showToast('Sesión cerrada');showSection('hero');}
+
+function updateUserUI(){
+  const bar=document.getElementById('userBar');
+  const su=document.getElementById('sidebarUser');
+  if(currentUser){
+    bar.style.display='flex';
+    document.getElementById('userName').textContent=currentUser.name.split(' ')[0];
+    su.style.display='flex';
+    document.getElementById('sidebarUserName').textContent=currentUser.name.split(' ')[0];
+    document.getElementById('regOverlay').classList.add('hidden');
+  } else {
+    bar.style.display='none';
+    su.style.display='none';
+    document.getElementById('regOverlay').classList.remove('hidden');
+  }
+}
+
+// ==================== SIDEBAR & NAV ====================
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.body.classList.toggle('sidebar-open');
+  if(panelMap) setTimeout(()=>panelMap.invalidateSize(),350);
+  if(fullMap) setTimeout(()=>fullMap.invalidateSize(),350);
+}
+
+let currentSection = 'hero';
+function showSection(name){
+  if(!currentUser && name!=='hero'){
+    showToast('Regístrate primero');
+    document.getElementById('regOverlay').classList.remove('hidden');
+    return;
+  }
+  currentSection = name;
+  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+  const navEl=document.getElementById('nav-'+name);
+  if(navEl) navEl.classList.add('active');
+  document.getElementById('section-hero').style.display='none';
+  document.getElementById('section-panel').style.display='none';
+  document.getElementById('section-mapa').style.display='none';
+  if(name==='hero'){
+    document.getElementById('section-hero').style.display='';
+  } else if(name==='mapa'){
+    document.getElementById('section-mapa').style.display='flex';
+    setTimeout(()=>initFullMap(),100);
+  } else {
+    document.getElementById('section-panel').style.display='flex';
+    loadPanel(name);
+  }
+}
+
+// ==================== PANEL ====================
+const panelCfg = {
+  turismo:    {title:'Lugares Turísticos', colorClass:'panel-header-turismo', badgeClass:'badge-t', sectionColor:'c-turismo'},
+  hoteles:    {title:'Hoteles',            colorClass:'panel-header-hoteles',  badgeClass:'badge-h', sectionColor:'c-hoteles'},
+  restaurantes:{title:'Restaurantes',      colorClass:'panel-header-restaurantes',badgeClass:'badge-r',sectionColor:'c-restaurantes'},
+  transporte: {title:'Transporte',         colorClass:'panel-header-transporte',badgeClass:'badge-b', sectionColor:'c-transporte'}
+};
+
+function loadPanel(name){
+  currentPanelSection = name;
+  const cfg = panelCfg[name];
+  const hdr = document.getElementById('panelHeaderBar');
+  hdr.className = cfg.colorClass;
+  hdr.style.padding='1rem 1.2rem';
+  hdr.style.display='flex';
+  hdr.style.alignItems='center';
+  hdr.style.gap='0.8rem';
+  hdr.style.flexShrink='0';
+  document.getElementById('panelTitleText').textContent = cfg.title;
+  document.getElementById('panelTitleText').style.color = 'var(--'+cfg.sectionColor+')';
+
+  let items;
+  if(name==='turismo') items=lugaresTuristicos;
+  else if(name==='hoteles') items=hoteles;
+  else if(name==='restaurantes') items=restaurantes;
+  else items=transportes;
+  const cnt = document.getElementById('panelCount');
+  cnt.className = 'panel-count-badge ' + cfg.badgeClass;
+  cnt.textContent = items.length + ' opciones';
+
+  const mapWrap = document.getElementById('panelMapWrap');
+  // Mapa solo en sección mapa dedicada, no en panels
+  mapWrap.style.display='none';
+
+  if(name==='turismo') renderConTabs('turismo',lugaresTuristicos,renderTurismoCard,'municipio','Roboré','t');
+  else if(name==='hoteles') renderConTabs('hoteles',hoteles,renderHotelCard,'ubicacion','Roboré','h');
+  else if(name==='restaurantes') renderConTabs('restaurantes',restaurantes,renderRestCard,'ubicacion','Roboré','r');
+  else {
+    document.getElementById('panelList').innerHTML = transportes.map(renderTransCard).join('');
+  }
+}
+
+function renderConTabs(panelName, items, renderFn, field, activeM, colorSuffix){
+  const panelList = document.getElementById('panelList');
+  const municipios = [{n:'Roboré'},{n:'Chochís'},{n:'Aguas Calientes'}];
+  const tabs = municipios.map(m=>`
+    <button class="municipio-tab-btn ${m.n===activeM?'active-'+colorSuffix:''}"
+      onclick="renderConTabs('${panelName}',
+        '${panelName}'==='turismo'?lugaresTuristicos:'${panelName}'==='hoteles'?hoteles:'${panelName}'==='restaurantes'?restaurantes:transportes,
+        '${panelName}'==='turismo'?renderTurismoCard:'${panelName}'==='hoteles'?renderHotelCard:'${panelName}'==='restaurantes'?renderRestCard:renderTransCard,
+        '${field}','${m.n}','${colorSuffix}')"
+    >${m.n}</button>
+  `).join('');
+
+  const filtrados = items.filter(x=>(x[field]||'').includes(activeM));
+  const cards = filtrados.map(renderFn).join('');
+
+  panelList.innerHTML = `
+    <div style="grid-column:1/-1;display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.4rem;">
+      ${tabs}
+    </div>
+    <div style="grid-column:1/-1;font-size:0.72rem;color:var(--text-soft);margin-bottom:0.2rem;">
+      ${filtrados.length} resultado${filtrados.length!==1?'s':''} en ${activeM}
+    </div>
+    ${filtrados.length>0 ? cards : '<div style="grid-column:1/-1;color:var(--text-soft);font-size:0.85rem;">Sin opciones en esta zona aún.</div>'}
+  `;
+}
+
+function scrollPanelDown(){
+  const w=document.getElementById('panelListWrap');
+  w.scrollBy({top:w.clientHeight-60,behavior:'smooth'});
+}
+
+// ==================== CARDS ====================
+function renderTurismoCard(l){
+  const sel = selectedItems.turismo.includes(l.id);
+  return `<div class="item-row t-turismo ${sel?'selected':''}" id="row-${l.id}" onclick="openDrawer('turismo',${l.id})">
+    <div style="width:100%;height:180px;overflow:hidden;position:relative;flex-shrink:0;">
+      <img src="${l.imagen}" alt="${l.item}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400'">
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:0.7rem;">
+        <div style="color:#fff;font-family:var(--font-display);font-weight:800;font-size:0.95rem;text-shadow:0 2px 8px #000;line-height:1.2;margin-bottom:0.25rem;">${l.item}</div>
+        <span style="background:rgba(57,255,20,0.25);color:var(--c-turismo);border:1px solid rgba(57,255,20,0.4);font-size:0.6rem;font-weight:700;padding:0.12rem 0.4rem;border-radius:20px;display:inline-block;">★ ${l.rating} · Bs ${l.precioLocal}</span>
+      </div>
+    </div>
+    <div style="padding:0.55rem 0.75rem 0.6rem;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:0.72rem;color:var(--text-soft);">${l.municipio} · ${l.dificultad||'Fácil'}</span>
+      <span style="font-size:0.68rem;color:var(--c-turismo);font-weight:700;">Ver →</span>
+    </div>
+  </div>`;
+}
+
+function renderHotelCard(h){
+  const sel = selectedItems.hotel===h.id;
+  return `<div class="item-row t-hoteles ${sel?'selected':''}" id="row-${h.id}" onclick="openDrawer('hoteles',${h.id})">
+    <div style="width:100%;height:180px;overflow:hidden;position:relative;flex-shrink:0;">
+      <img src="${h.imagen}" alt="${h.nombre}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400'">
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:0.7rem;">
+        <div style="color:#fff;font-family:var(--font-display);font-weight:800;font-size:0.95rem;text-shadow:0 2px 8px #000;line-height:1.2;margin-bottom:0.25rem;">${h.nombre}</div>
+        <span style="background:rgba(255,45,85,0.25);color:var(--c-hoteles);border:1px solid rgba(255,45,85,0.4);font-size:0.6rem;font-weight:700;padding:0.12rem 0.4rem;border-radius:20px;display:inline-block;">Bs ${h.precioNoche}/noche · ★ ${h.rating}</span>
+      </div>
+    </div>
+    <div style="padding:0.55rem 0.75rem 0.6rem;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:0.72rem;color:var(--text-soft);">${h.ubicacion} · ${h.tipo}</span>
+      <span style="font-size:0.68rem;color:var(--c-hoteles);font-weight:700;">Ver →</span>
+    </div>
+  </div>`;
+}
+
+function renderRestCard(r){
+  const sel = selectedItems.restaurante===r.id;
+  return `<div class="item-row t-restaurantes ${sel?'selected':''}" id="row-${r.id}" onclick="openDrawer('restaurantes',${r.id})">
+    <div style="width:100%;height:180px;overflow:hidden;position:relative;flex-shrink:0;">
+      <img src="${r.imagen}" alt="${r.item}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400'">
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:0.7rem;">
+        <div style="color:#fff;font-family:var(--font-display);font-weight:800;font-size:0.95rem;text-shadow:0 2px 8px #000;line-height:1.2;margin-bottom:0.25rem;">${r.item}</div>
+        <span style="background:rgba(168,85,247,0.25);color:var(--c-restaurantes);border:1px solid rgba(168,85,247,0.4);font-size:0.6rem;font-weight:700;padding:0.12rem 0.4rem;border-radius:20px;display:inline-block;">Almuerzo Bs ${r.precioAlmuerzo} · ${r.tipo}</span>
+      </div>
+    </div>
+    <div style="padding:0.55rem 0.75rem 0.6rem;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:0.72rem;color:var(--text-soft);">${r.ubicacion} · ${r.horario}</span>
+      <span style="font-size:0.68rem;color:var(--c-restaurantes);font-weight:700;">Ver →</span>
+    </div>
+  </div>`;
+}
+
+function renderTransCard(t){
+  const sel = selectedItems.transporte===t.id;
+  return `<div class="item-row t-transporte ${sel?'selected':''}" id="row-${t.id}" onclick="openDrawer('transporte',${t.id})">
+    <div style="width:100%;height:180px;overflow:hidden;position:relative;flex-shrink:0;">
+      <img src="${t.imagen}" alt="${t.empresa}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400'">
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:0.7rem;">
+        <div style="color:#fff;font-family:var(--font-display);font-weight:800;font-size:0.95rem;text-shadow:0 2px 8px #000;line-height:1.2;margin-bottom:0.25rem;">${t.empresa}</div>
+        <span style="background:rgba(56,189,248,0.25);color:var(--c-transporte);border:1px solid rgba(56,189,248,0.4);font-size:0.6rem;font-weight:700;padding:0.12rem 0.4rem;border-radius:20px;display:inline-block;">${t.esVehiculoPropio?'Auto propio':'Bs '+t.precio+' ida'}</span>
+      </div>
+    </div>
+    <div style="padding:0.55rem 0.75rem 0.6rem;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:0.72rem;color:var(--text-soft);">${t.tipo} · ${t.ruta}</span>
+      <span style="font-size:0.68rem;color:var(--c-transporte);font-weight:700;">Ver →</span>
+    </div>
+  </div>`;
+}
+
+// ==================== DRAWER ====================
+let drawerCurrentType = '';
+function openDrawer(type, id){
+  drawerCurrentType = type;
+  let html='', titulo='', sub='', imagen='';
+  const hdrEl = document.getElementById('drawerHeader');
+
+  if(type==='turismo'){
+    const l = lugaresTuristicos.find(x=>x.id===id);
+    titulo=l.item; sub='📍 '+l.municipio+' · ★ '+l.rating; imagen=l.imagen;
+    hdrEl.className = 'drawer-header-turismo';
+    hdrEl.style.cssText='padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;flex-shrink:0;';
+    html = drawerTurismoHTML(l);
+  } else if(type==='hoteles'){
+    const h = hoteles.find(x=>x.id===id);
+    titulo=h.nombre; sub='📍 '+h.ubicacion+' · ★ '+h.rating; imagen=h.imagen;
+    hdrEl.className = 'drawer-header-hoteles';
+    hdrEl.style.cssText='padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;flex-shrink:0;';
+    html = drawerHotelHTML(h);
+  } else if(type==='restaurantes'){
+    const r = restaurantes.find(x=>x.id===id);
+    titulo=r.item; sub='📍 '+r.ubicacion+' · '+r.tipo; imagen=r.imagen;
+    hdrEl.className = 'drawer-header-restaurantes';
+    hdrEl.style.cssText='padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;flex-shrink:0;';
+    html = drawerRestHTML(r);
+  } else {
+    const t = transportes.find(x=>x.id===id);
+    titulo=t.empresa; sub=t.tipo+' · '+t.ruta; imagen=t.imagen;
+    hdrEl.className = 'drawer-header-transporte';
+    hdrEl.style.cssText='padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;flex-shrink:0;';
+    html = drawerTransHTML(t);
+  }
+  document.getElementById('drawerTitle').textContent = titulo;
+  document.getElementById('drawerSub').textContent = sub;
+  document.getElementById('drawerImg').style.backgroundImage = `url('${imagen}')`;
+  document.getElementById('drawerImgThumb').style.backgroundImage = `url('${imagen}')`;
+  document.getElementById('drawerBody').innerHTML = html;
+  document.getElementById('detailDrawer').style.transform = 'translateX(0)';
+  document.getElementById('drawerOverlay').style.display = 'block';
+}
+function closeDrawer(){
+  document.getElementById('detailDrawer').style.transform = 'translateX(100%)';
+  document.getElementById('drawerOverlay').style.display = 'none';
+}
+
+function drawerTurismoHTML(l){
+  const sel = selectedItems.turismo.includes(l.id);
+  return `<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.2rem;">
+    <span class="drawer-tag tag-t">★ ${l.rating}</span>
+    <span class="drawer-tag tag-t">${l.municipio}</span>
+    <span class="drawer-tag tag-t">${l.horario}</span>
+    <span class="drawer-tag tag-t">${l.dificultad||'Fácil'}</span>
+  </div>
+  <p style="font-size:0.88rem;color:var(--text);line-height:1.65;">${l.descripcion}</p>
+  <div class="drawer-info-box">
+    <div style="font-size:0.75rem;font-weight:700;color:var(--c-turismo);margin-bottom:4px;">Información</div>
+    <div class="info-row"><strong style="min-width:80px;color:var(--text-soft);">Distancia</strong> ${l.distancia||'-'}</div>
+    <div class="info-row"><strong style="min-width:80px;color:var(--text-soft);">Cómo llegar</strong> ${l.transporte||'-'}</div>
+    <div class="info-row"><strong style="min-width:80px;color:var(--text-soft);">Experiencia</strong> ${l.experiencia||'-'}</div>
+    <div class="info-row"><strong style="min-width:80px;color:var(--text-soft);">Servicios</strong> ${l.servicios||'-'}</div>
+  </div>
+  ${l.recomendacion?`<div class="drawer-tip"><div class="tip-label">Recomendación</div><div class="tip-text">${l.recomendacion}</div></div>`:''}
+  <div class="drawer-price-box">
+    <div style="font-size:0.75rem;font-weight:700;color:var(--c-turismo);margin-bottom:6px;">Precios</div>
+    <div style="display:flex;justify-content:space-between;font-size:0.85rem;"><span style="color:var(--text-soft);">Visitante local</span><span class="drawer-price-big" style="color:var(--c-turismo);">Bs ${l.precioLocal}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-top:4px;"><span style="color:var(--text-soft);">Extranjero</span><strong style="color:var(--text);">Bs ${l.precioExtranjero}</strong></div>
+  </div>
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+    <button onclick="toggleTurismo(${l.id})" class="drawer-btn ${sel?'drawer-btn-t sel':'drawer-btn-t'}">${sel?'✓ Agregado al plan':'+ Agregar al plan'}</button>
+    ${l.googleMaps?`<a href="${l.googleMaps}" target="_blank" class="drawer-btn drawer-btn-maps">Ver en Maps</a>`:''}
+  </div>`;
+}
+
+function drawerHotelHTML(h){
+  const sel = selectedItems.hotel===h.id;
+  return `<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.2rem;">
+    <span class="drawer-tag tag-h">★ ${h.rating}</span>
+    <span class="drawer-tag tag-h">${h.ubicacion}</span>
+    <span class="drawer-tag tag-h">${h.tipo}</span>
+  </div>
+  <p style="font-size:0.88rem;color:var(--text);line-height:1.65;">${h.servicios}</p>
+  <div class="drawer-info-box" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+    <div class="info-row">WiFi: <strong>${h.wifi?'Sí':'No'}</strong></div>
+    <div class="info-row">Desayuno: <strong>${h.desayuno?'Sí':'No'}</strong></div>
+    <div class="info-row">Piscina: <strong>${h.piscina?'Sí':'No'}</strong></div>
+    <div class="info-row">Capacidad: <strong>${h.capacidad} pers.</strong></div>
+  </div>
+  <div class="drawer-price-box">
+    <div style="font-size:0.75rem;font-weight:700;color:var(--c-hoteles);margin-bottom:4px;">Precio por noche</div>
+    <div class="drawer-price-big" style="color:var(--c-hoteles);">Bs ${h.precioNoche}</div>
+  </div>
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+    <button onclick="toggleHotel(${h.id})" class="drawer-btn ${sel?'drawer-btn-h sel':'drawer-btn-h'}">${sel?'✓ Elegido':'+ Elegir hotel'}</button>
+    <button onclick="reservarDirecto('${h.nombre.replace(/'/g,"\\'")}','${h.telefono}')" class="drawer-btn drawer-btn-wa">Reservar WhatsApp</button>
+    ${h.googleMaps?`<a href="${h.googleMaps}" target="_blank" class="drawer-btn drawer-btn-maps">Ver en Maps</a>`:''}
+    ${h.facebook?`<a href="${h.facebook}" target="_blank" class="drawer-btn drawer-btn-fb">Facebook</a>`:''}
+  </div>`;
+}
+
+function drawerRestHTML(r){
+  const sel = selectedItems.restaurante===r.id;
+  return `<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.2rem;">
+    <span class="drawer-tag tag-r">${r.ubicacion}</span>
+    <span class="drawer-tag tag-r">${r.tipo}</span>
+    <span class="drawer-tag tag-r">${r.horario}</span>
+    <span class="drawer-tag tag-r">WiFi: ${r.wifi?'Sí':'No'}</span>
+  </div>
+  <p style="font-size:0.88rem;color:var(--text);line-height:1.65;">${r.especialidad}</p>
+  ${r.recomendacion?`<div class="drawer-tip"><div class="tip-label">Recomendación</div><div class="tip-text">${r.recomendacion}</div></div>`:''}
+  <div class="drawer-info-box">
+    <div style="font-size:0.75rem;font-weight:700;color:var(--c-restaurantes);margin-bottom:4px;">Dirección y capacidad</div>
+    <div class="info-row" style="font-size:0.82rem;">${r.direccion||''} ${r.capacidad?'· '+r.capacidad:''}</div>
+  </div>
+  <div class="drawer-price-box">
+    <div style="font-size:0.75rem;font-weight:700;color:var(--c-restaurantes);margin-bottom:6px;">Precios</div>
+    ${r.precioDesayuno>0?`<div style="display:flex;justify-content:space-between;font-size:0.82rem;"><span style="color:var(--text-soft);">Desayuno</span><strong>Bs ${r.precioDesayuno}</strong></div>`:''}
+    <div style="display:flex;justify-content:space-between;font-size:0.85rem;"><span style="color:var(--text-soft);">Almuerzo</span><span class="drawer-price-big" style="color:var(--c-restaurantes);">Bs ${r.precioAlmuerzo}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:0.82rem;"><span style="color:var(--text-soft);">Cena</span><strong>Bs ${r.precioCena}</strong></div>
+  </div>
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+    <button onclick="toggleRestaurante(${r.id})" class="drawer-btn ${sel?'drawer-btn-r sel':'drawer-btn-r'}">${sel?'✓ Elegido':'+ Elegir restaurante'}</button>
+    ${r.googleMaps?`<a href="${r.googleMaps}" target="_blank" class="drawer-btn drawer-btn-maps">Maps</a>`:''}
+    ${r.facebook?`<a href="${r.facebook}" target="_blank" class="drawer-btn drawer-btn-fb">F</a>`:''}
+  </div>`;
+}
+
+function drawerTransHTML(t){
+  const sel = selectedItems.transporte===t.id;
+  const precioLabel = t.esVehiculoPropio
+    ? `Gasolina ida y vuelta: <strong style="color:var(--c-transporte);">Bs ${t.costoBs}</strong><br><small style="color:var(--text-soft);">${t.kmIda} km ida · ${t.kmIyV} km i/v · ${t.litros} litros</small>`
+    : `Ida: Bs ${t.precio}/pers &nbsp;·&nbsp; <strong style="color:var(--c-transporte);">Ida y vuelta: Bs ${t.precio*2}/pers</strong>`;
+  return `<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.2rem;">
+    <span class="drawer-tag tag-b">${t.tipo}</span>
+    <span class="drawer-tag tag-b">${t.horario}</span>
+  </div>
+  <div class="drawer-info-box">
+    <div style="font-size:0.75rem;font-weight:700;color:var(--c-transporte);margin-bottom:4px;">Ruta</div>
+    <div class="info-row">${t.ruta}</div>
+  </div>
+  <div class="drawer-price-box">
+    <div style="font-size:0.75rem;font-weight:700;color:var(--c-transporte);margin-bottom:6px;">Precio</div>
+    <div style="font-size:0.85rem;line-height:1.8;">${precioLabel}</div>
+  </div>
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+    <button onclick="toggleTransporte(${t.id})" class="drawer-btn ${sel?'drawer-btn-b sel':'drawer-btn-b'}">${sel?'✓ Elegido':'+ Elegir transporte'}</button>
+    ${!t.esVehiculoPropio?`<button onclick="reservarDirecto('${t.empresa.replace(/'/g,"\\'")}','${t.telefono}')" class="drawer-btn drawer-btn-wa">Reservar</button>`:''}
+    ${t.compraOnline?`<a href="${t.compraOnline}" target="_blank" class="drawer-btn drawer-btn-maps">Comprar online</a>`:''}
+    ${t.googleMaps?`<a href="${t.googleMaps}" target="_blank" class="drawer-btn drawer-btn-maps">Ver en Maps</a>`:''}
+    ${t.facebook?`<a href="${t.facebook}" target="_blank" class="drawer-btn drawer-btn-fb">F</a>`:''}
+  </div>`;
+}
+
+// Toggle selecciones
+function toggleTurismo(id){
+  const i=selectedItems.turismo.indexOf(id);
+  if(i>=0) selectedItems.turismo.splice(i,1);
+  else if(selectedItems.turismo.length<5) selectedItems.turismo.push(id);
+  else { showToast('Máximo 5 lugares'); return; }
+  // Re-render drawer
+  const l=lugaresTuristicos.find(x=>x.id===id);
+  document.getElementById('drawerBody').innerHTML=drawerTurismoHTML(l);
+}
+function toggleHotel(id){
+  selectedItems.hotel=selectedItems.hotel===id?null:id;
+  const h=hoteles.find(x=>x.id===id);
+  document.getElementById('drawerBody').innerHTML=drawerHotelHTML(h);
+}
+function toggleRestaurante(id){
+  selectedItems.restaurante=selectedItems.restaurante===id?null:id;
+  const r=restaurantes.find(x=>x.id===id);
+  document.getElementById('drawerBody').innerHTML=drawerRestHTML(r);
+}
+function toggleTransporte(id){
+  selectedItems.transporte=selectedItems.transporte===id?null:id;
+  const t=transportes.find(x=>x.id===id);
+  document.getElementById('drawerBody').innerHTML=drawerTransHTML(t);
+}
+
+// ==================== MAPAS ====================
+function calcularDistancia(lat1,lng1,lat2,lng2){
+  const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function kmLabel(lat,lng){
+  const d=calcularDistancia(ROBORE_LAT,ROBORE_LNG,lat,lng);
+  return d<2?'En Roboré':Math.round(d)+' km de Roboré';
+}
+
+function initPanelMap(name,items){
+  if(!panelMap){
+    panelMap=L.map('panelMap',{zoomControl:true}).setView([-18.3328,-59.7583],10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(panelMap);
+  }
+  panelMarkers.forEach(m=>{try{panelMap.removeLayer(m);}catch(e){}});
+  panelMarkers=[];
+  if(name==='transporte'){
+    Object.entries(ciudadesBolivia).forEach(([k,c])=>{
+      const dist=Math.round(calcularDistancia(c.lat,c.lng,ROBORE_LAT,ROBORE_LNG));
+      const m=L.marker([c.lat,c.lng],{icon:L.divIcon({html:`<div style="background:#38BDF8;color:#000;padding:2px 6px;border-radius:20px;font-size:9px;font-weight:700;white-space:nowrap;">${c.nombre}</div>`,iconAnchor:[30,10]})}).addTo(panelMap).bindPopup(`<b>${c.nombre}</b><br>${dist} km a Roboré`);
+      panelMarkers.push(m);
+    });
+    Object.entries(destinosRuta).forEach(([k,d])=>{
+      const m=L.marker([d.lat,d.lng],{icon:L.divIcon({html:`<div style="background:#39FF14;color:#000;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;">${d.nombre}</div>`,iconAnchor:[35,12]})}).addTo(panelMap);
+      panelMarkers.push(m);
+    });
+    Object.entries(ciudadesBolivia).forEach(([k,c])=>{
+      Object.entries(destinosRuta).forEach(([dk,d])=>{
+        const line=L.polyline([[c.lat,c.lng],[d.lat,d.lng]],{color:'#38BDF8',weight:1.5,opacity:0.35,dashArray:'5,7'}).addTo(panelMap);
+        panelMarkers.push(line);
+      });
+    });
+    panelMap.setView([-17.0,-65.0],5);
+  }
+  setTimeout(()=>panelMap.invalidateSize(),200);
+}
+
+function initCalcMap(){
+  if(calcMap) return;
+  calcMap=L.map('calcMapContainer').setView([-17.0,-65.0],5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(calcMap);
+  Object.entries(ciudadesBolivia).forEach(([k,c])=>{
+    L.marker([c.lat,c.lng],{icon:L.divIcon({html:`<div style="background:#38BDF8;color:#000;padding:2px 5px;border-radius:20px;font-size:9px;font-weight:700;">${c.nombre}</div>`,iconAnchor:[25,10]})}).addTo(calcMap);
+  });
+  // También agregar lugares turísticos como destinos seleccionables
+  lugaresConCoord.forEach(l=>{
+    L.marker([l.lat,l.lng],{icon:L.divIcon({html:`<div style="background:#39FF14;color:#000;padding:2px 5px;border-radius:20px;font-size:8px;font-weight:700;">${l.item.split(' ')[0]}</div>`,iconAnchor:[25,10]})}).addTo(calcMap).bindPopup(`<b>${l.item}</b><br>${l.municipio}`);
+  });
+}
+
+function getUserLocation(){
+  if(!navigator.geolocation){showToast('Geolocalización no soportada');return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat=pos.coords.latitude, lng=pos.coords.longitude;
+    if(!calcMap) initCalcMap();
+    if(userMarker) calcMap.removeLayer(userMarker);
+    userMarker=L.marker([lat,lng],{icon:L.divIcon({html:`<div style="background:#FF2D55;color:#fff;padding:3px 7px;border-radius:20px;font-size:9px;font-weight:800;">Yo</div>`,iconAnchor:[15,10]})}).addTo(calcMap).bindPopup('Mi ubicación').openPopup();
+    calcMap.setView([lat,lng],7);
+    // Guardar como origen custom
+    document.getElementById('calcOriginSelect').innerHTML=`<option value="custom" data-lat="${lat}" data-lng="${lng}">Mi ubicación</option>`+Object.entries(ciudadesBolivia).map(([k,c])=>`<option value="${k}">${c.nombre}</option>`).join('');
+    showToast('Ubicación detectada');
+    if(calcMap) setTimeout(()=>calcMap.invalidateSize(),200);
+  },()=>showToast('Permiso denegado'));
+}
+
+function calcularCalcRoute(){
+  if(!calcMap) initCalcMap();
+  const oSel=document.getElementById('calcOriginSelect');
+  let co;
+  if(oSel.value==='custom'){
+    const lat=parseFloat(oSel.options[0].getAttribute('data-lat')),lng=parseFloat(oSel.options[0].getAttribute('data-lng'));
+    if(!lat) return;
+    co={lat,lng,nombre:'Mi ubicación'};
+  } else co=ciudadesBolivia[oSel.value];
+
+  const destVal=document.getElementById('calcDestSelect').value;
+  let cd;
+  if(destVal.startsWith('lugar_')){
+    const lid=parseInt(destVal.replace('lugar_',''));
+    cd=lugaresConCoord.find(l=>l.id===lid);
+  } else cd=destinosRuta[destVal];
+  if(!co||!cd) return;
+  if(calcRouteLine) calcMap.removeLayer(calcRouteLine);
+  calcRouteLine=L.polyline([[co.lat,co.lng],[cd.lat,cd.lng]],{color:'#39FF14',weight:4,opacity:0.8}).addTo(calcMap);
+  calcMap.fitBounds([[co.lat,co.lng],[cd.lat,cd.lng]],{padding:[40,40]});
+  calcRutaDist=calcularDistancia(co.lat,co.lng,cd.lat,cd.lng);
+  calcRutaTarifa=calcRutaDist*TARIFA_POR_KM;
+  document.getElementById('calcRouteInfo').textContent=`Ida y vuelta: ${Math.round(calcRutaDist*2)} km · Bs ${Math.round(calcRutaTarifa*2)} aprox.`;
+}
+
+function calcularPlanRoute(){
+  const co=ciudadesBolivia[document.getElementById('planOrigin').value],cd=destinosRuta[document.getElementById('planDest').value];
+  if(!co||!cd) return;
+  planRutaDist=calcularDistancia(co.lat,co.lng,cd.lat,cd.lng);
+  planRutaTarifa=planRutaDist*TARIFA_POR_KM;
+  document.getElementById('planRouteInfo').textContent=`Ida y vuelta: ${Math.round(planRutaDist*2)} km · Bs ${Math.round(planRutaTarifa*2)} aprox.`;
+}
+
+function onTransportChange(){
+  const val=document.getElementById('calcTransport').value;
+  const t=transportes.find(x=>x.id===parseInt(val));
+  const wrap=document.getElementById('calcMapWrapper');
+  wrap.style.display=(t&&t.esVehiculoPropio)?'block':'none';
+  if(t&&t.esVehiculoPropio){
+    if(!calcMap) initCalcMap();
+    // Poblar destinos con lugares turísticos también
+    const destSel=document.getElementById('calcDestSelect');
+    destSel.innerHTML=`<option value="">-- Destino turístico --</option>`
+      +Object.entries(destinosRuta).map(([k,d])=>`<option value="${k}">${d.nombre}</option>`).join('')
+      +lugaresConCoord.map(l=>`<option value="lugar_${l.id}">${l.item} (${l.municipio})</option>`).join('');
+    setTimeout(()=>calcMap.invalidateSize(),200);
+  }
+}
+
+function initFullMap(){
+  if(fullMap){
+    setTimeout(()=>fullMap.invalidateSize(),200);
+    return;
+  }
+  fullMap=L.map('fullMapContainer',{zoomControl:false}).setView([-18.26,-59.92],11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(fullMap);
+  L.control.zoom({position:'bottomright'}).addTo(fullMap);
+
+  // Roboré center star
+  const roboreIcon = L.divIcon({
+    html:`<div style="background:var(--neon,#39FF14);color:#000;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:900;white-space:nowrap;box-shadow:0 0 14px rgba(57,255,20,0.7);border:2px solid #fff;">★ ROBORÉ</div>`,
+    className:'',iconAnchor:[45,14]
+  });
+  L.marker([ROBORE_LAT,ROBORE_LNG],{icon:roboreIcon}).addTo(fullMap).bindPopup('<b>Roboré</b><br>Centro de la Chiquitanía');
+
+  // Category icons
+  const catColors = {
+    'Roboré': '#39FF14',
+    'Chochís': '#FFD700',
+    'Aguas Calientes': '#38BDF8'
+  };
+  const activeRoutes = [];
+
+  lugaresTuristicos.forEach(l=>{
+    if(!l.lat) return;
+    const color = catColors[l.municipio]||'#39FF14';
+    const icon = L.divIcon({
+      html:`<div style="
+        background:${color};color:#000;padding:4px 9px;border-radius:20px;
+        font-size:10px;font-weight:800;white-space:nowrap;
+        box-shadow:0 0 10px ${color}88;border:1.5px solid rgba(255,255,255,0.6);
+        cursor:pointer;transition:transform 0.15s;
+      ">${l.item.length>18?l.item.substring(0,16)+'…':l.item}</div>`,
+      className:'',iconAnchor:[50,14]
+    });
+    const marker = L.marker([l.lat,l.lng],{icon}).addTo(fullMap);
+
+    // Rich popup with image
+    marker.bindPopup(`
+      <div style="width:200px;font-family:system-ui;">
+        <img src="${l.imagen}" style="width:100%;height:100px;object-fit:cover;border-radius:6px;display:block;margin-bottom:6px;" onerror="this.style.display='none'">
+        <b style="font-size:12px;">${l.item}</b>
+        <div style="font-size:11px;color:#666;margin:3px 0;">${l.municipio} · ★ ${l.rating}</div>
+        <div style="font-size:11px;">Bs ${l.precioLocal} local · Bs ${l.precioExtranjero} extran.</div>
+        <div style="font-size:10px;color:#888;margin-top:3px;">${l.horario} · ${l.dificultad||'Fácil'}</div>
+        <a href="${l.googleMaps||'#'}" target="_blank" style="display:inline-block;margin-top:6px;background:#4285F4;color:#fff;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;text-decoration:none;">Ver en Maps</a>
+      </div>
+    `,{maxWidth:220});
+
+    // Draw line from Roboré on click
+    marker.on('click',()=>{
+      // Remove previous lines
+      activeRoutes.forEach(l=>fullMap.removeLayer(l));
+      activeRoutes.length=0;
+      const dist=Math.round(calcularDistancia(ROBORE_LAT,ROBORE_LNG,l.lat,l.lng));
+      const line=L.polyline([[ROBORE_LAT,ROBORE_LNG],[l.lat,l.lng]],{
+        color:color,weight:3,opacity:0.7,dashArray:'8,5'
+      }).addTo(fullMap);
+      line.bindTooltip(`${dist} km desde Roboré`,{permanent:true,direction:'center',className:''});
+      activeRoutes.push(line);
+    });
+  });
+
+  // ========== AÑADIR SURTIDORES SOLICITADOS (8 estaciones) ==========
+  const surtidores = [
+    { nombre: "Surtidor Goteon S.R.L.", lat: -17.666, lng: -62.733, tipo: "Privado", direccion: "Carretera Santa Cruz - Trinidad Km. 53, Barrio Belén" },
+    { nombre: "Estación de Servicios Dana S.R.L.", lat: -17.670, lng: -62.725, tipo: "Privado", direccion: "Carretera Santa Cruz - Trinidad Km. 55" },
+    { nombre: "Surtidor Petro Val", lat: -17.650, lng: -62.750, tipo: "Privado", direccion: "Municipio de Pailón, zona urbana sobre la ruta" },
+    { nombre: "Estación de Servicio Bianca", lat: -17.850, lng: -60.750, tipo: "Privado", direccion: "Carretera Santa Cruz a San José de Chiquitos, Zona Este" },
+    { nombre: "Surtidor YPFB San José", lat: -17.848, lng: -60.745, tipo: "YPFB", direccion: "Código Plus 573C+J87, área urbana de San José de Chiquitos" },
+    { nombre: "YPFB Logística Planta San José", lat: -17.852, lng: -60.748, tipo: "YPFB", direccion: "Av. Santiago Paris" },
+    { nombre: "Surtidor Ciro Romero Estrada", lat: -18.3328, lng: -59.7570, tipo: "Privado", direccion: "Carretera Santa Cruz - Puerto Suárez, Calle Tarija esquina Pando N° 3172, Roboré" },
+    { nombre: "Surtidor Estación de Servicio YPFB Roboré", lat: -18.333, lng: -59.760, tipo: "YPFB", direccion: "Área urbana de Roboré (surtidor estatal ampliado)" }
+  ];
+
+  const surtidorIcon = L.divIcon({
+    html: `<div style="background:#FF8C00;color:#000;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:800;white-space:nowrap;border:1px solid rgba(0,0,0,0.3);">⛽ Surtidor</div>`,
+    iconAnchor: [45, 10],
+    className: ''
+  });
+  surtidores.forEach(s => {
+    const marker = L.marker([s.lat, s.lng], { icon: surtidorIcon }).addTo(fullMap);
+    marker.bindPopup(`
+      <b>${s.nombre}</b><br>
+      Tipo: ${s.tipo}<br>
+      ${s.direccion}<br>
+      <span style="font-size:10px;">Combustible disponible (consulta precios)</span>
+    `);
+  });
+
+  // Mini legend
+  const legend = L.control({position:'topright'});
+  legend.onAdd=function(){
+    const d=L.DomUtil.create('div','');
+    d.style.cssText='background:rgba(13,17,23,0.9);padding:8px 12px;border-radius:10px;border:1px solid #30363D;font-size:11px;color:#E6EDF3;';
+    d.innerHTML=`
+      <div style="font-weight:700;margin-bottom:6px;color:#39FF14;">Leyenda</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;"><span style="background:#39FF14;width:10px;height:10px;border-radius:50%;display:inline-block;"></span> Roboré</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;"><span style="background:#FFD700;width:10px;height:10px;border-radius:50%;display:inline-block;"></span> Chochís</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;"><span style="background:#38BDF8;width:10px;height:10px;border-radius:50%;display:inline-block;"></span> Aguas Calientes</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="background:#FF8C00;width:10px;height:10px;border-radius:0;display:inline-block;"></span> ⛽ Surtidor (gasolinera)</div>
+      <div style="margin-top:6px;color:#8B949E;font-size:10px;">Toca un lugar para ver la ruta</div>
+    `;
+    return d;
+  };
+  legend.addTo(fullMap);
+
+  setTimeout(()=>fullMap.invalidateSize(),200);
+}
+
+// ==================== PLAN MODAL ====================
+function calcTransporteIyV(t, personas){
+  if(t.esVehiculoPropio) return planRutaDist ? Math.round(planRutaTarifa*2) : 0;
+  return t.precio * personas * 2; // ida y vuelta
+}
+
+function generateQuickPlan(){
+  const pres=parseFloat(document.getElementById('planBudget').value),per=parseInt(document.getElementById('planPeople').value),d=parseInt(document.getElementById('planDays').value);
+  if(pres<500) return showToast('Presupuesto mínimo Bs 500');
+  const noches=Math.max(0,d-1);
+  const bus=transportes.filter(x=>!x.esVehiculoPropio).sort((a,b)=>a.precio-b.precio)[0];
+  let t=bus, ct=bus.precio*per*2;
+  if(planRutaDist&&Math.round(planRutaTarifa*2)<ct){t=transportes.find(x=>x.id===46);ct=Math.round(planRutaTarifa*2);}
+  let h=hoteles.sort((a,b)=>a.precioNoche-b.precioNoche)[0],ch=noches?h.precioNoche*noches:0;
+  let r=restaurantes.filter(x=>x.precioAlmuerzo>0).sort((a,b)=>a.precioAlmuerzo-b.precioAlmuerzo)[0];
+  let cr=((r.precioAlmuerzo||0)+(r.precioCena||0))*per*d;
+  let acts=lugaresTuristicos.sort((a,b)=>a.precioLocal-b.precioLocal).slice(0,Math.min(d*2,5));
+  let ca=acts.reduce((s,a)=>s+a.precioLocal*per,0);
+  let usado=ct+ch+cr+ca,sobrante=pres-usado,mejora='';
+  if(usado>pres){
+    while(acts.length>1&&(ct+ch+cr+acts.reduce((s,a)=>s+a.precioLocal*per,0))>pres) acts.pop();
+    ca=acts.reduce((s,a)=>s+a.precioLocal*per,0); usado=ct+ch+cr+ca;
+    if(usado>pres) return showToast('Presupuesto insuficiente para el plan básico');
+  } else {
+    for(let hm of hoteles.sort((a,b)=>b.precioNoche-a.precioNoche)){if(noches===0)break;let nc=hm.precioNoche*noches;if(ct+nc+cr+ca<=pres&&hm.precioNoche>h.precioNoche){sobrante-=(nc-ch);ch=nc;h=hm;break;}}
+    sobrante=pres-ct-ch-cr-ca;
+    for(let extra of lugaresTuristicos.filter(l=>!acts.find(a=>a.id===l.id)).sort((a,b)=>a.precioLocal-b.precioLocal)){let ce=extra.precioLocal*per;if(ce<=sobrante&&acts.length<5){acts.push(extra);ca+=ce;sobrante-=ce;}}
+    sobrante=pres-ct-ch-cr-ca;
+    if(sobrante>0) mejora=`Te sobran Bs ${Math.round(sobrante)} para souvenirs o extras.`;
+  }
+  const planId='auto_'+Date.now();
+  const planText=buildPlanText('Plan Automático',t,h,r,acts,ct,ch,cr,ca,per,d,noches,pres,mejora);
+  document.getElementById('planResult').innerHTML=buildResultHTML(planText,pres,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,'neon');
+}
+
+function calculateWithSelections(){
+  const p=parseInt(document.getElementById('calcPeople').value||2),d=parseInt(document.getElementById('calcDays').value||2);
+  const t=transportes.find(x=>x.id===parseInt(document.getElementById('calcTransport').value));
+  const h=hoteles.find(x=>x.id===parseInt(document.getElementById('calcHotel').value));
+  const r=restaurantes.find(x=>x.id===parseInt(document.getElementById('calcRestaurante').value));
+  if(!t||!h||!r) return showToast('Selecciona transporte, hotel y restaurante');
+  const acts=selectedItems.turismo.map(id=>lugaresTuristicos.find(l=>l.id===id)).filter(Boolean);
+  const noches=Math.max(0,d-1);
+  const ct=t.esVehiculoPropio?(calcRutaDist?Math.round(calcRutaTarifa*2):0):t.precio*p*2;
+  const ch=h.precioNoche*noches;
+  const cr=((r.precioAlmuerzo||0)+(r.precioCena||0))*p*d;
+  const ca=acts.reduce((s,a)=>s+a.precioLocal*p,0);
+  const total=ct+ch+cr+ca;
+  const planId='manual_'+Date.now();
+  const planText=buildPlanText('Plan Manual',t,h,r,acts,ct,ch,cr,ca,p,d,noches,total,'');
+  document.getElementById('calcResult').innerHTML=buildResultHTML(planText,total,planId,'',t,h,r,acts,ct,ch,cr,ca,p,d,noches,'gold');
+}
+
+function buildPlanText(tipo,t,h,r,acts,ct,ch,cr,ca,per,d,noches,total,mejora){
+  const actsList=acts.map(a=>`  • ${a.item}
+      Municipio: ${a.municipio}
+      Horario: ${a.horario}
+      Cómo llegar: ${a.transporte||'Ver Maps'}
+      Precio: Bs ${a.precioLocal}/persona
+      Maps: ${a.googleMaps||'N/D'}`).join('\n');
+  const transLinks = t.esVehiculoPropio
+    ? `  Gasolina estimada: Bs ${t.costoBs} (${t.kmIyV} km ida y vuelta, ${t.litros} litros)`
+    : `  Compra online: ${t.compraOnline||'N/D'}
+  Facebook: ${t.facebook||'N/D'}
+  Maps: ${t.googleMaps||'N/D'}`;
+  return `
+╔══════════════════════════════════════╗
+   ROJOBORE · ${tipo}
+╚══════════════════════════════════════╝
+Personas: ${per} | Días: ${d} | Noches: ${noches}
+
+─── TRANSPORTE ───────────────────────
+${t.empresa}
+  Tipo: ${t.tipo} | Ruta: ${t.ruta}
+  Horarios: ${t.horario}
+  Precio POR PERSONA ida y vuelta: Bs ${t.esVehiculoPropio?(t.costoBs||'ver gasolina'):t.precio*2}
+${transLinks}
+
+─── ALOJAMIENTO ──────────────────────
+${h.nombre}
+  Ubicación: ${h.ubicacion} | Tipo: ${h.tipo} | Rating: ★${h.rating}
+  Servicios: ${h.servicios}
+  WiFi: ${h.wifi?'Sí':'No'} | Piscina: ${h.piscina?'Sí':'No'} | Desayuno: ${h.desayuno?'Sí':'No'}
+  Noches: ${noches} x Bs ${h.precioNoche} = Bs ${ch}
+  Maps: ${h.googleMaps||'N/D'}
+  Facebook: ${h.facebook||'N/D'}
+
+─── RESTAURANTE ──────────────────────
+${r.item}
+  Tipo: ${r.tipo} | Dirección: ${r.direccion||'Roboré'}
+  Horario: ${r.horario}
+  Almuerzo Bs ${r.precioAlmuerzo} + Cena Bs ${r.precioCena} x ${per} pers x ${d} días = Bs ${cr}
+  Maps: ${r.googleMaps||'N/D'}
+  Facebook: ${r.facebook||'N/D'}
+  ${r.recomendacion?'Tip: '+r.recomendacion:''}
+
+─── ACTIVIDADES (${acts.length}) ────────────────
+${actsList||'  Ninguna seleccionada'}
+  Total actividades: Bs ${ca}
+
+══════════════════════════════════════
+  TOTAL ESTIMADO: Bs ${total}
+${mejora?'  '+mejora:''}
+
+¡Que disfrutes la Chiquitanía boliviana!
+Rojobore — Guía oficial de Roboré
+══════════════════════════════════════
+`.trim();
+}
+
+function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,colorKey,presupuesto){
+  const c = colorKey==='neon'?'var(--c-turismo)':'var(--gold)';
+  const sobrante = presupuesto ? presupuesto-total : 0;
+  const sobranteBlock = presupuesto && sobrante>0 ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.6rem;">
+      <div style="background:rgba(57,255,20,0.12);border:1.5px solid rgba(57,255,20,0.4);border-radius:10px;padding:0.7rem;text-align:center;">
+        <div style="font-size:0.7rem;color:var(--text-soft);margin-bottom:2px;">GASTO TOTAL</div>
+        <div style="font-size:1.3rem;font-weight:900;color:var(--c-turismo);">Bs ${total}</div>
+      </div>
+      <div style="background:rgba(255,215,0,0.12);border:1.5px solid rgba(255,215,0,0.4);border-radius:10px;padding:0.7rem;text-align:center;">
+        <div style="font-size:0.7rem;color:var(--text-soft);margin-bottom:2px;">TE SOBRA</div>
+        <div style="font-size:1.3rem;font-weight:900;color:var(--gold);">Bs ${sobrante}</div>
+      </div>
+    </div>
+  ` : '';
+  return `
+  <div class="result-box" style="margin-top:0.8rem;">
+    <div style="font-weight:700;font-size:0.8rem;color:${c};margin-bottom:0.5rem;">Desglose completo · ${per} pers · ${d} días (${noches}n)</div>
+    <hr>
+    <div style="margin:0.4rem 0;font-size:0.78rem;">
+      <strong style="color:${c};">Transporte:</strong> ${t.empresa} · Ida y vuelta · <strong>Bs ${ct}</strong>
+      ${t.googleMaps?`<br><a href="${t.googleMaps}" target="_blank" style="color:var(--c-transporte);font-size:0.7rem;">Ver en Maps</a>`:''}
+      ${t.facebook?` · <a href="${t.facebook}" target="_blank" style="color:#1877F2;font-size:0.7rem;">Facebook</a>`:''}
+      ${t.compraOnline?` · <a href="${t.compraOnline}" target="_blank" style="color:var(--neon);font-size:0.7rem;">Comprar ticket</a>`:''}
+    </div>
+    <div style="margin:0.4rem 0;font-size:0.78rem;">
+      <strong style="color:${c};">Alojamiento:</strong> ${h.nombre} · ${noches}n · <strong>Bs ${ch}</strong>
+      ${h.googleMaps?`<br><a href="${h.googleMaps}" target="_blank" style="color:var(--c-transporte);font-size:0.7rem;">Ver en Maps</a>`:''}
+      ${h.facebook?` · <a href="${h.facebook}" target="_blank" style="color:#1877F2;font-size:0.7rem;">Facebook</a>`:''}
+    </div>
+    <div style="margin:0.4rem 0;font-size:0.78rem;">
+      <strong style="color:${c};">Restaurante:</strong> ${r.item} · Alm+Cena x${per}x${d}d · <strong>Bs ${cr}</strong>
+      ${r.direccion?`<br><span style="color:var(--text-soft);font-size:0.7rem;">📍 ${r.direccion}</span>`:''}
+      ${r.googleMaps?`<br><a href="${r.googleMaps}" target="_blank" style="color:var(--c-transporte);font-size:0.7rem;">Ver en Maps</a>`:''}
+      ${r.facebook?` · <a href="${r.facebook}" target="_blank" style="color:#1877F2;font-size:0.7rem;">Facebook</a>`:''}
+    </div>
+    <div style="margin:0.4rem 0;font-size:0.78rem;">
+      <strong style="color:${c};">Actividades (${acts.length}):</strong><br>
+      ${acts.map(a=>`<span style="display:block;padding-left:0.8rem;margin:2px 0;">• ${a.item} — ${a.municipio} (Bs${a.precioLocal}/pers)
+        ${a.googleMaps?`<a href="${a.googleMaps}" target="_blank" style="color:var(--c-transporte);font-size:0.7rem;margin-left:4px;">Maps</a>`:''}</span>`).join('')||'Ninguna'}<br>
+      <strong>Total actividades: Bs ${ca}</strong>
+    </div>
+  </div>
+  <div class="result-total">
+    <div style="font-size:0.72rem;color:var(--text-soft);margin-bottom:4px;">${presupuesto?'PRESUPUESTO TOTAL':'TOTAL ESTIMADO'}</div>
+    <div class="big">Bs ${presupuesto||total}</div>
+  </div>
+  ${sobranteBlock}
+  ${mejora&&sobrante<=0?`<div style="color:var(--gold);margin-top:0.5rem;font-size:0.78rem;font-style:italic;">${mejora}</div>`:''}
+  <button class="btn-send email" onclick="enviarPresupuesto(\`${planText.replace(/`/g,'\\`')}\`,${total},'email')">Enviar por Email</button>
+  <button class="btn-send whatsapp" onclick="enviarPresupuesto(\`${planText.replace(/`/g,'\\`')}\`,${total},'whatsapp')">Enviar por WhatsApp</button>
+  ${generateReviewSection(planId)}`;
+}
+
+// ==================== ROULETTE ====================
+function runRoulette(){
+  if(!currentUser){showToast('Regístrate primero');return;}
+  closeChoiceModal();
+  const overlay=document.getElementById('rouletteOverlay');
+  overlay.classList.remove('hidden');
+  const items=['rou-transport','rou-hotel','rou-rest','rou-act'];
+  items.forEach(id=>{
+    document.getElementById(id).className='roulette-item spinning';
+    document.getElementById(id).textContent='...';
+  });
+
+  const allTransNoBus=transportes.filter(x=>!x.esVehiculoPropio);
+  const tOpts=[...allTransNoBus];
+  const hOpts=[...hoteles];
+  const rOpts=restaurantes.filter(x=>x.precioAlmuerzo>0);
+  const aOpts=[...lugaresTuristicos];
+
+  let tick=0, totalTicks=40;
+  const interval=setInterval(()=>{
+    tick++;
+    const tR=tOpts[Math.floor(Math.random()*tOpts.length)];
+    const hR=hOpts[Math.floor(Math.random()*hOpts.length)];
+    const rR=rOpts[Math.floor(Math.random()*rOpts.length)];
+    const aR=aOpts[Math.floor(Math.random()*aOpts.length)];
+    document.getElementById('rou-transport').textContent=tR.empresa;
+    document.getElementById('rou-hotel').textContent=hR.nombre;
+    document.getElementById('rou-rest').textContent=rR.item;
+    document.getElementById('rou-act').textContent=aR.item;
+    document.getElementById('rou-status').textContent='Calculando combinación '+tick+'/'+totalTicks+'...';
+    if(tick===totalTicks){
+      clearInterval(interval);
+      // Lock results
+      document.getElementById('rou-transport').className='roulette-item locked-blue';
+      document.getElementById('rou-hotel').className='roulette-item locked-gold';
+      document.getElementById('rou-rest').className='roulette-item locked-purple';
+      document.getElementById('rou-act').className='roulette-item locked';
+      document.getElementById('rou-status').textContent='¡Ruta sorpresa lista!';
+      // Final picks
+      const tF=tOpts[Math.floor(Math.random()*tOpts.length)];
+      const hF=hOpts[Math.floor(Math.random()*hOpts.length)];
+      const rF=rOpts[Math.floor(Math.random()*rOpts.length)];
+      const num=2+Math.floor(Math.random()*3);
+      const actsF=[];
+      const shuffled=[...aOpts].sort(()=>Math.random()-0.5);
+      for(let i=0;i<num&&i<shuffled.length;i++) actsF.push(shuffled[i]);
+      document.getElementById('rou-transport').textContent=tF.empresa;
+      document.getElementById('rou-hotel').textContent=hF.nombre;
+      document.getElementById('rou-rest').textContent=rF.item;
+      document.getElementById('rou-act').textContent=actsF.map(a=>a.item).join(' + ');
+      setTimeout(()=>{
+        overlay.classList.add('hidden');
+        // Build result
+        const per=2, d=2, noches=1;
+        const ct=tF.precio*per*2;
+        const ch=hF.precioNoche*noches;
+        const cr=((rF.precioAlmuerzo||0)+(rF.precioCena||0))*per*d;
+        const ca=actsF.reduce((s,a)=>s+a.precioLocal*per,0);
+        const total=ct+ch+cr+ca;
+        const planId='sorpresa_'+Date.now();
+        const planText=buildPlanText('Ruta Sorpresa',tF,hF,rF,actsF,ct,ch,cr,ca,per,d,noches,total,'¡Aventura aleatoria!');
+        document.getElementById('surpriseResult').innerHTML=buildResultHTML(planText,total,planId,'¡Ruta generada aleatoriamente!',tF,hF,rF,actsF,ct,ch,cr,ca,per,d,noches,'gold');
+        document.getElementById('surpriseModal').classList.remove('hidden');
+      },1500);
+    }
+  },100);
+}
+
+// ==================== ENVÍO ====================
+function enviarPresupuesto(planText, total, metodo){
+  if(!currentUser){showToast('Regístrate primero');return;}
+  sendToSheets({type:'plan',userName:currentUser.name,userEmail:currentUser.email,userPhone:currentUser.phone,planDetails:planText,total,metodoEnvio:metodo});
+  const body=`Hola ${currentUser.name},\n\n${planText}\n\n¡Disfruta tu viaje por la Chiquitanía boliviana!\n\nEquipo Rojobore\nhttps://rojobore.com`;
+  if(metodo==='email'){
+    const subject=encodeURIComponent('Tu plan de viaje · Rojobore');
+    const bodyEnc=encodeURIComponent(body);
+    window.open(`mailto:${currentUser.email}?subject=${subject}&body=${bodyEnc}`);
+    showToast('Email enviado a '+currentUser.email);
+  } else {
+    let num=(currentUser.phone||'').replace(/\D/g,'');
+    if(num.length>=8){
+      window.open(`https://wa.me/${num}?text=${encodeURIComponent(body)}`);
+      showToast('WhatsApp enviado');
+    } else showToast('Número de WhatsApp inválido');
+  }
+}
+
+async function sendToSheets(d){
+  try{await fetch(GOOGLE_SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});}catch(e){}
+}
+
+function reservarDirecto(n,t){
+  if(!t||t==='N/A'){showToast('Teléfono no disponible');return;}
+  window.open(`https://wa.me/${t.replace(/[^0-9+]/g,'')}?text=${encodeURIComponent('Hola! Vi '+n+' en Rojobore y quisiera más información.')}`, '_blank');
+}
+function contactSupport(){
+  if(!currentUser){showToast('Regístrate primero');return;}
+  window.open('https://wa.me/59171607412?text=Hola Rojobore!', '_blank');
+}
+
+// ==================== MODALES HELPERS ====================
+function openChoiceModal(){if(!currentUser){showToast('Regístrate primero');return;}document.getElementById('choiceModal').classList.remove('hidden');}
+function openChoiceModalSafe(){if(!currentUser){showToast('Regístrate primero');document.getElementById('regOverlay').classList.remove('hidden');return;}document.getElementById('choiceModal').classList.remove('hidden');}
+function closeChoiceModal(){document.getElementById('choiceModal').classList.add('hidden');}
+function closeModals(){['planModal','calcModal','choiceModal','surpriseModal'].forEach(id=>document.getElementById(id).classList.add('hidden'));}
+
+function openPlanModal(){
+  closeModals();
+  document.getElementById('planModal').classList.remove('hidden');
+  document.getElementById('planResult').innerHTML='';
+  document.getElementById('planRouteInfo').textContent='Selecciona origen y destino';
+}
+function openCalcModal(){
+  closeModals();
+  document.getElementById('calcModal').classList.remove('hidden');
+  document.getElementById('calcTransport').innerHTML='<option value="0">-- Transporte --</option>'+transportes.map(t=>`<option value="${t.id}" ${selectedItems.transporte===t.id?'selected':''}>${t.empresa} · ${t.esVehiculoPropio?'Auto propio':'Bs '+t.precio+' ida (Bs '+(t.precio*2)+' i/v)'}</option>`).join('');
+  document.getElementById('calcHotel').innerHTML='<option value="0">-- Hotel --</option>'+hoteles.map(h=>`<option value="${h.id}" ${selectedItems.hotel===h.id?'selected':''}>${h.nombre} · ${h.ubicacion} · Bs ${h.precioNoche}/n</option>`).join('');
+  document.getElementById('calcRestaurante').innerHTML='<option value="0">-- Restaurante --</option>'+restaurantes.map(r=>`<option value="${r.id}" ${selectedItems.restaurante===r.id?'selected':''}>${r.item} · Bs ${r.precioAlmuerzo} alm</option>`).join('');
+  document.getElementById('actividadesCheckboxes').innerHTML=lugaresTuristicos.map(l=>`<label class="actividad-chip"><input type="checkbox" value="${l.id}" ${selectedItems.turismo.includes(l.id)?'checked':''} onchange="syncActividades()"> ${l.item} (Bs ${l.precioLocal})</label>`).join('');
+  document.getElementById('calcResult').innerHTML='';
+  onTransportChange();
+}
+function syncActividades(){
+  const checks=document.querySelectorAll('#actividadesCheckboxes input:checked');
+  selectedItems.turismo=Array.from(checks).map(c=>parseInt(c.value)).slice(0,5);
+}
+
+// ==================== REVIEW ====================
+function generateReviewSection(planId){
+  return `<div class="review-box" id="review-${planId}">
+    <div style="font-weight:600;font-size:0.75rem;color:var(--text-soft);margin-bottom:0.4rem;">Deja tu reseña</div>
+    <div class="stars" id="stars-${planId}"><span onclick="setRating('${planId}',1)">☆</span><span onclick="setRating('${planId}',2)">☆</span><span onclick="setRating('${planId}',3)">☆</span><span onclick="setRating('${planId}',4)">☆</span><span onclick="setRating('${planId}',5)">☆</span></div>
+    <textarea id="comment-${planId}" placeholder="Comentario..." style="margin-top:0.4rem;border-radius:8px;resize:vertical;min-height:60px;"></textarea>
+    <button onclick="submitReview('${planId}')" style="background:var(--neon);color:#0D1117;border:none;padding:0.4rem 1rem;border-radius:8px;margin-top:0.3rem;cursor:pointer;font-family:var(--font);font-weight:700;font-size:0.75rem;">Enviar</button>
+  </div>`;
+}
+function setRating(planId,val){
+  const stars=document.getElementById('stars-'+planId).children;
+  for(let i=0;i<stars.length;i++){stars[i].textContent=i<val?'★':'☆';stars[i].classList.toggle('active',i<val);}
+  document.getElementById('stars-'+planId).setAttribute('data-rating',val);
+}
+function submitReview(planId){
+  const rating=document.getElementById('stars-'+planId).getAttribute('data-rating')||0;
+  const comment=document.getElementById('comment-'+planId).value;
+  if(!rating){showToast('Selecciona una puntuación');return;}
+  sendToSheets({type:'review',planId,rating,comment,user:currentUser?.name||'Anónimo'});
+  showToast('Reseña enviada');
+  document.getElementById('review-'+planId).innerHTML='<p style="color:var(--neon);font-size:0.8rem;">¡Gracias por tu reseña!</p>';
+}
+
+// ==================== UTILS ====================
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._timeout);t._timeout=setTimeout(()=>t.style.display='none',2500);}
+
+function createClouds(){
+  const container=document.getElementById('cloudsContainer');
+  if(!container) return;
+  container.innerHTML='';
+  for(let i=0;i<8;i++){
+    const cloud=document.createElement('div');
+    cloud.className='cloud';
+    const size=Math.random()*150+100;
+    cloud.style.cssText=`width:${size}px;height:${size*0.6}px;top:${Math.random()*80}%;left:${-(Math.random()*400+150)}px;animation-duration:${Math.random()*30+50}s;animation-delay:${Math.random()*40}s;opacity:${Math.random()*0.2+0.05};`;
+    container.appendChild(cloud);
+  }
+}
+
+// Cerrar modales al click externo
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this) this.classList.add('hidden');}));
+document.getElementById('choiceModal').addEventListener('click',function(e){if(e.target===this) this.classList.add('hidden');});
+
+// Init
+createClouds();
+updateUserUI();
+</script>
+</body>
+</html>
