@@ -672,7 +672,7 @@ const lugaresConCoord = lugaresTuristicos.filter(l=>l.lat);
 const TARIFA_POR_KM = 2.5;
 const ROBORE_LAT = -18.3328, ROBORE_LNG = -59.7583;
 
-// ===== URL DE GOOGLE SHEETS (cambia por la tuya) =====
+// ===== URL DE GOOGLE SHEETS =====
 const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzdm-jNrmwODTWSPGo3bSmULaetDaEfONZ9DkA2Q9bIorTd5rMY1oab7oUTd0gD0KCo/exec';
 
 let selectedItems = { turismo:[], restaurante:null, hotel:null, transporte:null };
@@ -703,18 +703,21 @@ window.registerUser = async function() {
   }
 
   try {
+    // Enviar como x-www-form-urlencoded
+    const formData = new URLSearchParams({
+      type: 'new_user',
+      userName: name,
+      userEmail: email,
+      userPhone: phone
+    }).toString();
+
     const response = await fetch(GOOGLE_SHEETS_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'new_user',
-        userName: name,
-        userEmail: email,
-        userPhone: phone
-      })
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData
     });
-    const data = await response.json();
-    if (data.success) {
+    const text = await response.text();
+    if (text === 'success') {
       currentUser = { name, email, phone };
       localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
       localStorage.removeItem('rojobore_users_list');
@@ -722,7 +725,7 @@ window.registerUser = async function() {
       updateUserUI();
       showToast('¡Registro exitoso! Bienvenido ' + name.split(' ')[0]);
     } else {
-      showToast('Error en el servidor: ' + (data.error || data.message));
+      showToast('Error en el servidor: ' + text);
     }
   } catch (error) {
     showToast('Error de conexión. Intenta de nuevo.');
@@ -740,7 +743,7 @@ window.loginUser = async function() {
   try {
     const url = `${GOOGLE_SHEETS_URL}?action=checkUser&email=${encodeURIComponent(email)}`;
     const response = await fetch(url);
-    const data = await response.json();
+    const data = await response.json(); // El servidor devuelve JSON en GET
     if (data.success && data.user) {
       currentUser = data.user;
       localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
@@ -781,20 +784,21 @@ function updateUserUI() {
   }
 }
 
-// ==================== ENVÍO A SHEETS (SIN no-cors) ====================
+// ==================== ENVÍO A SHEETS (CORREGIDO) ====================
 async function sendToSheets(data) {
   try {
+    const formData = new URLSearchParams(data).toString();
     const response = await fetch(GOOGLE_SHEETS_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData
     });
-    const result = await response.json();
-    if (result.success) {
+    const text = await response.text();
+    if (text === 'success') {
       showToast('Datos guardados correctamente');
       return true;
     } else {
-      showToast('Error al guardar: ' + (result.error || result.message));
+      showToast('Error al guardar: ' + text);
       return false;
     }
   } catch (error) {
