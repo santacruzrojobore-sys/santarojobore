@@ -10,12 +10,11 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     :root {
-      /* PALETA AVENTURA OSCURA */
       --bg: #0D1117;
       --bg2: #161B22;
       --card: #1C2333;
       --card2: #21262D;
-      --neon: #39FF14;          /* verde neón */
+      --neon: #39FF14;
       --neon-dim: #1a8a09;
       --gold: #FFD700;
       --gold-dim: #b59a00;
@@ -29,8 +28,6 @@
       --sidebar-w-open: 220px;
       --font-display: 'Playfair Display', Georgia, serif;
       --font: 'DM Sans', system-ui, sans-serif;
-
-      /* COLORES POR SECCIÓN */
       --c-turismo: #39FF14;
       --c-turismo-bg: rgba(57,255,20,0.08);
       --c-hoteles: #FF2D55;
@@ -40,16 +37,11 @@
       --c-transporte: #38BDF8;
       --c-transporte-bg: rgba(56,189,248,0.09);
     }
-
     *{margin:0;padding:0;box-sizing:border-box;}
     html,body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.45;height:100%;width:100%;overflow:hidden;}
-
-    /* Scrollbar oscuro */
     ::-webkit-scrollbar{width:5px;height:5px;}
     ::-webkit-scrollbar-track{background:var(--bg2);}
     ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-
-    /* ===== SIDEBAR ===== */
     .sidebar {
       position:fixed; left:0; top:0; bottom:0;
       width:var(--sidebar-w);
@@ -105,12 +97,8 @@
     .sidebar-user:hover { color:rgba(255,255,255,0.7); }
     .sidebar-user-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0; transition:opacity 0.2s; }
     .sidebar.open .sidebar-user-name { opacity:1; }
-
-    /* ===== MAIN LAYOUT ===== */
     .app-main { position:fixed; inset:0; left:var(--sidebar-w); transition:left 0.3s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column; }
     body.sidebar-open .app-main { left:var(--sidebar-w-open); }
-
-    /* ===== HERO ===== */
     .hero-full {
       position:absolute; inset:0;
       background:url('https://lh3.googleusercontent.com/place-photos/AJRVUZONoB-ZKELjLo3bOPKZ7LDXi20-UuLnTtsI5c42Dx9RH_-_9-WEd_zG9nPGhCd0JussJUldkXQjQbLjqTDiN58AjmG_s8ZVX0M_q31v9KP3tWTtG_Q-y_zabLNUzVtFwM2O-u7ob0dK0vSGwQ=s4800-w800-h600') center/cover no-repeat;
@@ -120,7 +108,6 @@
       content:''; position:absolute; inset:0;
       background:linear-gradient(180deg, rgba(13,17,23,0.4) 0%, rgba(13,17,23,0.85) 100%);
     }
-    /* Neón scan line */
     .hero-full::after {
       content:''; position:absolute; inset:0; pointer-events:none;
       background:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(57,255,20,0.015) 2px, rgba(57,255,20,0.015) 4px);
@@ -156,19 +143,13 @@
     .user-bar { position:absolute; top:1rem; right:1rem; z-index:10; display:flex; gap:0.5rem; align-items:center; }
     .user-chip { background:rgba(57,255,20,0.15); border:1px solid rgba(57,255,20,0.3); padding:0.4rem 0.8rem; border-radius:20px; font-size:0.7rem; font-weight:600; color:var(--neon); }
     .btn-logout { background:none; border:1px solid rgba(255,255,255,0.3); padding:0.2rem 0.5rem; border-radius:12px; font-size:0.6rem; cursor:pointer; color:rgba(255,255,255,0.6); }
-
-    /* ===== PANEL HEADER COLORES POR SECCIÓN ===== */
     .panel-header-turismo { background:linear-gradient(135deg, #0a1a05 0%, #0d2a08 100%); border-bottom:1px solid rgba(57,255,20,0.3); }
     .panel-header-hoteles { background:linear-gradient(135deg, #1a0508 0%, #2a0510 100%); border-bottom:1px solid rgba(255,45,85,0.4); }
     .panel-header-restaurantes { background:linear-gradient(135deg, #130a1f 0%, #1c0a2e 100%); border-bottom:1px solid rgba(168,85,247,0.4); }
     .panel-header-transporte { background:linear-gradient(135deg, #051018 0%, #081822 100%); border-bottom:1px solid rgba(56,189,248,0.4); }
     .panel-header-mapa { background:linear-gradient(135deg, #070d14 0%, #0c1520 100%); border-bottom:1px solid rgba(56,189,248,0.3); }
-
-    /* ===== PANEL BODY ===== */
     #section-panel { background:var(--bg); }
     .panel-list-wrap { flex:1; overflow-y:auto; overflow-x:hidden; padding:1rem; -webkit-overflow-scrolling:touch; }
-
-    /* Card base oscura */
     .item-row {
       display:flex !important; flex-direction:column !important;
       height:auto !important; min-height:0 !important; align-self:start !important;
@@ -185,18 +166,12 @@
     .item-row.selected.t-hoteles { border-color:var(--c-hoteles); background:rgba(255,45,85,0.06); }
     .item-row.selected.t-restaurantes { border-color:var(--c-restaurantes); background:rgba(168,85,247,0.06); }
     .item-row.selected.t-transporte { border-color:var(--c-transporte); background:rgba(56,189,248,0.06); }
-
-    /* DRAWER */
     #detailDrawer { position:fixed; right:0; top:0; bottom:0; width:min(440px,100vw); background:var(--card); z-index:2500; transform:translateX(100%); transition:transform 0.35s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column; box-shadow:-8px 0 40px rgba(0,0,0,0.5); }
     #drawerOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2400; }
-
-    /* Drawer header colores */
     .drawer-header-turismo { background:linear-gradient(135deg, #0a1a05, #0f2a09); border-bottom:2px solid rgba(57,255,20,0.4); }
     .drawer-header-hoteles { background:linear-gradient(135deg, #1a0508, #2e0912); border-bottom:2px solid rgba(255,45,85,0.5); }
     .drawer-header-restaurantes { background:linear-gradient(135deg, #130a1f, #200d35); border-bottom:2px solid rgba(168,85,247,0.5); }
     .drawer-header-transporte { background:linear-gradient(135deg, #051018, #0c1a28); border-bottom:2px solid rgba(56,189,248,0.5); }
-
-    /* ===== REGISTRO RENOVADO ===== */
     .reg-overlay {
       position:fixed; inset:0;
       background:rgba(0,0,0,0.88);
@@ -255,8 +230,6 @@
     .btn-register.login-btn:hover { background:rgba(57,255,20,0.1); }
     .reg-footer { text-align:center; margin-top:1rem; font-size:0.72rem; color:var(--text-soft); }
     .reg-footer span { color:var(--neon); font-weight:500; cursor:pointer; }
-
-    /* ===== MODALES ===== */
     .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; display:flex; align-items:flex-end; justify-content:center; }
     .modal-overlay.hidden { display:none; }
     .modal-sheet { background:var(--card2); border-radius:20px 20px 0 0; padding:1.2rem 1rem; width:100%; max-width:600px; max-height:88vh; overflow-y:auto; animation:slideUp 0.35s ease; border:1px solid var(--border); border-bottom:none; }
@@ -264,8 +237,6 @@
     @media(min-width:600px){.modal-sheet{border-radius:20px;margin-bottom:2rem;max-height:82vh;border-bottom:1px solid var(--border);}}
     .modal-close { float:right; background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--text-soft); }
     .modal-sheet h3 { color:var(--text); font-family:var(--font-display); }
-
-    /* Choice modal */
     .choice-modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3500; display:flex; align-items:center; justify-content:center; }
     .choice-modal.hidden { display:none; }
     .choice-card { background:var(--card2); border-radius:20px; padding:2rem 1.5rem; width:90%; max-width:400px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.5); border:1px solid var(--border); }
@@ -277,8 +248,6 @@
     .choice-btn.sorpresa { background:rgba(168,85,247,0.1); border:1.5px solid rgba(168,85,247,0.4); color:#c084fc; }
     .choice-btn:hover { transform:translateX(4px); filter:brightness(1.15); }
     .choice-cancel { background:none; border:none; font-size:0.7rem; cursor:pointer; color:var(--text-soft); margin-top:0.5rem; font-family:var(--font); }
-
-    /* INPUTS EN MODALES */
     input[type=number], select, textarea {
       width:100%; padding:0.55rem 0.7rem; border-radius:8px;
       border:1px solid var(--border); font-family:var(--font); font-size:0.8rem;
@@ -286,8 +255,6 @@
     }
     input[type=number]:focus, select:focus, textarea:focus { outline:none; border-color:var(--neon); }
     select option { background:var(--bg2); }
-
-    /* Botones en modales */
     .btn-hero-modal {
       width:100%; padding:0.9rem; border-radius:10px; font-weight:700;
       font-size:0.85rem; cursor:pointer; border:none; margin-top:0.4rem;
@@ -298,13 +265,9 @@
     .btn-modal-gold { background:var(--gold); color:#0D1117; }
     .btn-modal-purple { background:#a855f7; color:#fff; }
     .btn-hero-modal:hover { transform:translateY(-2px); filter:brightness(1.1); }
-
-    /* Tabs plan */
     .tab-book { display:flex; gap:0; background:var(--bg2); border-radius:12px 12px 0 0; overflow:hidden; margin-bottom:0.5rem; }
     .tab-btn { flex:1; padding:0.8rem 0.4rem; border:none; background:transparent; font-weight:600; font-size:0.7rem; color:var(--text-soft); cursor:pointer; border-radius:0; display:flex; flex-direction:column; align-items:center; gap:0.2rem; font-family:var(--font); transition:0.2s; }
     .tab-btn.active { background:var(--card); color:var(--neon); }
-
-    /* Result boxes */
     .result-box { background:var(--bg2); border-radius:10px; padding:0.8rem; margin-top:0.5rem; font-size:0.75rem; line-height:1.8; border:1px solid var(--border); color:var(--text); }
     .result-box hr { border-color:var(--border); margin:0.4rem 0; }
     .result-total { background:linear-gradient(135deg, rgba(57,255,20,0.15), rgba(255,215,0,0.1)); border:1px solid rgba(57,255,20,0.3); border-radius:10px; padding:0.8rem; text-align:center; margin-top:0.5rem; }
@@ -313,29 +276,19 @@
     .btn-send.email { background:rgba(57,255,20,0.15); color:var(--neon); border:1px solid rgba(57,255,20,0.3); }
     .btn-send.whatsapp { background:#25D366; color:#fff; }
     .btn-send:hover { filter:brightness(1.15); transform:translateY(-1px); }
-
-    /* Route bar */
     .route-bar { display:flex; gap:0.4rem; padding:0.6rem; flex-wrap:wrap; align-items:center; background:var(--bg2); border-radius:10px; border:1px solid var(--border); }
     .route-bar select, .route-bar button { padding:0.4rem 0.6rem; font-size:0.72rem; border-radius:8px; border:1px solid var(--border); font-family:var(--font); background:var(--card); cursor:pointer; color:var(--text); }
     .route-bar button { background:var(--neon); color:#0D1117; font-weight:700; border:none; }
     .tarifa-info { padding:0.35rem 0.6rem; font-size:0.72rem; text-align:center; background:rgba(57,255,20,0.08); border-radius:8px; color:var(--neon); font-weight:600; border:1px solid rgba(57,255,20,0.2); }
-
-    /* Toast */
     .toast { position:fixed; top:15px; left:50%; transform:translateX(-50%); background:var(--neon); color:#0D1117; padding:0.5rem 1.2rem; border-radius:20px; font-weight:700; font-size:0.75rem; z-index:9999; display:none; box-shadow:0 6px 20px rgba(57,255,20,0.4); }
     .whatsapp-float { position:fixed; bottom:20px; right:20px; background:#25D366; width:46px; height:46px; border-radius:50%; color:#fff; font-size:1.2rem; box-shadow:0 6px 20px rgba(37,211,102,0.5); cursor:pointer; z-index:99; border:none; display:flex; align-items:center; justify-content:center; }
     .map-container { height:200px; border-radius:8px; margin:0.5rem 0; border:1px solid var(--border); }
-
-    /* Actividades grid */
     .actividades-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:0.4rem; max-height:180px; overflow-y:auto; margin:0.4rem 0; }
     .actividad-chip { display:flex; align-items:center; gap:0.3rem; font-size:0.65rem; padding:0.3rem 0.5rem; border-radius:8px; background:var(--card); border:1px solid var(--border); cursor:pointer; font-family:var(--font); color:var(--text); }
     .actividad-chip input { width:auto; margin:0; }
-
-    /* Review */
     .review-box { margin-top:0.8rem; background:var(--bg2); padding:0.7rem; border-radius:8px; border:1px solid var(--border); }
     .stars span { font-size:1.2rem; cursor:pointer; color:var(--border); transition:0.2s; }
     .stars span.active { color:var(--gold); }
-
-    /* RULETA ANIMACIÓN */
     .roulette-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:5000; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1.5rem; }
     .roulette-overlay.hidden { display:none; }
     .roulette-items { display:flex; flex-direction:column; gap:0.5rem; align-items:center; }
@@ -347,8 +300,6 @@
     .roulette-item.locked-blue { color:var(--c-transporte); text-shadow:0 0 20px rgba(56,189,248,0.6); }
     @keyframes spin-flash { 0%{opacity:1} 50%{opacity:0.3} 100%{opacity:1} }
     .roulette-title { font-family:var(--font-display); font-size:1.5rem; color:var(--neon); text-shadow:0 0 30px rgba(57,255,20,0.5); letter-spacing:0.1em; }
-
-    /* TABS DE MUNICIPIO */
     .municipio-tab-btn {
       padding:0.5rem 1rem; border-radius:20px; border:2px solid var(--border);
       cursor:pointer; font-family:var(--font); font-size:0.75rem; font-weight:700;
@@ -358,28 +309,16 @@
     .municipio-tab-btn.active-h { border-color:var(--c-hoteles); color:var(--c-hoteles); background:rgba(255,45,85,0.08); }
     .municipio-tab-btn.active-r { border-color:var(--c-restaurantes); color:var(--c-restaurantes); background:rgba(168,85,247,0.08); }
     .municipio-tab-btn.active-b { border-color:var(--c-transporte); color:var(--c-transporte); background:rgba(56,189,248,0.08); }
-
-    /* Cards grid */
     #panelList { display:grid; grid-template-columns:repeat(2,1fr); grid-auto-rows:auto; gap:1.5rem; align-items:start; align-content:start; padding:1rem 1rem 3rem; }
     @media(max-width:500px){ #panelList { grid-template-columns:1fr; } }
-    @media(max-width:768px){
-      :root { --sidebar-w:56px; --sidebar-w-open:200px; }
-    }
-
-    /* Scroll btn */
+    @media(max-width:768px){ :root { --sidebar-w:56px; --sidebar-w-open:200px; } }
     #scrollDownBtn { display:none; position:absolute; bottom:20px; right:20px; width:46px; height:46px; background:var(--neon); color:#0D1117; border:none; border-radius:50%; font-size:1.2rem; cursor:pointer; box-shadow:0 4px 16px rgba(57,255,20,0.4); z-index:100; align-items:center; justify-content:center; transition:background 0.2s; font-weight:900; }
-
-    /* Mapa panel */
     #panelMapWrap { display:none; width:340px; flex-shrink:0; position:relative; border-right:1px solid var(--border); }
     #panelMap, #fullMapContainer { height:100%; width:100%; }
-
-    /* Leaflet oscuro */
     .leaflet-container { background:#0D1117 !important; }
     .leaflet-tile { filter:brightness(0.7) saturate(0.5) hue-rotate(5deg); }
     .leaflet-popup-content-wrapper { background:var(--card2); color:var(--text); border:1px solid var(--border); }
     .leaflet-popup-tip { background:var(--card2); }
-
-    /* Detalle drawer body */
     #drawerBody { flex:1; overflow-y:auto; padding:1.2rem; display:flex; flex-direction:column; gap:0.9rem; background:var(--bg2); }
     .drawer-info-box { background:var(--card); border-radius:12px; padding:0.85rem; display:flex; flex-direction:column; gap:0.5rem; border:1px solid var(--border); }
     .drawer-info-box .info-row { font-size:0.82rem; display:flex; gap:0.6rem; color:var(--text); }
@@ -406,15 +345,11 @@
     .drawer-btn-maps { background:rgba(66,133,244,0.2); color:#4285F4; border:1px solid rgba(66,133,244,0.3); }
     .drawer-btn-wa { background:#25D366; color:#fff; }
     .drawer-btn-fb { background:rgba(24,119,242,0.2); color:#1877F2; border:1px solid rgba(24,119,242,0.3); font-weight:900; }
-
-    /* Count badge */
     .panel-count-badge { font-size:0.7rem; padding:0.25rem 0.7rem; border-radius:20px; }
     .badge-t { background:rgba(57,255,20,0.15); color:var(--c-turismo); }
     .badge-h { background:rgba(255,45,85,0.15); color:var(--c-hoteles); }
     .badge-r { background:rgba(168,85,247,0.15); color:var(--c-restaurantes); }
     .badge-b { background:rgba(56,189,248,0.15); color:var(--c-transporte); }
-
-    /* mapa full */
     #section-mapa { position:absolute; inset:0; display:none; flex-direction:column; }
   </style>
 </head>
@@ -437,27 +372,25 @@
         <button class="reg-tab active" onclick="switchRegTab('register')">Crear cuenta</button>
         <button class="reg-tab" onclick="switchRegTab('login')">Ya tengo cuenta</button>
       </div>
-      <!-- REGISTRO -->
       <div id="reg-form-register" class="reg-form">
         <div class="input-group">
           <span class="input-icon">👤</span>
-          <input type="text" id="regName" placeholder="Nombre completo">
+          <input type="text" id="regName" placeholder="Nombre completo" required>
         </div>
         <div class="input-group">
           <span class="input-icon">📧</span>
-          <input type="email" id="regEmail" placeholder="Correo electrónico">
+          <input type="email" id="regEmail" placeholder="Correo electrónico" required>
         </div>
         <div class="input-group">
           <span class="input-icon">📱</span>
-          <input type="tel" id="regPhone" placeholder="WhatsApp (ej: +591 71607412)">
+          <input type="tel" id="regPhone" placeholder="WhatsApp (ej: +591 71607412)" required>
         </div>
         <button class="btn-register" onclick="registerUser()">Registrarme gratis</button>
       </div>
-      <!-- LOGIN -->
       <div id="reg-form-login" class="reg-form" style="display:none;">
         <div class="input-group">
           <span class="input-icon">📧</span>
-          <input type="email" id="loginEmail" placeholder="Correo electrónico registrado">
+          <input type="email" id="loginEmail" placeholder="Correo electrónico registrado" required>
         </div>
         <button class="btn-register login-btn" onclick="loginUser()">Ingresar</button>
       </div>
@@ -659,7 +592,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ===================== DATOS ACTUALIZADOS =====================
+// ===================== DATOS =====================
 const lugaresTuristicos = [
   { id:1, item:"Balneario Municipal El Chorro", municipio:"Roboré", precioLocal:10, precioExtranjero:20, rating:4.5, horario:"08:00-18:00", descripcion:"Balneario municipal con piscinas naturales de agua cristalina.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFQPhHMGCCn48M4BkPYvUoe1H5xZVhW4THzOyu2GUzusahqvrklQyjz2XYncSgcuPzjLhIBCvai9AoRc4hJBh4AdU44vtZQn2g5L3O6x-i9kDK5s38l_bq-dwRLABYYjsTLA2LOhQ=w408-h306-k-no", lat:-18.3328, lng:-59.7583, googleMaps:"https://maps.app.goo.gl/eeZzYqQRrB1Qtw4n8", distancia:"Centro de Roboré", transporte:"Caminando 5 min", dificultad:"Fácil", experiencia:"Relax, familiar", servicios:"Vestidores, baños, quioscos", recomendacion:"Llevar traje de baño y protector solar" },
   { id:2, item:"Las Pampas", municipio:"Roboré", precioLocal:15, precioExtranjero:30, rating:4.3, horario:"06:00-17:00", descripcion:"Sabana chiquitana con avistamiento de aves.", imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFX1oxpyxW4T8nYX81lAf0UPUQ7IUJ8F7ivlIeJTiNpfeGR7LLKuSouhRFTtGd6qg17JdmDEMc0EHl9JMEvNpDwruoWGFatlAobliemGwefyRoozuuvCNuoS9Jggfiobqwea4UA=w408-h306-k-no", lat:-18.345, lng:-59.77, googleMaps:"https://maps.app.goo.gl/bCKPCNzh1Vxf9Upt9", distancia:"12 km al norte", transporte:"Taxi o bicicleta", dificultad:"Moderada", experiencia:"Naturaleza, aventura", servicios:"Guías locales", recomendacion:"Calzado cómodo, agua, binoculares" },
@@ -719,7 +652,6 @@ const transportes = [
   { id:463, empresa:"Vehículo propio → Aguas Calientes", tipo:"Auto propio", precio:0, horario:"Libre", ruta:"Santa Cruz → Aguas Calientes", imagen:"https://carnovo.com/wp-content/uploads/2018/08/cupra-leon-sportstourer.jpg", telefono:"N/A", esVehiculoPropio:true, kmIda:450, kmIyV:900, litros:90, costoBs:477, destinoKey:"aguascalientes" }
 ];
 
-// Ciudades y destinos para rutas
 const ciudadesBolivia = {
   "santa-cruz":{nombre:"Santa Cruz",lat:-17.7833,lng:-63.1821},
   "cochabamba":{nombre:"Cochabamba",lat:-17.4139,lng:-66.1653},
@@ -735,12 +667,13 @@ const destinosRuta = {
   "chochis":{nombre:"Chochís",lat:-18.15,lng:-60.03},
   "aguascalientes":{nombre:"Aguas Calientes",lat:-18.25,lng:-59.55}
 };
-// Destinos turísticos individuales para mapa auto
 const lugaresConCoord = lugaresTuristicos.filter(l=>l.lat);
 
-const TARIFA_POR_KM = 2.5; // Bs/km combustible aprox
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzdm-jNrmwODTWSPGo3bSmULaetDaEfONZ9DkA2Q9bIorTd5rMY1oab7oUTd0gD0KCo/exec';
+const TARIFA_POR_KM = 2.5;
 const ROBORE_LAT = -18.3328, ROBORE_LNG = -59.7583;
+
+// ===== URL DE GOOGLE SHEETS (cambia por la tuya) =====
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzdm-jNrmwODTWSPGo3bSmULaetDaEfONZ9DkA2Q9bIorTd5rMY1oab7oUTd0gD0KCo/exec';
 
 let selectedItems = { turismo:[], restaurante:null, hotel:null, transporte:null };
 let currentUser = JSON.parse(localStorage.getItem('rojobore_user')||'null');
@@ -748,87 +681,173 @@ let calcMap = null, calcRouteLine = null;
 let userMarker = null;
 let planRutaDist = 0, planRutaTarifa = 0;
 let calcRutaDist = 0, calcRutaTarifa = 0;
-let calcRutaIda = true; // siempre ida y vuelta
 let panelMap = null, fullMap = null;
 let panelMarkers = [];
 let currentPanelSection = '';
 
-// ==================== REGISTRO / LOGIN ====================
-function switchRegTab(tab){
-  document.querySelectorAll('.reg-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelector('.reg-tab[onclick*="'+tab+'"]').classList.add('active');
-  document.getElementById('reg-form-register').style.display = tab==='register'?'flex':'none';
-  document.getElementById('reg-form-login').style.display = tab==='login'?'flex':'none';
-}
+// ==================== REGISTRO / LOGIN (CORREGIDOS) ====================
+window.switchRegTab = function(tab) {
+  document.querySelectorAll('.reg-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.reg-tab[onclick*="${tab}"]`).classList.add('active');
+  document.getElementById('reg-form-register').style.display = tab === 'register' ? 'flex' : 'none';
+  document.getElementById('reg-form-login').style.display = tab === 'login' ? 'flex' : 'none';
+};
 
-window.registerUser = function(){
-  const n=document.getElementById('regName').value.trim(),e=document.getElementById('regEmail').value.trim(),p=document.getElementById('regPhone').value.trim();
-  if(!n||!e||!p) return showToast('Completa todos los campos');
-  // Check email en localStorage
-  const existing = JSON.parse(localStorage.getItem('rojobore_users_list')||'[]');
-  if(existing.find(u=>u.email===e)){
-    showToast('Ese correo ya está registrado. Usa "Ya tengo cuenta".');
-    switchRegTab('login');
-    document.getElementById('loginEmail').value = e;
+window.registerUser = async function() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  if (!name || !email || !phone) {
+    showToast('Completa todos los campos');
     return;
   }
-  currentUser={name:n,email:e,phone:p};
-  existing.push(currentUser);
-  localStorage.setItem('rojobore_users_list', JSON.stringify(existing));
-  localStorage.setItem('rojobore_user',JSON.stringify(currentUser));
-  sendToSheets({type:'new_user',userName:n,userEmail:e,userPhone:p});
-  document.getElementById('regOverlay').classList.add('hidden');
-  updateUserUI();
-  showToast('Bienvenido ' + n.split(' ')[0] + '!');
+
+  try {
+    const response = await fetch(GOOGLE_SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'new_user',
+        userName: name,
+        userEmail: email,
+        userPhone: phone
+      })
+    });
+    const data = await response.json();
+    if (data.success) {
+      currentUser = { name, email, phone };
+      localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
+      localStorage.removeItem('rojobore_users_list');
+      document.getElementById('regOverlay').classList.add('hidden');
+      updateUserUI();
+      showToast('¡Registro exitoso! Bienvenido ' + name.split(' ')[0]);
+    } else {
+      showToast('Error en el servidor: ' + (data.error || data.message));
+    }
+  } catch (error) {
+    showToast('Error de conexión. Intenta de nuevo.');
+    console.error(error);
+  }
 };
 
-window.loginUser = function(){
-  const e=document.getElementById('loginEmail').value.trim();
-  if(!e) return showToast('Ingresa tu correo');
-  const existing = JSON.parse(localStorage.getItem('rojobore_users_list')||'[]');
-  const found = existing.find(u=>u.email===e);
-  if(!found){ showToast('Correo no encontrado. Regístrate primero.'); return; }
-  currentUser = found;
-  localStorage.setItem('rojobore_user',JSON.stringify(currentUser));
-  document.getElementById('regOverlay').classList.add('hidden');
-  updateUserUI();
-  showToast('Hola de nuevo, ' + found.name.split(' ')[0] + '!');
+window.loginUser = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) {
+    showToast('Ingresa tu correo');
+    return;
+  }
+
+  try {
+    const url = `${GOOGLE_SHEETS_URL}?action=checkUser&email=${encodeURIComponent(email)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.success && data.user) {
+      currentUser = data.user;
+      localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
+      localStorage.removeItem('rojobore_users_list');
+      document.getElementById('regOverlay').classList.add('hidden');
+      updateUserUI();
+      showToast('Hola de nuevo, ' + currentUser.name.split(' ')[0] + '!');
+    } else {
+      showToast('Correo no encontrado. Regístrate primero.');
+    }
+  } catch (error) {
+    showToast('Error de conexión. Intenta de nuevo.');
+    console.error(error);
+  }
 };
 
-function logout(){currentUser=null;localStorage.removeItem('rojobore_user');updateUserUI();showToast('Sesión cerrada');showSection('hero');}
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('rojobore_user');
+  updateUserUI();
+  showToast('Sesión cerrada');
+  showSection('hero');
+}
 
-function updateUserUI(){
-  const bar=document.getElementById('userBar');
-  const su=document.getElementById('sidebarUser');
-  if(currentUser){
-    bar.style.display='flex';
-    document.getElementById('userName').textContent=currentUser.name.split(' ')[0];
-    su.style.display='flex';
-    document.getElementById('sidebarUserName').textContent=currentUser.name.split(' ')[0];
+function updateUserUI() {
+  const bar = document.getElementById('userBar');
+  const su = document.getElementById('sidebarUser');
+  if (currentUser) {
+    bar.style.display = 'flex';
+    document.getElementById('userName').textContent = currentUser.name.split(' ')[0];
+    su.style.display = 'flex';
+    document.getElementById('sidebarUserName').textContent = currentUser.name.split(' ')[0];
     document.getElementById('regOverlay').classList.add('hidden');
   } else {
-    bar.style.display='none';
-    su.style.display='none';
+    bar.style.display = 'none';
+    su.style.display = 'none';
     document.getElementById('regOverlay').classList.remove('hidden');
   }
 }
 
-// ==================== SIDEBAR & NAV ====================
-function toggleSidebar(){
+// ==================== ENVÍO A SHEETS (SIN no-cors) ====================
+async function sendToSheets(data) {
+  try {
+    const response = await fetch(GOOGLE_SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (result.success) {
+      showToast('Datos guardados correctamente');
+      return true;
+    } else {
+      showToast('Error al guardar: ' + (result.error || result.message));
+      return false;
+    }
+  } catch (error) {
+    showToast('Error de conexión');
+    console.error(error);
+    return false;
+  }
+}
+
+// ==================== ENVIAR PRESUPUESTO (ACTUALIZADO) ====================
+window.enviarPresupuesto = async function(planText, total, metodo) {
+  if (!currentUser) { showToast('Regístrate primero'); return; }
+  const ok = await sendToSheets({
+    type: 'plan',
+    userName: currentUser.name,
+    userEmail: currentUser.email,
+    userPhone: currentUser.phone,
+    planDetails: planText,
+    total: total,
+    metodoEnvio: metodo
+  });
+  if (!ok) return;
+
+  const body = `Hola ${currentUser.name},\n\n${planText}\n\n¡Disfruta tu viaje por la Chiquitanía boliviana!\n\nEquipo Rojobore\nhttps://rojobore.com`;
+  if (metodo === 'email') {
+    const subject = encodeURIComponent('Tu plan de viaje · Rojobore');
+    window.open(`mailto:${currentUser.email}?subject=${subject}&body=${encodeURIComponent(body)}`);
+    showToast('Email enviado a ' + currentUser.email);
+  } else {
+    let num = (currentUser.phone || '').replace(/\D/g, '');
+    if (num.length >= 8) {
+      window.open(`https://wa.me/${num}?text=${encodeURIComponent(body)}`);
+      showToast('WhatsApp enviado');
+    } else {
+      showToast('Número de WhatsApp inválido');
+    }
+  }
+};
+
+// ==================== FUNCIONES DE INTERFAZ (TODAS LAS QUE TENÍAS) ====================
+function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.body.classList.toggle('sidebar-open');
   if(panelMap) setTimeout(()=>panelMap.invalidateSize(),350);
   if(fullMap) setTimeout(()=>fullMap.invalidateSize(),350);
 }
 
-let currentSection = 'hero';
-function showSection(name){
-  if(!currentUser && name!=='hero'){
+function showSection(name) {
+  if(!currentUser && name!=='hero') {
     showToast('Regístrate primero');
     document.getElementById('regOverlay').classList.remove('hidden');
     return;
   }
-  currentSection = name;
   document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
   const navEl=document.getElementById('nav-'+name);
   if(navEl) navEl.classList.add('active');
@@ -846,7 +865,6 @@ function showSection(name){
   }
 }
 
-// ==================== PANEL ====================
 const panelCfg = {
   turismo:    {title:'Lugares Turísticos', colorClass:'panel-header-turismo', badgeClass:'badge-t', sectionColor:'c-turismo'},
   hoteles:    {title:'Hoteles',            colorClass:'panel-header-hoteles',  badgeClass:'badge-h', sectionColor:'c-hoteles'},
@@ -854,7 +872,7 @@ const panelCfg = {
   transporte: {title:'Transporte',         colorClass:'panel-header-transporte',badgeClass:'badge-b', sectionColor:'c-transporte'}
 };
 
-function loadPanel(name){
+function loadPanel(name) {
   currentPanelSection = name;
   const cfg = panelCfg[name];
   const hdr = document.getElementById('panelHeaderBar');
@@ -877,7 +895,6 @@ function loadPanel(name){
   cnt.textContent = items.length + ' opciones';
 
   const mapWrap = document.getElementById('panelMapWrap');
-  // Mapa solo en sección mapa dedicada, no en panels
   mapWrap.style.display='none';
 
   if(name==='turismo') renderConTabs('turismo',lugaresTuristicos,renderTurismoCard,'municipio','Roboré','t');
@@ -888,7 +905,7 @@ function loadPanel(name){
   }
 }
 
-function renderConTabs(panelName, items, renderFn, field, activeM, colorSuffix){
+function renderConTabs(panelName, items, renderFn, field, activeM, colorSuffix) {
   const panelList = document.getElementById('panelList');
   const municipios = [{n:'Roboré'},{n:'Chochís'},{n:'Aguas Calientes'}];
   const tabs = municipios.map(m=>`
@@ -914,13 +931,13 @@ function renderConTabs(panelName, items, renderFn, field, activeM, colorSuffix){
   `;
 }
 
-function scrollPanelDown(){
+function scrollPanelDown() {
   const w=document.getElementById('panelListWrap');
   w.scrollBy({top:w.clientHeight-60,behavior:'smooth'});
 }
 
-// ==================== CARDS ====================
-function renderTurismoCard(l){
+// Render cards
+function renderTurismoCard(l) {
   const sel = selectedItems.turismo.includes(l.id);
   return `<div class="item-row t-turismo ${sel?'selected':''}" id="row-${l.id}" onclick="openDrawer('turismo',${l.id})">
     <div style="width:100%;height:180px;overflow:hidden;position:relative;flex-shrink:0;">
@@ -937,7 +954,7 @@ function renderTurismoCard(l){
   </div>`;
 }
 
-function renderHotelCard(h){
+function renderHotelCard(h) {
   const sel = selectedItems.hotel===h.id;
   return `<div class="item-row t-hoteles ${sel?'selected':''}" id="row-${h.id}" onclick="openDrawer('hoteles',${h.id})">
     <div style="width:100%;height:180px;overflow:hidden;position:relative;flex-shrink:0;">
@@ -954,7 +971,7 @@ function renderHotelCard(h){
   </div>`;
 }
 
-function renderRestCard(r){
+function renderRestCard(r) {
   const sel = selectedItems.restaurante===r.id;
   return `<div class="item-row t-restaurantes ${sel?'selected':''}" id="row-${r.id}" onclick="openDrawer('restaurantes',${r.id})">
     <div style="width:100%;height:180px;overflow:hidden;position:relative;flex-shrink:0;">
@@ -971,7 +988,7 @@ function renderRestCard(r){
   </div>`;
 }
 
-function renderTransCard(t){
+function renderTransCard(t) {
   const sel = selectedItems.transporte===t.id;
   return `<div class="item-row t-transporte ${sel?'selected':''}" id="row-${t.id}" onclick="openDrawer('transporte',${t.id})">
     <div style="width:100%;height:180px;overflow:hidden;position:relative;flex-shrink:0;">
@@ -988,9 +1005,10 @@ function renderTransCard(t){
   </div>`;
 }
 
-// ==================== DRAWER ====================
+// Drawer
 let drawerCurrentType = '';
-function openDrawer(type, id){
+
+function openDrawer(type, id) {
   drawerCurrentType = type;
   let html='', titulo='', sub='', imagen='';
   const hdrEl = document.getElementById('drawerHeader');
@@ -1028,12 +1046,13 @@ function openDrawer(type, id){
   document.getElementById('detailDrawer').style.transform = 'translateX(0)';
   document.getElementById('drawerOverlay').style.display = 'block';
 }
-function closeDrawer(){
+
+function closeDrawer() {
   document.getElementById('detailDrawer').style.transform = 'translateX(100%)';
   document.getElementById('drawerOverlay').style.display = 'none';
 }
 
-function drawerTurismoHTML(l){
+function drawerTurismoHTML(l) {
   const sel = selectedItems.turismo.includes(l.id);
   return `<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.2rem;">
     <span class="drawer-tag tag-t">★ ${l.rating}</span>
@@ -1061,7 +1080,7 @@ function drawerTurismoHTML(l){
   </div>`;
 }
 
-function drawerHotelHTML(h){
+function drawerHotelHTML(h) {
   const sel = selectedItems.hotel===h.id;
   return `<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.2rem;">
     <span class="drawer-tag tag-h">★ ${h.rating}</span>
@@ -1087,7 +1106,7 @@ function drawerHotelHTML(h){
   </div>`;
 }
 
-function drawerRestHTML(r){
+function drawerRestHTML(r) {
   const sel = selectedItems.restaurante===r.id;
   return `<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.2rem;">
     <span class="drawer-tag tag-r">${r.ubicacion}</span>
@@ -1114,7 +1133,7 @@ function drawerRestHTML(r){
   </div>`;
 }
 
-function drawerTransHTML(t){
+function drawerTransHTML(t) {
   const sel = selectedItems.transporte===t.id;
   const precioLabel = t.esVehiculoPropio
     ? `Gasolina ida y vuelta: <strong style="color:var(--c-transporte);">Bs ${t.costoBs}</strong><br><small style="color:var(--text-soft);">${t.kmIda} km ida · ${t.kmIyV} km i/v · ${t.litros} litros</small>`
@@ -1141,43 +1160,38 @@ function drawerTransHTML(t){
 }
 
 // Toggle selecciones
-function toggleTurismo(id){
+function toggleTurismo(id) {
   const i=selectedItems.turismo.indexOf(id);
   if(i>=0) selectedItems.turismo.splice(i,1);
   else if(selectedItems.turismo.length<5) selectedItems.turismo.push(id);
   else { showToast('Máximo 5 lugares'); return; }
-  // Re-render drawer
   const l=lugaresTuristicos.find(x=>x.id===id);
   document.getElementById('drawerBody').innerHTML=drawerTurismoHTML(l);
 }
-function toggleHotel(id){
+function toggleHotel(id) {
   selectedItems.hotel=selectedItems.hotel===id?null:id;
   const h=hoteles.find(x=>x.id===id);
   document.getElementById('drawerBody').innerHTML=drawerHotelHTML(h);
 }
-function toggleRestaurante(id){
+function toggleRestaurante(id) {
   selectedItems.restaurante=selectedItems.restaurante===id?null:id;
   const r=restaurantes.find(x=>x.id===id);
   document.getElementById('drawerBody').innerHTML=drawerRestHTML(r);
 }
-function toggleTransporte(id){
+function toggleTransporte(id) {
   selectedItems.transporte=selectedItems.transporte===id?null:id;
   const t=transportes.find(x=>x.id===id);
   document.getElementById('drawerBody').innerHTML=drawerTransHTML(t);
 }
 
-// ==================== MAPAS ====================
-function calcularDistancia(lat1,lng1,lat2,lng2){
+// Mapas
+function calcularDistancia(lat1,lng1,lat2,lng2) {
   const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lng2-lng1)*Math.PI/180;
   const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-function kmLabel(lat,lng){
-  const d=calcularDistancia(ROBORE_LAT,ROBORE_LNG,lat,lng);
-  return d<2?'En Roboré':Math.round(d)+' km de Roboré';
-}
 
-function initPanelMap(name,items){
+function initPanelMap(name,items) {
   if(!panelMap){
     panelMap=L.map('panelMap',{zoomControl:true}).setView([-18.3328,-59.7583],10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(panelMap);
@@ -1205,20 +1219,19 @@ function initPanelMap(name,items){
   setTimeout(()=>panelMap.invalidateSize(),200);
 }
 
-function initCalcMap(){
+function initCalcMap() {
   if(calcMap) return;
   calcMap=L.map('calcMapContainer').setView([-17.0,-65.0],5);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(calcMap);
   Object.entries(ciudadesBolivia).forEach(([k,c])=>{
     L.marker([c.lat,c.lng],{icon:L.divIcon({html:`<div style="background:#38BDF8;color:#000;padding:2px 5px;border-radius:20px;font-size:9px;font-weight:700;">${c.nombre}</div>`,iconAnchor:[25,10]})}).addTo(calcMap);
   });
-  // También agregar lugares turísticos como destinos seleccionables
   lugaresConCoord.forEach(l=>{
     L.marker([l.lat,l.lng],{icon:L.divIcon({html:`<div style="background:#39FF14;color:#000;padding:2px 5px;border-radius:20px;font-size:8px;font-weight:700;">${l.item.split(' ')[0]}</div>`,iconAnchor:[25,10]})}).addTo(calcMap).bindPopup(`<b>${l.item}</b><br>${l.municipio}`);
   });
 }
 
-function getUserLocation(){
+function getUserLocation() {
   if(!navigator.geolocation){showToast('Geolocalización no soportada');return;}
   navigator.geolocation.getCurrentPosition(pos=>{
     const lat=pos.coords.latitude, lng=pos.coords.longitude;
@@ -1226,14 +1239,13 @@ function getUserLocation(){
     if(userMarker) calcMap.removeLayer(userMarker);
     userMarker=L.marker([lat,lng],{icon:L.divIcon({html:`<div style="background:#FF2D55;color:#fff;padding:3px 7px;border-radius:20px;font-size:9px;font-weight:800;">Yo</div>`,iconAnchor:[15,10]})}).addTo(calcMap).bindPopup('Mi ubicación').openPopup();
     calcMap.setView([lat,lng],7);
-    // Guardar como origen custom
     document.getElementById('calcOriginSelect').innerHTML=`<option value="custom" data-lat="${lat}" data-lng="${lng}">Mi ubicación</option>`+Object.entries(ciudadesBolivia).map(([k,c])=>`<option value="${k}">${c.nombre}</option>`).join('');
     showToast('Ubicación detectada');
     if(calcMap) setTimeout(()=>calcMap.invalidateSize(),200);
   },()=>showToast('Permiso denegado'));
 }
 
-function calcularCalcRoute(){
+function calcularCalcRoute() {
   if(!calcMap) initCalcMap();
   const oSel=document.getElementById('calcOriginSelect');
   let co;
@@ -1258,7 +1270,7 @@ function calcularCalcRoute(){
   document.getElementById('calcRouteInfo').textContent=`Ida y vuelta: ${Math.round(calcRutaDist*2)} km · Bs ${Math.round(calcRutaTarifa*2)} aprox.`;
 }
 
-function calcularPlanRoute(){
+function calcularPlanRoute() {
   const co=ciudadesBolivia[document.getElementById('planOrigin').value],cd=destinosRuta[document.getElementById('planDest').value];
   if(!co||!cd) return;
   planRutaDist=calcularDistancia(co.lat,co.lng,cd.lat,cd.lng);
@@ -1266,14 +1278,13 @@ function calcularPlanRoute(){
   document.getElementById('planRouteInfo').textContent=`Ida y vuelta: ${Math.round(planRutaDist*2)} km · Bs ${Math.round(planRutaTarifa*2)} aprox.`;
 }
 
-function onTransportChange(){
+function onTransportChange() {
   const val=document.getElementById('calcTransport').value;
   const t=transportes.find(x=>x.id===parseInt(val));
   const wrap=document.getElementById('calcMapWrapper');
   wrap.style.display=(t&&t.esVehiculoPropio)?'block':'none';
   if(t&&t.esVehiculoPropio){
     if(!calcMap) initCalcMap();
-    // Poblar destinos con lugares turísticos también
     const destSel=document.getElementById('calcDestSelect');
     destSel.innerHTML=`<option value="">-- Destino turístico --</option>`
       +Object.entries(destinosRuta).map(([k,d])=>`<option value="${k}">${d.nombre}</option>`).join('')
@@ -1282,45 +1293,29 @@ function onTransportChange(){
   }
 }
 
-function initFullMap(){
-  if(fullMap){
-    setTimeout(()=>fullMap.invalidateSize(),200);
-    return;
-  }
+function initFullMap() {
+  if(fullMap){ setTimeout(()=>fullMap.invalidateSize(),200); return; }
   fullMap=L.map('fullMapContainer',{zoomControl:false}).setView([-18.26,-59.92],11);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(fullMap);
   L.control.zoom({position:'bottomright'}).addTo(fullMap);
 
-  // Roboré center star
   const roboreIcon = L.divIcon({
     html:`<div style="background:var(--neon,#39FF14);color:#000;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:900;white-space:nowrap;box-shadow:0 0 14px rgba(57,255,20,0.7);border:2px solid #fff;">★ ROBORÉ</div>`,
     className:'',iconAnchor:[45,14]
   });
   L.marker([ROBORE_LAT,ROBORE_LNG],{icon:roboreIcon}).addTo(fullMap).bindPopup('<b>Roboré</b><br>Centro de la Chiquitanía');
 
-  // Category icons
-  const catColors = {
-    'Roboré': '#39FF14',
-    'Chochís': '#FFD700',
-    'Aguas Calientes': '#38BDF8'
-  };
+  const catColors = { 'Roboré': '#39FF14', 'Chochís': '#FFD700', 'Aguas Calientes': '#38BDF8' };
   const activeRoutes = [];
 
   lugaresTuristicos.forEach(l=>{
     if(!l.lat) return;
     const color = catColors[l.municipio]||'#39FF14';
     const icon = L.divIcon({
-      html:`<div style="
-        background:${color};color:#000;padding:4px 9px;border-radius:20px;
-        font-size:10px;font-weight:800;white-space:nowrap;
-        box-shadow:0 0 10px ${color}88;border:1.5px solid rgba(255,255,255,0.6);
-        cursor:pointer;transition:transform 0.15s;
-      ">${l.item.length>18?l.item.substring(0,16)+'…':l.item}</div>`,
+      html:`<div style="background:${color};color:#000;padding:4px 9px;border-radius:20px;font-size:10px;font-weight:800;white-space:nowrap;box-shadow:0 0 10px ${color}88;border:1.5px solid rgba(255,255,255,0.6);cursor:pointer;">${l.item.length>18?l.item.substring(0,16)+'…':l.item}</div>`,
       className:'',iconAnchor:[50,14]
     });
     const marker = L.marker([l.lat,l.lng],{icon}).addTo(fullMap);
-
-    // Rich popup with image
     marker.bindPopup(`
       <div style="width:200px;font-family:system-ui;">
         <img src="${l.imagen}" style="width:100%;height:100px;object-fit:cover;border-radius:6px;display:block;margin-bottom:6px;" onerror="this.style.display='none'">
@@ -1331,22 +1326,16 @@ function initFullMap(){
         <a href="${l.googleMaps||'#'}" target="_blank" style="display:inline-block;margin-top:6px;background:#4285F4;color:#fff;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;text-decoration:none;">Ver en Maps</a>
       </div>
     `,{maxWidth:220});
-
-    // Draw line from Roboré on click
     marker.on('click',()=>{
-      // Remove previous lines
       activeRoutes.forEach(l=>fullMap.removeLayer(l));
       activeRoutes.length=0;
       const dist=Math.round(calcularDistancia(ROBORE_LAT,ROBORE_LNG,l.lat,l.lng));
-      const line=L.polyline([[ROBORE_LAT,ROBORE_LNG],[l.lat,l.lng]],{
-        color:color,weight:3,opacity:0.7,dashArray:'8,5'
-      }).addTo(fullMap);
+      const line=L.polyline([[ROBORE_LAT,ROBORE_LNG],[l.lat,l.lng]],{color:color,weight:3,opacity:0.7,dashArray:'8,5'}).addTo(fullMap);
       line.bindTooltip(`${dist} km desde Roboré`,{permanent:true,direction:'center',className:''});
       activeRoutes.push(line);
     });
   });
 
-  // ========== AÑADIR SURTIDORES SOLICITADOS (8 estaciones) ==========
   const surtidores = [
     { nombre: "Surtidor Goteon S.R.L.", lat: -17.666, lng: -62.733, tipo: "Privado", direccion: "Carretera Santa Cruz - Trinidad Km. 53, Barrio Belén" },
     { nombre: "Estación de Servicios Dana S.R.L.", lat: -17.670, lng: -62.725, tipo: "Privado", direccion: "Carretera Santa Cruz - Trinidad Km. 55" },
@@ -1357,23 +1346,15 @@ function initFullMap(){
     { nombre: "Surtidor Ciro Romero Estrada", lat: -18.3328, lng: -59.7570, tipo: "Privado", direccion: "Carretera Santa Cruz - Puerto Suárez, Calle Tarija esquina Pando N° 3172, Roboré" },
     { nombre: "Surtidor Estación de Servicio YPFB Roboré", lat: -18.333, lng: -59.760, tipo: "YPFB", direccion: "Área urbana de Roboré (surtidor estatal ampliado)" }
   ];
-
   const surtidorIcon = L.divIcon({
     html: `<div style="background:#FF8C00;color:#000;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:800;white-space:nowrap;border:1px solid rgba(0,0,0,0.3);">⛽ Surtidor</div>`,
-    iconAnchor: [45, 10],
-    className: ''
+    iconAnchor: [45, 10]
   });
   surtidores.forEach(s => {
     const marker = L.marker([s.lat, s.lng], { icon: surtidorIcon }).addTo(fullMap);
-    marker.bindPopup(`
-      <b>${s.nombre}</b><br>
-      Tipo: ${s.tipo}<br>
-      ${s.direccion}<br>
-      <span style="font-size:10px;">Combustible disponible (consulta precios)</span>
-    `);
+    marker.bindPopup(`<b>${s.nombre}</b><br>Tipo: ${s.tipo}<br>${s.direccion}<br><span style="font-size:10px;">Combustible disponible (consulta precios)</span>`);
   });
 
-  // Mini legend
   const legend = L.control({position:'topright'});
   legend.onAdd=function(){
     const d=L.DomUtil.create('div','');
@@ -1389,23 +1370,22 @@ function initFullMap(){
     return d;
   };
   legend.addTo(fullMap);
-
   setTimeout(()=>fullMap.invalidateSize(),200);
 }
 
-// ==================== PLAN MODAL ====================
-function calcTransporteIyV(t, personas){
+// Plan y ruleta (todas las funciones)
+function calcTransporteIyV(t, personas) {
   if(t.esVehiculoPropio) return planRutaDist ? Math.round(planRutaTarifa*2) : 0;
-  return t.precio * personas * 2; // ida y vuelta
+  return t.precio * personas * 2;
 }
 
-function generateQuickPlan(){
+function generateQuickPlan() {
   const pres=parseFloat(document.getElementById('planBudget').value),per=parseInt(document.getElementById('planPeople').value),d=parseInt(document.getElementById('planDays').value);
   if(pres<500) return showToast('Presupuesto mínimo Bs 500');
   const noches=Math.max(0,d-1);
   const bus=transportes.filter(x=>!x.esVehiculoPropio).sort((a,b)=>a.precio-b.precio)[0];
   let t=bus, ct=bus.precio*per*2;
-  if(planRutaDist&&Math.round(planRutaTarifa*2)<ct){t=transportes.find(x=>x.id===46);ct=Math.round(planRutaTarifa*2);}
+  if(planRutaDist&&Math.round(planRutaTarifa*2)<ct){t=transportes.find(x=>x.id===461);ct=Math.round(planRutaTarifa*2);}
   let h=hoteles.sort((a,b)=>a.precioNoche-b.precioNoche)[0],ch=noches?h.precioNoche*noches:0;
   let r=restaurantes.filter(x=>x.precioAlmuerzo>0).sort((a,b)=>a.precioAlmuerzo-b.precioAlmuerzo)[0];
   let cr=((r.precioAlmuerzo||0)+(r.precioCena||0))*per*d;
@@ -1428,7 +1408,7 @@ function generateQuickPlan(){
   document.getElementById('planResult').innerHTML=buildResultHTML(planText,pres,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,'neon');
 }
 
-function calculateWithSelections(){
+function calculateWithSelections() {
   const p=parseInt(document.getElementById('calcPeople').value||2),d=parseInt(document.getElementById('calcDays').value||2);
   const t=transportes.find(x=>x.id===parseInt(document.getElementById('calcTransport').value));
   const h=hoteles.find(x=>x.id===parseInt(document.getElementById('calcHotel').value));
@@ -1446,18 +1426,11 @@ function calculateWithSelections(){
   document.getElementById('calcResult').innerHTML=buildResultHTML(planText,total,planId,'',t,h,r,acts,ct,ch,cr,ca,p,d,noches,'gold');
 }
 
-function buildPlanText(tipo,t,h,r,acts,ct,ch,cr,ca,per,d,noches,total,mejora){
-  const actsList=acts.map(a=>`  • ${a.item}
-      Municipio: ${a.municipio}
-      Horario: ${a.horario}
-      Cómo llegar: ${a.transporte||'Ver Maps'}
-      Precio: Bs ${a.precioLocal}/persona
-      Maps: ${a.googleMaps||'N/D'}`).join('\n');
+function buildPlanText(tipo,t,h,r,acts,ct,ch,cr,ca,per,d,noches,total,mejora) {
+  const actsList=acts.map(a=>`  • ${a.item}\n      Municipio: ${a.municipio}\n      Horario: ${a.horario}\n      Cómo llegar: ${a.transporte||'Ver Maps'}\n      Precio: Bs ${a.precioLocal}/persona\n      Maps: ${a.googleMaps||'N/D'}`).join('\n');
   const transLinks = t.esVehiculoPropio
     ? `  Gasolina estimada: Bs ${t.costoBs} (${t.kmIyV} km ida y vuelta, ${t.litros} litros)`
-    : `  Compra online: ${t.compraOnline||'N/D'}
-  Facebook: ${t.facebook||'N/D'}
-  Maps: ${t.googleMaps||'N/D'}`;
+    : `  Compra online: ${t.compraOnline||'N/D'}\n  Facebook: ${t.facebook||'N/D'}\n  Maps: ${t.googleMaps||'N/D'}`;
   return `
 ╔══════════════════════════════════════╗
    ROJOBORE · ${tipo}
@@ -1503,7 +1476,7 @@ Rojobore — Guía oficial de Roboré
 `.trim();
 }
 
-function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,colorKey,presupuesto){
+function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,colorKey,presupuesto) {
   const c = colorKey==='neon'?'var(--c-turismo)':'var(--gold)';
   const sobrante = presupuesto ? presupuesto-total : 0;
   const sobranteBlock = presupuesto && sobrante>0 ? `
@@ -1557,17 +1530,13 @@ function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per
   ${generateReviewSection(planId)}`;
 }
 
-// ==================== ROULETTE ====================
-function runRoulette(){
+function runRoulette() {
   if(!currentUser){showToast('Regístrate primero');return;}
   closeChoiceModal();
   const overlay=document.getElementById('rouletteOverlay');
   overlay.classList.remove('hidden');
   const items=['rou-transport','rou-hotel','rou-rest','rou-act'];
-  items.forEach(id=>{
-    document.getElementById(id).className='roulette-item spinning';
-    document.getElementById(id).textContent='...';
-  });
+  items.forEach(id=>{document.getElementById(id).className='roulette-item spinning';document.getElementById(id).textContent='...';});
 
   const allTransNoBus=transportes.filter(x=>!x.esVehiculoPropio);
   const tOpts=[...allTransNoBus];
@@ -1589,13 +1558,11 @@ function runRoulette(){
     document.getElementById('rou-status').textContent='Calculando combinación '+tick+'/'+totalTicks+'...';
     if(tick===totalTicks){
       clearInterval(interval);
-      // Lock results
       document.getElementById('rou-transport').className='roulette-item locked-blue';
       document.getElementById('rou-hotel').className='roulette-item locked-gold';
       document.getElementById('rou-rest').className='roulette-item locked-purple';
       document.getElementById('rou-act').className='roulette-item locked';
       document.getElementById('rou-status').textContent='¡Ruta sorpresa lista!';
-      // Final picks
       const tF=tOpts[Math.floor(Math.random()*tOpts.length)];
       const hF=hOpts[Math.floor(Math.random()*hOpts.length)];
       const rF=rOpts[Math.floor(Math.random()*rOpts.length)];
@@ -1609,7 +1576,6 @@ function runRoulette(){
       document.getElementById('rou-act').textContent=actsF.map(a=>a.item).join(' + ');
       setTimeout(()=>{
         overlay.classList.add('hidden');
-        // Build result
         const per=2, d=2, noches=1;
         const ct=tF.precio*per*2;
         const ch=hF.precioNoche*noches;
@@ -1625,50 +1591,21 @@ function runRoulette(){
   },100);
 }
 
-// ==================== ENVÍO ====================
-function enviarPresupuesto(planText, total, metodo){
-  if(!currentUser){showToast('Regístrate primero');return;}
-  sendToSheets({type:'plan',userName:currentUser.name,userEmail:currentUser.email,userPhone:currentUser.phone,planDetails:planText,total,metodoEnvio:metodo});
-  const body=`Hola ${currentUser.name},\n\n${planText}\n\n¡Disfruta tu viaje por la Chiquitanía boliviana!\n\nEquipo Rojobore\nhttps://rojobore.com`;
-  if(metodo==='email'){
-    const subject=encodeURIComponent('Tu plan de viaje · Rojobore');
-    const bodyEnc=encodeURIComponent(body);
-    window.open(`mailto:${currentUser.email}?subject=${subject}&body=${bodyEnc}`);
-    showToast('Email enviado a '+currentUser.email);
-  } else {
-    let num=(currentUser.phone||'').replace(/\D/g,'');
-    if(num.length>=8){
-      window.open(`https://wa.me/${num}?text=${encodeURIComponent(body)}`);
-      showToast('WhatsApp enviado');
-    } else showToast('Número de WhatsApp inválido');
-  }
-}
-
-async function sendToSheets(d){
-  try{await fetch(GOOGLE_SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});}catch(e){}
-}
-
-function reservarDirecto(n,t){
+function reservarDirecto(n,t) {
   if(!t||t==='N/A'){showToast('Teléfono no disponible');return;}
   window.open(`https://wa.me/${t.replace(/[^0-9+]/g,'')}?text=${encodeURIComponent('Hola! Vi '+n+' en Rojobore y quisiera más información.')}`, '_blank');
 }
-function contactSupport(){
+function contactSupport() {
   if(!currentUser){showToast('Regístrate primero');return;}
   window.open('https://wa.me/59171607412?text=Hola Rojobore!', '_blank');
 }
 
-// ==================== MODALES HELPERS ====================
+// Modales
 function openChoiceModal(){if(!currentUser){showToast('Regístrate primero');return;}document.getElementById('choiceModal').classList.remove('hidden');}
 function openChoiceModalSafe(){if(!currentUser){showToast('Regístrate primero');document.getElementById('regOverlay').classList.remove('hidden');return;}document.getElementById('choiceModal').classList.remove('hidden');}
 function closeChoiceModal(){document.getElementById('choiceModal').classList.add('hidden');}
 function closeModals(){['planModal','calcModal','choiceModal','surpriseModal'].forEach(id=>document.getElementById(id).classList.add('hidden'));}
-
-function openPlanModal(){
-  closeModals();
-  document.getElementById('planModal').classList.remove('hidden');
-  document.getElementById('planResult').innerHTML='';
-  document.getElementById('planRouteInfo').textContent='Selecciona origen y destino';
-}
+function openPlanModal(){closeModals();document.getElementById('planModal').classList.remove('hidden');document.getElementById('planResult').innerHTML='';document.getElementById('planRouteInfo').textContent='Selecciona origen y destino';}
 function openCalcModal(){
   closeModals();
   document.getElementById('calcModal').classList.remove('hidden');
@@ -1684,8 +1621,8 @@ function syncActividades(){
   selectedItems.turismo=Array.from(checks).map(c=>parseInt(c.value)).slice(0,5);
 }
 
-// ==================== REVIEW ====================
-function generateReviewSection(planId){
+// Review
+function generateReviewSection(planId) {
   return `<div class="review-box" id="review-${planId}">
     <div style="font-weight:600;font-size:0.75rem;color:var(--text-soft);margin-bottom:0.4rem;">Deja tu reseña</div>
     <div class="stars" id="stars-${planId}"><span onclick="setRating('${planId}',1)">☆</span><span onclick="setRating('${planId}',2)">☆</span><span onclick="setRating('${planId}',3)">☆</span><span onclick="setRating('${planId}',4)">☆</span><span onclick="setRating('${planId}',5)">☆</span></div>
@@ -1693,24 +1630,23 @@ function generateReviewSection(planId){
     <button onclick="submitReview('${planId}')" style="background:var(--neon);color:#0D1117;border:none;padding:0.4rem 1rem;border-radius:8px;margin-top:0.3rem;cursor:pointer;font-family:var(--font);font-weight:700;font-size:0.75rem;">Enviar</button>
   </div>`;
 }
-function setRating(planId,val){
+function setRating(planId,val) {
   const stars=document.getElementById('stars-'+planId).children;
   for(let i=0;i<stars.length;i++){stars[i].textContent=i<val?'★':'☆';stars[i].classList.toggle('active',i<val);}
   document.getElementById('stars-'+planId).setAttribute('data-rating',val);
 }
-function submitReview(planId){
+function submitReview(planId) {
   const rating=document.getElementById('stars-'+planId).getAttribute('data-rating')||0;
   const comment=document.getElementById('comment-'+planId).value;
   if(!rating){showToast('Selecciona una puntuación');return;}
   sendToSheets({type:'review',planId,rating,comment,user:currentUser?.name||'Anónimo'});
-  showToast('Reseña enviada');
   document.getElementById('review-'+planId).innerHTML='<p style="color:var(--neon);font-size:0.8rem;">¡Gracias por tu reseña!</p>';
 }
 
-// ==================== UTILS ====================
+// Utils
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._timeout);t._timeout=setTimeout(()=>t.style.display='none',2500);}
 
-function createClouds(){
+function createClouds() {
   const container=document.getElementById('cloudsContainer');
   if(!container) return;
   container.innerHTML='';
@@ -1728,8 +1664,8 @@ document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click
 document.getElementById('choiceModal').addEventListener('click',function(e){if(e.target===this) this.classList.add('hidden');});
 
 // Init
-createClouds();
 updateUserUI();
+createClouds();
 </script>
 </body>
 </html>
