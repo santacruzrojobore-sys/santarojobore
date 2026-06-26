@@ -147,12 +147,17 @@
     .user-chip { background:rgba(57,255,20,0.15); border:1px solid rgba(57,255,20,0.3); padding:0.4rem 0.8rem; border-radius:20px; font-size:0.7rem; font-weight:600; color:var(--neon); }
     .btn-logout { background:none; border:1px solid rgba(255,255,255,0.3); padding:0.2rem 0.5rem; border-radius:12px; font-size:0.6rem; cursor:pointer; color:rgba(255,255,255,0.6); }
 
-    /* ===== REGISTRO EN HERO ===== */
+    /* ===== REGISTRO COMO MODAL OVERLAY (antes era panel fijo en el hero) ===== */
     .hero-register-panel {
-      position:absolute; bottom:0; left:0; right:0; z-index:5;
-      background:linear-gradient(0deg, rgba(13,17,23,0.98) 0%, rgba(13,17,23,0.8) 100%);
+      position:fixed; inset:0; z-index:3800;
+      background:rgba(0,0,0,0.85);
       padding:1.5rem 2rem 2rem;
-      display:flex; flex-direction:column; align-items:center; gap:1rem;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem;
+    }
+    .hero-register-panel .hero-reg-close {
+      position:absolute; top:16px; right:16px;
+      background:rgba(255,255,255,0.1); border:none; color:#fff;
+      width:36px; height:36px; border-radius:8px; cursor:pointer; font-size:1.1rem;
     }
     .hero-reg-title {
       font-family:var(--font-display); color:#fff; font-size:1.3rem; font-weight:700;
@@ -266,6 +271,7 @@
     .btn-send.email { background:rgba(57,255,20,0.15); color:var(--neon); border:1px solid rgba(57,255,20,0.3); }
     .btn-send.whatsapp { background:#25D366; color:#fff; }
     .btn-send:hover { filter:brightness(1.15); transform:translateY(-1px); }
+    .btn-mini-reservar:hover { filter:brightness(1.2); transform:translateY(-1px); }
     .route-bar { display:flex; gap:0.4rem; padding:0.6rem; flex-wrap:wrap; align-items:center; background:var(--bg2); border-radius:10px; border:1px solid var(--border); }
     .route-bar select, .route-bar button { padding:0.4rem 0.6rem; font-size:0.72rem; border-radius:8px; border:1px solid var(--border); font-family:var(--font); background:var(--card); cursor:pointer; color:var(--text); }
     .route-bar button { background:var(--neon); color:#0D1117; font-weight:700; border:none; }
@@ -764,7 +770,10 @@
         <button class="btn-logout" onclick="logout()">Salir</button>
       </div>
 
-      <div id="heroRegisterPanel" class="hero-register-panel">
+      <!-- ✅ CORRECCIÓN PUNTO 2: el registro ahora es un modal oculto por defecto (style="display:none"),
+           ya no se muestra automáticamente al cargar la página. Se abre solo con openRegisterModal(). -->
+      <div id="heroRegisterPanel" class="hero-register-panel" style="display:none;">
+        <button class="hero-reg-close" onclick="closeRegisterModal()">✕</button>
         <div style="text-align:center;">
           <div class="hero-title" style="font-size:clamp(2rem,6vw,3.5rem);margin-bottom:0.3rem;">Rojobore</div>
           <p class="hero-sub">Chiquitanía · Bolivia · Aventura</p>
@@ -808,7 +817,8 @@
         <div class="hero-reg-footer">Al registrarte aceptas nuestros <span>términos</span> y <span>política de privacidad</span></div>
       </div>
 
-      <div class="hero-content" id="heroLoggedContent" style="display:none;">
+      <!-- ✅ CORRECCIÓN PUNTO 2: ahora siempre visible (display:flex), con o sin usuario registrado -->
+      <div class="hero-content" id="heroLoggedContent" style="display:flex;">
         <p class="hero-sub">Chiquitanía · Bolivia · Aventura</p>
         <div class="hero-buttons">
           <button class="btn-hero btn-explore" onclick="showSection('turismo')">Explorar lugares</button>
@@ -988,7 +998,18 @@ let bookingState = {
   nota: ''
 };
 
-// ==================== CAMBIO #2: REGISTRO EMBEBIDO ====================
+// ==================== REGISTRO COMO MODAL (PUNTO 2) ====================
+// El panel de registro ya no se muestra automáticamente en el hero.
+// Estas dos funciones lo abren/cierran como un modal flotante,
+// que se invoca desde showSection(), openChoiceModalSafe() y openBookingModal()
+// cuando el usuario intenta usar una función sin estar registrado.
+function openRegisterModal() {
+  document.getElementById('heroRegisterPanel').style.display = 'flex';
+}
+function closeRegisterModal() {
+  document.getElementById('heroRegisterPanel').style.display = 'none';
+}
+
 window.switchHeroTab = function(tab) {
   document.querySelectorAll('.hero-reg-tab').forEach(t => t.classList.remove('active'));
   event.target.classList.add('active');
@@ -1006,10 +1027,11 @@ window.registerUser = async function() {
     const formData = new URLSearchParams({ type:'new_user', userName:name, userEmail:email, userPhone:phone }).toString();
     const response = await fetch(GOOGLE_SHEETS_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:formData });
     const text = await response.text();
-    if (text === 'success') {
+    if (text === 'success' || text.startsWith('success_sin_correo')) {
       currentUser = { name, email, phone };
       localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
       updateUserUI();
+      closeRegisterModal();
       showToast('¡Bienvenido/a ' + name.split(' ')[0] + '!');
       // El servidor envía el correo de bienvenida automáticamente
     } else if (text === 'already_exists') {
@@ -1033,6 +1055,7 @@ window.loginUser = async function() {
       currentUser = data.user;
       localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
       updateUserUI();
+      closeRegisterModal();
       showToast('¡Hola de nuevo, ' + currentUser.name.split(' ')[0] + '!');
     } else {
       showToast('Correo no encontrado. Regístrate primero.');
@@ -1050,20 +1073,18 @@ function logout() {
   showSection('hero');
 }
 
+// ✅ CORRECCIÓN PUNTO 2: ya no controla heroRegisterPanel (ahora es modal independiente).
+// El hero siempre muestra heroLoggedContent, con o sin usuario.
 function updateUserUI() {
   const bar = document.getElementById('userBar');
-  const heroReg = document.getElementById('heroRegisterPanel');
   const heroLogged = document.getElementById('heroLoggedContent');
   if (currentUser) {
     bar.style.display = 'flex';
     document.getElementById('userName').textContent = currentUser.name.split(' ')[0];
-    heroReg.style.display = 'none';
-    heroLogged.style.display = 'flex';
   } else {
     bar.style.display = 'none';
-    heroReg.style.display = 'flex';
-    heroLogged.style.display = 'none';
   }
+  heroLogged.style.display = 'flex';
 }
 
 // ==================== ENVÍO A SHEETS ====================
@@ -1078,7 +1099,7 @@ async function sendToSheets(data) {
 }
 
 window.enviarPresupuesto = async function(planText, total, metodo) {
-  if (!currentUser) { showToast('Regístrate primero'); return; }
+  if (!currentUser) { openRegisterModal(); return; }
   const ok = await sendToSheets({ type:'plan', userName:currentUser.name, userEmail:currentUser.email, userPhone:currentUser.phone, planDetails:planText, total:total, metodoEnvio:metodo });
   if (!ok) return;
   const body = `Hola ${currentUser.name},\n\n${planText}\n\n¡Disfruta tu viaje por la Chiquitanía boliviana!\n\nEquipo Rojobore\nhttps://rojobore.com`;
@@ -1101,8 +1122,10 @@ function toggleSidebar() {
   if(fullMap) setTimeout(()=>fullMap.invalidateSize(),350);
 }
 
+// ✅ CORRECCIÓN PUNTO 2: en vez de solo avisar con un toast, ahora abre
+// directamente el modal de registro cuando el usuario no está logueado.
 function showSection(name) {
-  if(!currentUser && name!=='hero') { showToast('Regístrate primero'); return; }
+  if(!currentUser && name!=='hero') { openRegisterModal(); return; }
   document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
   const navEl=document.getElementById('nav-'+name);
   if(navEl) navEl.classList.add('active');
@@ -1499,8 +1522,9 @@ function initFullMap() {
 }
 
 // ==================== SISTEMA DE RESERVAS AMPLIADO ====================
+// ✅ CORRECCIÓN PUNTO 2: ahora abre el modal de registro en vez de solo avisar.
 function openBookingModal() {
-  if(!currentUser) { showToast('Regístrate primero'); return; }
+  if(!currentUser) { openRegisterModal(); return; }
   bookingState = {
     step: 1, serviceType: 'turismo', item: null,
     fecha: '', personas: 2, visitorType: 'local',
@@ -1900,29 +1924,104 @@ function calculateWithSelections() {
 function buildPlanText(tipo,t,h,r,acts,ct,ch,cr,ca,per,d,noches,total,mejora) {
   const actsList=acts.map(a=>`  • ${a.item}\n      ${a.municipio} | ${a.horario} | ${a.transporte||''}\n      Bs ${a.precioLocal}/pers | Maps: ${a.googleMaps||'N/D'}`).join('\n');
   const transLinks=t.esVehiculoPropio?`  Gasolina est.: Bs ${t.costoBs} (${t.kmIyV} km i/v)`:`  Compra online: ${t.compraOnline||'N/D'}\n  Facebook: ${t.facebook||'N/D'}`;
-  return `ROJOBORE · ${tipo}\nPersonas: ${per} | Días: ${d} | Noches: ${noches}\n\nTRANSPORTE\n${t.empresa} | ${t.tipo} | ${t.ruta}\nHorarios: ${t.horario}\n${transLinks}\n\nALOJAMIENTO\n${h.nombre} | ${h.ubicacion} | ★${h.rating}\nNoches: ${noches} × Bs ${h.precioNoche} = Bs ${ch}\nMaps: ${h.googleMaps||'N/D'}\n\nRESTAURANTE\n${r.item} | ${r.tipo} | ${r.horario}\nAlm Bs ${r.precioAlmuerzo} + Cena Bs ${r.precioCena} × ${per} × ${d}d = Bs ${cr}\nMaps: ${r.googleMaps||'N/D'}\n\nACTIVIDADES (${acts.length})\n${actsList||'  Ninguna'}\nTotal actividades: Bs ${ca}\n\nTOTAL ESTIMADO: Bs ${total}\n${mejora?mejora:''}\n\n¡Que disfrutes la Chiquitanía boliviana!\nRojobore — https://rojobore.com`.trim();
+  return `ROJOBORE · ${tipo}\nPersonas: ${per} | Días: ${d} | Noches: ${noches}\n\nTRANSPORTE\n${t.empresa} | ${t.tipo} | ${t.ruta}\nHorarios: ${t.horario}\n${transLinks}\n\nALOJAMIENTO\n${h.nombre} | ${h.ubicacion} | ★${h.rating}\nNoches: ${noches} × Bs ${h.precioNoche} = Bs ${ch}\nMaps: ${h.googleMaps||'N/D'}\n\nRESTAURANTE\n${r.item} | ${r.tipo} | ${r.horario}\nAlm Bs ${r.precioAlmuerzo} + Cena Bs ${r.precioCena} × ${per} × ${d}d = Bs ${cr}\nMaps: ${r.googleMaps||'N/D'}\n\nACTIVIDADES (${acts.length})\n${actsList||'  Ninguna'}\nTotal actividades: Bs ${ca}\n\nTOTAL ESTIMADO: Bs ${total}\n${mejora?mejora:''}\n\n¡Que disfrutes la Chiquitanía boliviana!\nRojobore — https://santacruzrojobore-sys.github.io/santarojobore/`.trim();
 }
 
+// ✅ CORRECCIÓN PUNTO 3: agregados botones de "Reservar" individuales para
+// transporte, hotel, restaurante y cada actividad, además del botón
+// general "¡Reservar todo este plan!". El plan se guarda en
+// window._planesGenerados[planId] para que los botones puedan recuperarlo.
 function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,colorKey,presupuesto) {
   const c=colorKey==='neon'?'var(--c-turismo)':'var(--gold)';
   const sobrante=presupuesto?presupuesto-total:0;
   const sobranteBlock=presupuesto&&sobrante>0?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.6rem;"><div style="background:rgba(57,255,20,0.12);border:1.5px solid rgba(57,255,20,0.4);border-radius:10px;padding:0.7rem;text-align:center;"><div style="font-size:0.7rem;color:var(--text-soft);">GASTO</div><div style="font-size:1.3rem;font-weight:900;color:var(--c-turismo);">Bs ${total}</div></div><div style="background:rgba(255,215,0,0.12);border:1.5px solid rgba(255,215,0,0.4);border-radius:10px;padding:0.7rem;text-align:center;"><div style="font-size:0.7rem;color:var(--text-soft);">TE SOBRA</div><div style="font-size:1.3rem;font-weight:900;color:var(--gold);">Bs ${sobrante}</div></div></div>`:'';
+
+  // Guardamos el plan completo en memoria para que el botón "Reservar todo" pueda usarlo
+  window._planesGenerados = window._planesGenerados || {};
+  window._planesGenerados[planId] = { t, h, r, acts, ct, ch, cr, ca, per, d, noches };
+
+  const miniBtn = (tipo, id) => `<button class="btn-mini-reservar" onclick="reservarItemDePlan('${planId}','${tipo}',${id})" style="background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.35);border-radius:6px;padding:2px 8px;font-size:0.65rem;font-weight:700;cursor:pointer;margin-left:6px;">🎟️ Reservar</button>`;
+
   return `<div class="result-box" style="margin-top:0.8rem;">
     <div style="font-weight:700;font-size:0.8rem;color:${c};margin-bottom:0.5rem;">Desglose · ${per} pers · ${d} días (${noches}n)</div><hr>
-    <div style="margin:0.4rem 0;font-size:0.78rem;"><strong style="color:${c};">Transporte:</strong> ${t.empresa} · <strong>Bs ${ct}</strong>${t.googleMaps?` <a href="${t.googleMaps}" target="_blank" style="color:var(--c-transporte);font-size:0.7rem;">Maps</a>`:''}</div>
-    <div style="margin:0.4rem 0;font-size:0.78rem;"><strong style="color:${c};">Hotel:</strong> ${h.nombre} · ${noches}n · <strong>Bs ${ch}</strong>${h.googleMaps?` <a href="${h.googleMaps}" target="_blank" style="color:var(--c-transporte);font-size:0.7rem;">Maps</a>`:''}</div>
-    <div style="margin:0.4rem 0;font-size:0.78rem;"><strong style="color:${c};">Restaurante:</strong> ${r.item} · <strong>Bs ${cr}</strong></div>
-    <div style="margin:0.4rem 0;font-size:0.78rem;"><strong style="color:${c};">Actividades:</strong> ${acts.map(a=>a.item).join(', ')||'Ninguna'} · <strong>Bs ${ca}</strong></div>
+    <div style="margin:0.4rem 0;font-size:0.78rem;display:flex;align-items:center;flex-wrap:wrap;"><strong style="color:${c};">Transporte:</strong>&nbsp;${t.empresa} · <strong>Bs ${ct}</strong>${t.googleMaps?` <a href="${t.googleMaps}" target="_blank" style="color:var(--c-transporte);font-size:0.7rem;">Maps</a>`:''}${!t.esVehiculoPropio?miniBtn('transporte',t.id):''}</div>
+    <div style="margin:0.4rem 0;font-size:0.78rem;display:flex;align-items:center;flex-wrap:wrap;"><strong style="color:${c};">Hotel:</strong>&nbsp;${h.nombre} · ${noches}n · <strong>Bs ${ch}</strong>${h.googleMaps?` <a href="${h.googleMaps}" target="_blank" style="color:var(--c-transporte);font-size:0.7rem;">Maps</a>`:''}${miniBtn('hotel',h.id)}</div>
+    <div style="margin:0.4rem 0;font-size:0.78rem;display:flex;align-items:center;flex-wrap:wrap;"><strong style="color:${c};">Restaurante:</strong>&nbsp;${r.item} · <strong>Bs ${cr}</strong>${miniBtn('restaurante',r.id)}</div>
+    <div style="margin:0.4rem 0;font-size:0.78rem;">
+      <strong style="color:${c};">Actividades:</strong> <strong>Bs ${ca}</strong>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
+        ${acts.length? acts.map(a=>`<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);padding:3px 8px;border-radius:6px;"><span>${a.item}</span>${miniBtn('turismo',a.id)}</div>`).join('') : '<span style="color:var(--text-soft);">Ninguna</span>'}
+      </div>
+    </div>
   </div>
   <div class="result-total"><div style="font-size:0.72rem;color:var(--text-soft);">TOTAL</div><div class="big">Bs ${presupuesto||total}</div></div>
   ${sobranteBlock}
+  <button class="btn-send" style="background:var(--neon);color:#0D1117;" onclick="reservarPlanCompleto('${planId}')">🎟️ ¡Reservar todo este plan!</button>
   <button class="btn-send email" onclick="enviarPresupuesto(\`${planText.replace(/`/g,'\\`')}\`,${total},'email')">📧 Enviar por Email</button>
   <button class="btn-send whatsapp" onclick="enviarPresupuesto(\`${planText.replace(/`/g,'\\`')}\`,${total},'whatsapp')">💬 Enviar por WhatsApp</button>
   ${generateReviewSection(planId)}`;
 }
 
+// ==================== RESERVAR DESDE EL DESGLOSE DEL PLAN (PUNTO 3) ====================
+
+// Botón individual: abre el modal de reserva ya con ese ítem específico elegido,
+// y salta directo al paso de fecha/personas (paso 2) para ahorrarle clics al usuario.
+function reservarItemDePlan(planId, tipo, id) {
+  if (!currentUser) { openRegisterModal(); return; }
+  const plan = window._planesGenerados[planId];
+  if (!plan) { showToast('No se encontró el plan'); return; }
+
+  openBookingModal();
+  setTimeout(() => {
+    switchBookingTab(tipo);
+    selectBookingItem(tipo, id);
+    const persInput = document.getElementById('bookingPersonas');
+    if (persInput) persInput.value = plan.per;
+    bookingState.personas = plan.per;
+    bookingNext(); // avanza automáticamente del paso 1 al paso 2
+  }, 120);
+}
+
+// Botón general: crea de una vez una reserva por cada componente del plan
+// (transporte si no es vehículo propio, hotel, restaurante, y cada actividad),
+// usando los datos de contacto del usuario ya registrado.
+async function reservarPlanCompleto(planId) {
+  if (!currentUser) { openRegisterModal(); return; }
+  const plan = window._planesGenerados[planId];
+  if (!plan) { showToast('No se encontró el plan'); return; }
+
+  const fecha = new Date().toISOString().split('T')[0];
+  const items = [];
+
+  if (!plan.t.esVehiculoPropio) {
+    items.push({ tipo:'transporte', lugar: plan.t.empresa, municipio: plan.t.ruta||'', total: plan.ct });
+  }
+  items.push({ tipo:'hotel', lugar: plan.h.nombre, municipio: plan.h.ubicacion||'', total: plan.ch });
+  items.push({ tipo:'restaurante', lugar: plan.r.item, municipio: plan.r.ubicacion||'', total: plan.cr });
+  plan.acts.forEach(a => {
+    items.push({ tipo:'turismo', lugar: a.item, municipio: a.municipio||'', total: a.precioLocal*plan.per });
+  });
+
+  showToast('Generando reservas...');
+  let ok = 0;
+  for (const it of items) {
+    const ticketNum = 'ROJ-' + Date.now().toString(36).toUpperCase() + '-' + Math.floor(Math.random()*900+100);
+    const sent = await sendToSheets({
+      type: 'reservation',
+      ticketNum,
+      tipoReserva: it.tipo,
+      userName: currentUser.name, userEmail: currentUser.email, userPhone: currentUser.phone,
+      lugar: it.lugar, municipio: it.municipio, fecha: fecha,
+      personas: plan.per, visitorType: 'local',
+      total: it.total, nota: 'Reserva generada desde plan completo'
+    });
+    if (sent) ok++;
+  }
+  showToast(`¡${ok} de ${items.length} reservas generadas! Revisa tu correo o contáctanos para confirmar.`);
+}
+
 function runRoulette() {
-  if(!currentUser){showToast('Regístrate primero');return;}
+  if(!currentUser){openRegisterModal();return;}
   closeChoiceModal();
   const overlay=document.getElementById('rouletteOverlay');
   overlay.classList.remove('hidden');
@@ -1972,8 +2071,9 @@ function contactSupport() {
   window.open('https://wa.me/59171607412?text=Hola Rojobore!', '_blank');
 }
 
-function openChoiceModalSafe(){ if(!currentUser){showToast('Regístrate primero');return;} document.getElementById('choiceModal').classList.remove('hidden'); }
-function openChoiceModal(){ if(!currentUser){showToast('Regístrate primero');return;} document.getElementById('choiceModal').classList.remove('hidden'); }
+// ✅ CORRECCIÓN PUNTO 2: ahora abre el modal de registro en vez de solo avisar.
+function openChoiceModalSafe(){ if(!currentUser){openRegisterModal();return;} document.getElementById('choiceModal').classList.remove('hidden'); }
+function openChoiceModal(){ if(!currentUser){openRegisterModal();return;} document.getElementById('choiceModal').classList.remove('hidden'); }
 function closeChoiceModal(){ document.getElementById('choiceModal').classList.add('hidden'); }
 function closeModals(){ ['planModal','calcModal','choiceModal','surpriseModal'].forEach(id=>document.getElementById(id).classList.add('hidden')); }
 function openPlanModal(){ closeModals(); document.getElementById('planModal').classList.remove('hidden'); document.getElementById('planResult').innerHTML=''; document.getElementById('planRouteInfo').textContent='Selecciona origen y destino'; }
