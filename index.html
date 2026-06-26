@@ -88,17 +88,11 @@
     .sidebar-icon { font-size:1.1rem; flex-shrink:0; width:24px; text-align:center; }
     .sidebar-label { opacity:0; transition:opacity 0.2s; pointer-events:none; }
     .sidebar.open .sidebar-label { opacity:1; }
-    .sidebar-bottom { width:100%; padding:0.5rem; border-top:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; gap:0.3rem; }
+    .sidebar-bottom { width:100%; padding:0.5rem; border-top:1px solid rgba(255,255,255,0.06); }
     .sidebar-plan-btn {
       background:linear-gradient(135deg, rgba(57,255,20,0.2) 0%, rgba(255,215,0,0.15) 100%);
       border-color:rgba(57,255,20,0.4) !important;
       color:var(--neon) !important;
-      font-weight:700 !important;
-    }
-    .sidebar-reservar-btn {
-      background:rgba(255,215,0,0.12);
-      border-color:rgba(255,215,0,0.35) !important;
-      color:var(--gold) !important;
       font-weight:700 !important;
     }
 
@@ -114,11 +108,11 @@
     }
     .hero-full::before {
       content:''; position:absolute; inset:0;
-      background:linear-gradient(180deg, rgba(13,17,23,0.3) 0%, rgba(13,17,23,0.75) 100%);
+      background:linear-gradient(180deg, rgba(13,17,23,0.4) 0%, rgba(13,17,23,0.85) 100%);
     }
     .hero-full::after {
       content:''; position:absolute; inset:0; pointer-events:none;
-      background:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(57,255,20,0.012) 2px, rgba(57,255,20,0.012) 4px);
+      background:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(57,255,20,0.015) 2px, rgba(57,255,20,0.015) 4px);
       z-index:1;
     }
     .clouds-container { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }
@@ -127,12 +121,7 @@
     .cloud::before{width:60%;height:60%;top:-30%;left:20%;}
     .cloud::after{width:40%;height:40%;top:-20%;left:50%;}
     @keyframes floatCloud{0%{transform:translateX(0);}100%{transform:translateX(100vw);}}
-
-    /* hero content (centro) */
-    .hero-content {
-      position:relative; z-index:2; width:100%;
-      padding:1.5rem 2rem 3.5rem; text-align:center;
-    }
+    .hero-content { position:relative; z-index:2; width:100%; padding:1.5rem 2rem 2.5rem; text-align:center; }
     .hero-title {
       font-family:var(--font-display); font-weight:900;
       font-size:clamp(3rem,8vw,5.5rem);
@@ -141,7 +130,7 @@
       filter:drop-shadow(0 0 30px rgba(57,255,20,0.4)) drop-shadow(0 6px 12px rgba(0,0,0,0.6));
       letter-spacing:-0.01em;
     }
-    .hero-sub { margin:0.5rem 0 2rem; color:rgba(255,255,255,0.8); text-shadow:0 4px 10px rgba(0,0,0,0.6); font-weight:300; letter-spacing:0.1em; text-transform:uppercase; font-size:0.85rem; }
+    .hero-sub { font-size:1.1rem; margin:0.5rem 0 2rem; color:rgba(255,255,255,0.8); text-shadow:0 4px 10px rgba(0,0,0,0.6); font-weight:300; letter-spacing:0.1em; text-transform:uppercase; font-size:0.85rem; }
     .hero-buttons { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
     .btn-hero {
       flex:1; min-width:160px; padding:1rem 1.8rem; border-radius:30px;
@@ -154,135 +143,48 @@
     .btn-plan { background:rgba(255,215,0,0.15); color:var(--gold); border:1px solid rgba(255,215,0,0.4); box-shadow:0 8px 25px rgba(255,215,0,0.15); }
     .btn-hero:hover { transform:translateY(-2px); filter:brightness(1.1); }
 
-    /* ===== REGISTRO TOP-RIGHT (CAMBIO #2) ===== */
-    /* Panel flotante en esquina superior derecha */
-    #authTopRight {
-      position:absolute;
-      top:1rem; right:1rem;
-      z-index:10;
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      gap:0.5rem;
-    }
+    .user-bar { position:absolute; top:1rem; right:1rem; z-index:10; display:flex; gap:0.5rem; align-items:center; }
+    .user-chip { background:rgba(57,255,20,0.15); border:1px solid rgba(57,255,20,0.3); padding:0.4rem 0.8rem; border-radius:20px; font-size:0.7rem; font-weight:600; color:var(--neon); }
+    .btn-logout { background:none; border:1px solid rgba(255,255,255,0.3); padding:0.2rem 0.5rem; border-radius:12px; font-size:0.6rem; cursor:pointer; color:rgba(255,255,255,0.6); }
 
-    /* Chip que muestra cuando el usuario está logueado */
-    #userBar {
-      display:none;
-      align-items:center;
-      gap:0.5rem;
+    /* ===== REGISTRO EN HERO ===== */
+    .hero-register-panel {
+      position:absolute; bottom:0; left:0; right:0; z-index:5;
+      background:linear-gradient(0deg, rgba(13,17,23,0.98) 0%, rgba(13,17,23,0.8) 100%);
+      padding:1.5rem 2rem 2rem;
+      display:flex; flex-direction:column; align-items:center; gap:1rem;
     }
-    .user-chip {
-      background:rgba(57,255,20,0.15);
-      border:1px solid rgba(57,255,20,0.3);
-      padding:0.4rem 0.8rem;
-      border-radius:20px;
-      font-size:0.7rem;
-      font-weight:600;
-      color:var(--neon);
-      backdrop-filter:blur(8px);
+    .hero-reg-title {
+      font-family:var(--font-display); color:#fff; font-size:1.3rem; font-weight:700;
+      text-align:center; text-shadow:0 2px 8px rgba(0,0,0,0.6);
     }
-    .btn-logout {
-      background:rgba(255,255,255,0.1);
-      border:1px solid rgba(255,255,255,0.2);
-      padding:0.3rem 0.6rem;
-      border-radius:12px;
-      font-size:0.65rem;
-      cursor:pointer;
-      color:rgba(255,255,255,0.7);
+    .hero-reg-sub { font-size:0.8rem; color:rgba(255,255,255,0.55); text-align:center; }
+    .hero-reg-tabs { display:flex; background:rgba(255,255,255,0.08); border-radius:12px; padding:3px; gap:2px; }
+    .hero-reg-tab { flex:1; padding:0.45rem 1.2rem; border:none; background:transparent; border-radius:9px; font-family:var(--font); font-size:0.78rem; font-weight:600; cursor:pointer; color:rgba(255,255,255,0.5); transition:0.2s; white-space:nowrap; }
+    .hero-reg-tab.active { background:var(--card); color:var(--neon); box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+    .hero-reg-form { width:100%; max-width:480px; display:flex; flex-direction:column; gap:0.65rem; }
+    .hero-reg-row { display:flex; gap:0.6rem; }
+    .hero-input-group { position:relative; flex:1; }
+    .hero-input-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.4); font-size:0.85rem; pointer-events:none; }
+    .hero-input {
+      width:100%; padding:0.75rem 0.9rem 0.75rem 2.5rem; border-radius:10px;
+      border:1.5px solid rgba(255,255,255,0.12); font-family:var(--font); font-size:0.85rem;
+      background:rgba(255,255,255,0.07); color:#fff; transition:all 0.2s;
+    }
+    .hero-input:focus { outline:none; border-color:var(--neon); background:rgba(57,255,20,0.05); }
+    .hero-input::placeholder { color:rgba(255,255,255,0.35); }
+    .btn-register-hero {
+      width:100%; background:var(--neon); color:#0D1117; border:none;
+      padding:0.85rem; border-radius:10px; font-weight:700; font-size:0.9rem;
+      cursor:pointer; letter-spacing:0.04em; text-transform:uppercase;
+      transition:all 0.3s; box-shadow:0 6px 20px rgba(57,255,20,0.3);
       font-family:var(--font);
-      backdrop-filter:blur(8px);
     }
-
-    /* Botón que abre/cierra el panel de auth */
-    #authToggleBtn {
-      background:rgba(13,17,23,0.85);
-      border:1.5px solid rgba(57,255,20,0.4);
-      border-radius:14px;
-      padding:0.5rem 1rem;
-      color:var(--neon);
-      font-family:var(--font);
-      font-size:0.78rem;
-      font-weight:700;
-      cursor:pointer;
-      backdrop-filter:blur(12px);
-      display:flex;
-      align-items:center;
-      gap:0.4rem;
-      transition:all 0.2s;
-      box-shadow:0 4px 16px rgba(0,0,0,0.4);
-    }
-    #authToggleBtn:hover { background:rgba(57,255,20,0.12); }
-
-    /* Panel desplegable de registro/login */
-    #authPanel {
-      background:rgba(13,17,23,0.96);
-      border:1.5px solid rgba(57,255,20,0.3);
-      border-radius:16px;
-      padding:1.2rem;
-      width:310px;
-      display:none;
-      flex-direction:column;
-      gap:0.8rem;
-      backdrop-filter:blur(20px);
-      box-shadow:0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(57,255,20,0.08);
-      animation:fadeInDown 0.25s ease;
-    }
-    @keyframes fadeInDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-    #authPanel.open { display:flex; }
-
-    .auth-panel-title {
-      font-family:var(--font-display);
-      font-size:1rem;
-      font-weight:700;
-      color:#fff;
-      text-align:center;
-    }
-    .auth-tabs {
-      display:flex;
-      background:rgba(255,255,255,0.06);
-      border-radius:10px;
-      padding:3px;
-      gap:2px;
-    }
-    .auth-tab {
-      flex:1; padding:0.4rem 0.6rem;
-      border:none; background:transparent;
-      border-radius:8px; font-family:var(--font);
-      font-size:0.75rem; font-weight:600;
-      cursor:pointer; color:rgba(255,255,255,0.45);
-      transition:0.2s; white-space:nowrap;
-    }
-    .auth-tab.active { background:var(--card); color:var(--neon); box-shadow:0 2px 8px rgba(0,0,0,0.3); }
-    .auth-input-group { position:relative; }
-    .auth-input-icon {
-      position:absolute; left:10px; top:50%;
-      transform:translateY(-50%);
-      color:rgba(255,255,255,0.35);
-      font-size:0.8rem; pointer-events:none;
-    }
-    .auth-input {
-      width:100%; padding:0.65rem 0.8rem 0.65rem 2.2rem;
-      border-radius:9px; border:1.5px solid rgba(255,255,255,0.1);
-      font-family:var(--font); font-size:0.82rem;
-      background:rgba(255,255,255,0.06); color:#fff;
-      transition:all 0.2s;
-    }
-    .auth-input:focus { outline:none; border-color:var(--neon); background:rgba(57,255,20,0.04); }
-    .auth-input::placeholder { color:rgba(255,255,255,0.3); }
-    .btn-auth-submit {
-      width:100%; background:var(--neon); color:#0D1117;
-      border:none; padding:0.75rem; border-radius:9px;
-      font-weight:700; font-size:0.85rem; cursor:pointer;
-      letter-spacing:0.04em; text-transform:uppercase;
-      transition:all 0.25s; font-family:var(--font);
-      box-shadow:0 4px 16px rgba(57,255,20,0.25);
-    }
-    .btn-auth-submit:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(57,255,20,0.35); }
-    .btn-auth-login { background:transparent; color:var(--neon); border:1.5px solid var(--neon); box-shadow:none; }
-    .btn-auth-login:hover { background:rgba(57,255,20,0.08); }
-    .auth-footer { font-size:0.65rem; color:rgba(255,255,255,0.28); text-align:center; }
-    .auth-footer span { color:rgba(57,255,20,0.65); cursor:pointer; }
+    .btn-register-hero:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(57,255,20,0.4); }
+    .btn-login-hero { background:transparent; color:var(--neon); border:1.5px solid var(--neon); box-shadow:none; }
+    .btn-login-hero:hover { background:rgba(57,255,20,0.1); }
+    .hero-reg-footer { font-size:0.68rem; color:rgba(255,255,255,0.3); text-align:center; }
+    .hero-reg-footer span { color:rgba(57,255,20,0.7); cursor:pointer; }
 
     /* ===== PANELS ===== */
     .panel-header-turismo { background:linear-gradient(135deg, #0a1a05 0%, #0d2a08 100%); border-bottom:1px solid rgba(57,255,20,0.3); }
@@ -364,15 +266,6 @@
     .btn-send.email { background:rgba(57,255,20,0.15); color:var(--neon); border:1px solid rgba(57,255,20,0.3); }
     .btn-send.whatsapp { background:#25D366; color:#fff; }
     .btn-send:hover { filter:brightness(1.15); transform:translateY(-1px); }
-    /* ===== BOTÓN RESERVAR EN PLAN (CAMBIO #3) ===== */
-    .btn-send.reservar {
-      background:linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.15));
-      color:var(--gold);
-      border:1px solid rgba(255,215,0,0.4);
-      font-size:0.82rem;
-      padding:0.8rem;
-    }
-    .btn-send.reservar:hover { background:rgba(255,215,0,0.25); }
     .route-bar { display:flex; gap:0.4rem; padding:0.6rem; flex-wrap:wrap; align-items:center; background:var(--bg2); border-radius:10px; border:1px solid var(--border); }
     .route-bar select, .route-bar button { padding:0.4rem 0.6rem; font-size:0.72rem; border-radius:8px; border:1px solid var(--border); font-family:var(--font); background:var(--card); cursor:pointer; color:var(--text); }
     .route-bar button { background:var(--neon); color:#0D1117; font-weight:700; border:none; }
@@ -448,6 +341,8 @@
     .badge-r { background:rgba(168,85,247,0.15); color:var(--c-restaurantes); }
     .badge-b { background:rgba(56,189,248,0.15); color:var(--c-transporte); }
     #section-mapa { position:absolute; inset:0; display:none; flex-direction:column; }
+
+    /* ===== MAPA MEJORADO ===== */
     .leaflet-control-zoom a {
       width:40px !important; height:40px !important; line-height:40px !important;
       font-size:22px !important; font-weight:900 !important;
@@ -501,7 +396,7 @@
     }
     .sp-maps-btn:hover { background:#3367d6; }
 
-    /* ===== MODAL DE RESERVAS ===== */
+    /* ===== BOOKING MODAL (RESERVAS) ===== */
     .booking-modal { position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:4500; display:flex; align-items:center; justify-content:center; }
     .booking-modal.hidden { display:none; }
     .booking-card {
@@ -542,6 +437,26 @@
       border:1px solid var(--border); font-family:var(--font); font-size:0.8rem;
       background:var(--bg2); color:var(--text); margin:0;
     }
+    .item-select-list { max-height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:0.4rem; }
+    .item-select-opt {
+      display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0.7rem;
+      border-radius:8px; border:1px solid var(--border); background:var(--bg2);
+      cursor:pointer; transition:0.2s; font-size:0.8rem; color:var(--text);
+    }
+    .item-select-opt:hover { border-color:var(--neon); background:rgba(57,255,20,0.05); }
+    .item-select-opt.selected { border-color:var(--neon); background:rgba(57,255,20,0.1); color:var(--neon); }
+    .item-select-opt img { width:36px; height:36px; border-radius:6px; object-fit:cover; flex-shrink:0; }
+    .booking-tabs {
+      display:flex; gap:0.3rem; margin-bottom:0.6rem;
+    }
+    .booking-tab {
+      flex:1; padding:0.4rem 0.2rem; border-radius:8px; border:1.5px solid var(--border);
+      background:var(--bg2); color:var(--text-soft); font-family:var(--font);
+      font-size:0.7rem; font-weight:700; cursor:pointer; transition:0.2s; text-align:center;
+    }
+    .booking-tab.active { border-color:var(--neon); color:var(--neon); background:rgba(57,255,20,0.08); }
+
+    /* TICKET */
     .ticket-wrap {
       background:linear-gradient(135deg, #0a1a05 0%, #0d2a08 100%);
       border:2px solid rgba(57,255,20,0.5); border-radius:16px;
@@ -577,15 +492,6 @@
     .ticket-btn-wa { background:#25D366; color:#fff; }
     .ticket-btn-email { background:rgba(255,255,255,0.08); color:var(--text); border:1px solid var(--border); }
     .ticket-btn:hover { filter:brightness(1.1); transform:translateY(-1px); }
-    .item-select-list { max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:0.4rem; }
-    .item-select-opt {
-      display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0.7rem;
-      border-radius:8px; border:1px solid var(--border); background:var(--bg2);
-      cursor:pointer; transition:0.2s; font-size:0.8rem; color:var(--text);
-    }
-    .item-select-opt:hover { border-color:var(--neon); background:rgba(57,255,20,0.05); }
-    .item-select-opt.selected { border-color:var(--neon); background:rgba(57,255,20,0.1); color:var(--neon); }
-    .item-select-opt img { width:36px; height:36px; border-radius:6px; object-fit:cover; flex-shrink:0; }
   </style>
 </head>
 <body>
@@ -673,30 +579,43 @@
   </div>
 </div>
 
-<!-- ===== MODAL DE RESERVAS ===== -->
+<!-- ===== BOOKING MODAL (RESERVAS AMPLIADAS) ===== -->
 <div class="booking-modal hidden" id="bookingModal">
   <div class="booking-card">
     <div class="booking-header">
       <span style="font-size:1.4rem;">🎟️</span>
       <div style="flex:1;">
-        <div style="font-family:var(--font-display);color:var(--neon);font-size:1.05rem;font-weight:700;">Reservar lugar turístico</div>
-        <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);margin-top:2px;">Simulador de reservas · Rojobore</div>
+        <div style="font-family:var(--font-display);color:var(--neon);font-size:1.05rem;font-weight:700;">Reservar en Rojobore</div>
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);margin-top:2px;">Lugares · Hoteles · Restaurantes</div>
       </div>
       <button onclick="closeBookingModal()" style="background:rgba(255,255,255,0.08);border:none;color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;">✕</button>
     </div>
+
+    <!-- Pasos -->
     <div class="booking-steps" id="bookingSteps">
-      <div class="booking-step active" id="bstep1">1· Lugar</div>
+      <div class="booking-step active" id="bstep1">1· Elige</div>
       <div class="booking-step" id="bstep2">2· Fecha</div>
       <div class="booking-step" id="bstep3">3· Datos</div>
       <div class="booking-step" id="bstep4">4· Ticket</div>
     </div>
+
     <div class="booking-body">
+      <!-- PASO 1: Pestañas y lista -->
       <div id="bpage1">
         <div class="booking-section">
-          <div class="booking-section-title">¿Qué lugar quieres visitar?</div>
-          <div class="item-select-list" id="bookingLugaresList"></div>
+          <div class="booking-section-title">¿Qué quieres reservar?</div>
+          <!-- Pestañas -->
+          <div class="booking-tabs" id="bookingServiceTabs">
+            <button class="booking-tab active" onclick="switchBookingTab('turismo')">🏖️ Lugares</button>
+            <button class="booking-tab" onclick="switchBookingTab('hotel')">🏨 Hoteles</button>
+            <button class="booking-tab" onclick="switchBookingTab('restaurante')">🍽️ Restaurantes</button>
+          </div>
+          <!-- Lista dinámica -->
+          <div id="bookingItemsList" class="item-select-list"></div>
         </div>
       </div>
+
+      <!-- PASO 2: Fecha y personas -->
       <div id="bpage2" style="display:none;">
         <div class="booking-section">
           <div class="booking-section-title">¿Cuándo y cuántas personas?</div>
@@ -710,32 +629,38 @@
               <input type="number" id="bookingPersonas" value="2" min="1" max="20">
             </div>
           </div>
-          <div style="font-size:0.72rem;color:var(--text-soft);margin-top:0.5rem;">Tipo de visitante:</div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.4rem;">
-            <button onclick="setVisitorType('local')" id="vtype-local" class="booking-select-btn chosen" style="flex:1;justify-content:center;">🇧🇴 Local</button>
-            <button onclick="setVisitorType('extranjero')" id="vtype-extranjero" class="booking-select-btn" style="flex:1;justify-content:center;">✈️ Extranjero</button>
+          <div id="bookingTipoVisitante" style="display:block;">
+            <div style="font-size:0.72rem;color:var(--text-soft);margin-top:0.5rem;">Tipo de visitante (solo para lugares turísticos):</div>
+            <div style="display:flex;gap:0.5rem;margin-top:0.4rem;">
+              <button onclick="setVisitorType('local')" id="vtype-local" class="booking-select-btn chosen" style="flex:1;justify-content:center;">🇧🇴 Local</button>
+              <button onclick="setVisitorType('extranjero')" id="vtype-extranjero" class="booking-select-btn" style="flex:1;justify-content:center;">✈️ Extranjero</button>
+            </div>
           </div>
         </div>
         <div id="booking-price-preview" style="text-align:center;margin-top:0.5rem;font-size:0.9rem;color:var(--text-soft);"></div>
       </div>
+
+      <!-- PASO 3: Datos de contacto -->
       <div id="bpage3" style="display:none;">
         <div class="booking-section">
           <div class="booking-section-title">Tus datos de contacto</div>
-          <div style="position:relative;margin-bottom:0.5rem;">
-            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:0.85rem;">👤</span>
-            <input class="auth-input" style="padding-left:2.2rem;background:var(--bg2);border-color:var(--border);" type="text" id="bookingNombre" placeholder="Nombre completo">
+          <div class="hero-input-group" style="margin-bottom:0.5rem;">
+            <span class="hero-input-icon" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);">👤</span>
+            <input class="hero-input" type="text" id="bookingNombre" placeholder="Nombre completo" style="background:var(--bg2);border-color:var(--border);">
           </div>
-          <div style="position:relative;margin-bottom:0.5rem;">
-            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:0.85rem;">📱</span>
-            <input class="auth-input" style="padding-left:2.2rem;background:var(--bg2);border-color:var(--border);" type="tel" id="bookingTel" placeholder="WhatsApp (ej: +591 71607412)">
+          <div class="hero-input-group" style="margin-bottom:0.5rem;">
+            <span class="hero-input-icon" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);">📱</span>
+            <input class="hero-input" type="tel" id="bookingTel" placeholder="WhatsApp (ej: +591 71607412)" style="background:var(--bg2);border-color:var(--border);">
           </div>
-          <div style="position:relative;">
-            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:0.85rem;">📧</span>
-            <input class="auth-input" style="padding-left:2.2rem;background:var(--bg2);border-color:var(--border);" type="email" id="bookingEmail" placeholder="Correo electrónico">
+          <div class="hero-input-group">
+            <span class="hero-input-icon" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);">📧</span>
+            <input class="hero-input" type="email" id="bookingEmail" placeholder="Correo electrónico" style="background:var(--bg2);border-color:var(--border);">
           </div>
-          <textarea id="bookingNota" placeholder="Nota especial (opcional)..." style="margin-top:0.5rem;min-height:60px;background:var(--bg2);border-color:var(--border);color:var(--text);border-radius:8px;padding:0.6rem;font-size:0.8rem;font-family:var(--font);resize:vertical;width:100%;border:1px solid var(--border);"></textarea>
+          <textarea id="bookingNota" placeholder="Nota especial (opcional)..." style="margin-top:0.5rem;min-height:60px;background:var(--bg2);border-color:var(--border);color:var(--text);border-radius:8px;padding:0.6rem;font-size:0.8rem;font-family:var(--font);resize:vertical;"></textarea>
         </div>
       </div>
+
+      <!-- PASO 4: TICKET -->
       <div id="bpage4" style="display:none;">
         <div class="ticket-wrap" id="ticketWrap">
           <div class="ticket-header">
@@ -746,13 +671,13 @@
             </div>
           </div>
           <div class="ticket-body">
-            <div class="ticket-row"><span class="ticket-label">Lugar</span><span class="ticket-val" id="tk-lugar">-</span></div>
-            <div class="ticket-row"><span class="ticket-label">Municipio</span><span class="ticket-val" id="tk-municipio">-</span></div>
+            <div class="ticket-row"><span class="ticket-label">Tipo</span><span class="ticket-val" id="tk-tipo-servicio">-</span></div>
+            <div class="ticket-row"><span class="ticket-label">Nombre</span><span class="ticket-val" id="tk-lugar">-</span></div>
+            <div class="ticket-row"><span class="ticket-label">Ubicación</span><span class="ticket-val" id="tk-municipio">-</span></div>
             <div class="ticket-row"><span class="ticket-label">Fecha</span><span class="ticket-val" id="tk-fecha">-</span></div>
             <div class="ticket-row"><span class="ticket-label">Horario</span><span class="ticket-val" id="tk-horario">-</span></div>
             <div class="ticket-row"><span class="ticket-label">Personas</span><span class="ticket-val" id="tk-personas">-</span></div>
-            <div class="ticket-row"><span class="ticket-label">Tipo</span><span class="ticket-val" id="tk-tipo">-</span></div>
-            <div class="ticket-row"><span class="ticket-label">Precio/persona</span><span class="ticket-val" id="tk-precio-unit">-</span></div>
+            <div class="ticket-row"><span class="ticket-label">Precio unitario</span><span class="ticket-val" id="tk-precio-unit">-</span></div>
             <div class="ticket-row"><span class="ticket-label">Nombre</span><span class="ticket-val" id="tk-nombre">-</span></div>
             <div class="ticket-row"><span class="ticket-label">Contacto</span><span class="ticket-val" id="tk-contacto">-</span></div>
             <div id="tk-nota-row" class="ticket-row" style="display:none;"><span class="ticket-label">Nota</span><span class="ticket-val" id="tk-nota">-</span></div>
@@ -761,7 +686,9 @@
               <span class="ticket-total-val" id="tk-total">Bs 0</span>
             </div>
             <div class="ticket-qr-area">
-              <div class="ticket-qr-box"><span id="ticketQR">QR<br>Válido<br>72h</span></div>
+              <div class="ticket-qr-box">
+                <span id="ticketQR">QR<br>Válido<br>72h</span>
+              </div>
               <div class="ticket-qr-text">
                 Este ticket es una reserva simulada.<br>
                 Preséntalo al operador local al llegar.<br>
@@ -776,6 +703,8 @@
           <button class="ticket-btn ticket-btn-email" onclick="sendTicketEmail()">📧 Email</button>
         </div>
       </div>
+
+      <!-- Botones de navegación -->
       <div style="display:flex;gap:0.5rem;margin-top:0.5rem;" id="bookingNavBtns">
         <button onclick="bookingPrev()" id="btnBookPrev" style="flex:1;padding:0.8rem;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-family:var(--font);font-weight:600;display:none;">← Atrás</button>
         <button onclick="bookingNext()" id="btnBookNext" style="flex:2;padding:0.8rem;border-radius:10px;border:none;background:var(--neon);color:#0D1117;cursor:pointer;font-family:var(--font);font-weight:700;font-size:0.9rem;">Siguiente →</button>
@@ -819,10 +748,6 @@
       <span class="sidebar-icon">✦</span>
       <span class="sidebar-label">Planificar viaje</span>
     </div>
-    <div class="sidebar-item sidebar-reservar-btn" onclick="openBookingModal()">
-      <span class="sidebar-icon">🎟️</span>
-      <span class="sidebar-label">Reservar</span>
-    </div>
   </div>
 </div>
 
@@ -834,64 +759,60 @@
     <div class="hero-full">
       <div class="clouds-container" id="cloudsContainer"></div>
 
-      <!-- CAMBIO #2: AUTH TOP-RIGHT - esquina superior derecha -->
-      <div id="authTopRight">
-        <!-- Chip de usuario logueado -->
-        <div id="userBar">
-          <span class="user-chip" id="userName">Usuario</span>
-          <button class="btn-logout" onclick="logout()">Salir</button>
-        </div>
-        <!-- Botón toggle para el panel de registro (solo si no está logueado) -->
-        <button id="authToggleBtn" onclick="toggleAuthPanel()">
-          <span>👤</span> Ingresar / Registrarse
-        </button>
-        <!-- Panel de registro/login desplegable -->
-        <div id="authPanel">
-          <div class="auth-panel-title">Bienvenido a Rojobore</div>
-          <div class="auth-tabs">
-            <button class="auth-tab active" onclick="switchAuthTab('register',event)">Crear cuenta</button>
-            <button class="auth-tab" onclick="switchAuthTab('login',event)">Ya tengo cuenta</button>
-          </div>
-          <!-- Formulario de registro -->
-          <div id="auth-form-register" style="display:flex;flex-direction:column;gap:0.6rem;">
-            <div class="auth-input-group">
-              <span class="auth-input-icon">👤</span>
-              <input class="auth-input" type="text" id="regName" placeholder="Nombre completo">
-            </div>
-            <div class="auth-input-group">
-              <span class="auth-input-icon">📧</span>
-              <input class="auth-input" type="email" id="regEmail" placeholder="Correo electrónico">
-            </div>
-            <div class="auth-input-group">
-              <span class="auth-input-icon">📱</span>
-              <input class="auth-input" type="tel" id="regPhone" placeholder="+591 71607412">
-            </div>
-            <button class="btn-auth-submit" onclick="registerUser()">Registrarme gratis</button>
-          </div>
-          <!-- Formulario de login -->
-          <div id="auth-form-login" style="display:none;flex-direction:column;gap:0.6rem;">
-            <div class="auth-input-group">
-              <span class="auth-input-icon">📧</span>
-              <input class="auth-input" type="email" id="loginEmail" placeholder="Correo registrado">
-            </div>
-            <button class="btn-auth-submit btn-auth-login" onclick="loginUser()">Ingresar a mi cuenta</button>
-          </div>
-          <div class="auth-footer">Al registrarte aceptas nuestros <span>términos</span> y <span>privacidad</span></div>
-        </div>
+      <div class="user-bar" id="userBar" style="display:none;">
+        <span class="user-chip" id="userName">Usuario</span>
+        <button class="btn-logout" onclick="logout()">Salir</button>
       </div>
 
-      <!-- Hero content (centro, siempre visible) -->
-      <div class="hero-content" id="heroContent">
-        <div class="hero-title">Rojobore</div>
+      <div id="heroRegisterPanel" class="hero-register-panel">
+        <div style="text-align:center;">
+          <div class="hero-title" style="font-size:clamp(2rem,6vw,3.5rem);margin-bottom:0.3rem;">Rojobore</div>
+          <p class="hero-sub">Chiquitanía · Bolivia · Aventura</p>
+        </div>
+
+        <div class="hero-reg-tabs">
+          <button class="hero-reg-tab active" onclick="switchHeroTab('register')">Crear cuenta</button>
+          <button class="hero-reg-tab" onclick="switchHeroTab('login')">Ya tengo cuenta</button>
+        </div>
+
+        <!-- Registro -->
+        <div id="hero-form-register" class="hero-reg-form">
+          <div class="hero-reg-row">
+            <div class="hero-input-group">
+              <span class="hero-input-icon">👤</span>
+              <input class="hero-input" type="text" id="regName" placeholder="Nombre completo" required>
+            </div>
+          </div>
+          <div class="hero-reg-row">
+            <div class="hero-input-group" style="flex:1.2;">
+              <span class="hero-input-icon">📧</span>
+              <input class="hero-input" type="email" id="regEmail" placeholder="Correo electrónico" required>
+            </div>
+            <div class="hero-input-group" style="flex:1;">
+              <span class="hero-input-icon">📱</span>
+              <input class="hero-input" type="tel" id="regPhone" placeholder="+591 71607412" required>
+            </div>
+          </div>
+          <button class="btn-register-hero" onclick="registerUser()">Registrarme gratis</button>
+        </div>
+
+        <!-- Login -->
+        <div id="hero-form-login" class="hero-reg-form" style="display:none;">
+          <div class="hero-input-group">
+            <span class="hero-input-icon">📧</span>
+            <input class="hero-input" type="email" id="loginEmail" placeholder="Correo electrónico registrado" required>
+          </div>
+          <button class="btn-register-hero btn-login-hero" onclick="loginUser()">Ingresar a mi cuenta</button>
+        </div>
+
+        <div class="hero-reg-footer">Al registrarte aceptas nuestros <span>términos</span> y <span>política de privacidad</span></div>
+      </div>
+
+      <div class="hero-content" id="heroLoggedContent" style="display:none;">
         <p class="hero-sub">Chiquitanía · Bolivia · Aventura</p>
-        <!-- Botones solo si está logueado -->
-        <div class="hero-buttons" id="heroLoggedButtons" style="display:none;">
+        <div class="hero-buttons">
           <button class="btn-hero btn-explore" onclick="showSection('turismo')">Explorar lugares</button>
           <button class="btn-hero btn-plan" onclick="openChoiceModalSafe()">Planificar viaje</button>
-        </div>
-        <!-- Mensaje si no está logueado -->
-        <div id="heroGuestMsg" style="font-size:0.82rem;color:rgba(255,255,255,0.5);margin-top:0.5rem;">
-          ↗ Regístrate para explorar la Chiquitanía
         </div>
       </div>
     </div>
@@ -991,11 +912,11 @@ const restaurantes = [
   { id:55, item:"Hotel Restaurant Cruz Blanca", ubicacion:"Roboré", precioDesayuno:30, precioAlmuerzo:65, precioCena:60, tipo:"Hotelero", horario:"07:00-22:00", especialidad:"Menú internacional y platos regionales.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEo8LGBSP7T-V0TI-LGANybBsimEeP4S6X_ZCdz7j7tTsgMG-R2RS2eR0qm4sD49XPfDWl5RfqzYqhblGT09YCzJZ8tKHQuvs_NOq-NXed-qO4_JR2UN2QvJN0UPfboYNQsYXvu=w408-h725-k-no", googleMaps:"https://maps.app.goo.gl/uEFQBm5uLT1JSXQS9", facebook:"https://www.facebook.com/HotelCruzBlancaRobore/", direccion:"Calle principal, Roboré", capacidad:"50 personas", recomendacion:"Cena formal con variedad de platos. Buen servicio." },
   { id:56, item:"El Sazón de Mimín", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:35, precioCena:30, tipo:"Casera", horario:"07:00-19:00", especialidad:"Comida casera tradicional.", wifi:false, imagen:"https://tse4.mm.bing.net/th/id/OIP.wM_dOInx84R72zTre0SkkAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", googleMaps:"https://maps.app.goo.gl/JeBeuXr3Kr8WG63g7", facebook:"https://www.facebook.com/Restaurante.Mimin/", direccion:"Zona sur, Roboré", capacidad:"25 personas", recomendacion:"Sopa de maní todos los días. Comida como en casa." },
   { id:57, item:"A LO GRILL", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:50, precioCena:45, tipo:"Parrilla", horario:"11:00-23:00", especialidad:"Parrilladas y cortes de carne.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFgnGX4ridvVh23wAn-NYDPJxJUnNXqKiBZ_ipRWNcE2nzIcAH9kY24sD_driLJjjmd8FaK-skfvfLs8V5UvQl6rxEAkNCOXQzRqvMXuKpeC3809EvJRvicnOPYTFKAU_AxWxA=w408-h306-k-no", googleMaps:"https://maps.app.goo.gl/ouaTCatojBZ73Qzi9", facebook:"https://www.facebook.com/people/A-lo-Grill-Robore/100084755334417/", direccion:"Calle sin salida, Roboré", capacidad:"30 personas", recomendacion:"Parrillada mixta con guarnición. Ambiente juvenil." },
-  { id:58, item:"Pacumutos - El Pila", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:40, precioCena:35, tipo:"Rápida", horario:"10:00-21:00", especialidad:"Pacumutos (brochetas) y comida rápida.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEJaBeVGzkhKF7GipSgFBqOJxCgwqnkGY4KT4nr4EmMrNOSOsq510cTGa6vMpIS04GABGSA2p56dlJywx5gwlbScFJDTHtdo1RV-mYSHkKNWA9I9Xr8Y91Y-EnIrUilpMfsPQLH=w408-h432-k-no", googleMaps:"https://maps.app.goo.gl/6zJjpMpd9JGisCpRA", direccion:"Calle del estudiante, Roboré", capacidad:"20 personas", recomendacion:"Brochetas de carne y pollo. Rápido y sabroso." },
+  { id:58, item:"Pacumutos - El Pila", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:40, precioCena:35, tipo:"Rápida", horario:"10:00-21:00", especialidad:"Pacumutos (brochetas) y comida rápida.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEJaBeVGzkhKF7GipSgFBqOJxCgwqnkGY4KT4nr4EmMrNOSOsq510cTGa6vMpIS04GABGSy2p56dlJywx5gwlbScFJDTHtdo1RV-mYSHkKNWA9I9Xr8Y91Y-EnIrUilpMfsPQLH=w408-h432-k-no", googleMaps:"https://maps.app.goo.gl/6zJjpMpd9JGisCpRA", facebook:"", direccion:"Calle del estudiante, Roboré", capacidad:"20 personas", recomendacion:"Brochetas de carne y pollo. Rápido y sabroso." },
   { id:59, item:"Saborcitos Abu Ta Ta", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:30, precioCena:25, tipo:"Comedor", horario:"07:00-18:00", especialidad:"Comida casera y meriendas.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAE9yT6o_lsALsbzxf_Me2vp5ctFFbr4zjXJo0Mrm-pBIgabTUZypeUw0fcudAa-e-pnV-K3O_sosrWuDPh1_CXZsQeJYDhaE1ahYbA8X9Jcv_fzMOdKzI5CSKaNqq3fPch7Va6B=w408-h408-k-no", googleMaps:"https://maps.app.goo.gl/oH6TLXRMtjsaPrr9A", facebook:"https://www.facebook.com/people/Saborcitos-AbuTata/100063776271614/", direccion:"Calle Sucre, Roboré", capacidad:"20 personas", recomendacion:"Comida económica y sabrosa. Ideal para almuerzo rápido." },
   { id:60, item:"Chicken Mania", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:45, precioCena:40, tipo:"Rápida", horario:"11:00-22:00", especialidad:"Pollo frito y hamburguesas.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAE-ssSaylBVLmYEpL15JbLPtCeEytT5d3aLhC0I_88DRSqYoeUpz3jmPzHg5ZPuhQTfS2S394T7cH1Arptqj2LOewwiiBScyOhE03wTJxBjL9d2S3wo6Vt9W92N3LACbfmP-4s=w408-h725-k-no", googleMaps:"https://maps.app.goo.gl/M3iCPkLVZhzRgTxe7", facebook:"https://www.facebook.com/chickenmaniaec/", direccion:"Esquina plaza, Roboré", capacidad:"20 personas", recomendacion:"Pollo crujiente y papas fritas. Para jóvenes." },
   { id:61, item:"Repostería Japonesa Roboré", ubicacion:"Roboré", precioDesayuno:25, precioAlmuerzo:35, precioCena:30, tipo:"Repostería", horario:"08:00-20:00", especialidad:"Postres japoneses y café.", wifi:true, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSDuI9hpJmaBa6yLjPt0zDw1GnTvdbtAwQQUYlJGOAvPThxfEausc_ZL75SvHsR2zXUqxLPfDw1-bfos9uRLPBkX1X1cdtxDhgD2hwlb8dAsDWeLRbcvVVBe67cwJNO2codkNB=w408-h306-k-no", googleMaps:"https://maps.app.goo.gl/cLCTVpeZnAf5pzRi6", facebook:"https://www.facebook.com/ReposteriaJaponesaRobore/", direccion:"Centro, Roboré", capacidad:"15 personas", recomendacion:"Mochis y pastel de matcha. Algo diferente y delicioso." },
-  { id:62, item:'Restauran "La Clave"', ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:45, precioCena:40, tipo:"Familiar", horario:"07:00-21:00", especialidad:"Platos típicos y menú del día.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEd_ZueuQthZzW4zjVPevE9jwW5bMXURqdosAhDRadvJZPj_5MRbxKnDBaNh-9VNQc8vKyfpa85Odl_OgoE_W3L8Pqpc4-iiHruVaENh5jGLuta2fwlbwLBVSoU0pYqNk6Xwenu=w546-h240-k-no", googleMaps:"https://maps.app.goo.gl/YKknAPxVYca5ZKio9", direccion:"Calle Bolívar, Roboré", capacidad:"30 personas", recomendacion:"Menú económico y completo. Buena sazón." },
+  { id:62, item:'Restauran "La Clave"', ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:45, precioCena:40, tipo:"Familiar", horario:"07:00-21:00", especialidad:"Platos típicos y menú del día.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEd_ZueuQthZzW4zjVPevE9jwW5bMXURqdosAhDRadvJZPj_5MRbxKnDBaNh-9VNQc8vKyfpa85Odl_OgoE_W3L8Pqpc4-iiHruVaENh5jGLuta2fwlbwLBVSoU0pYqNk6Xwenu=w546-h240-k-no", googleMaps:"https://maps.app.goo.gl/YKknAPxVYca5ZKio9", facebook:"", direccion:"Calle Bolívar, Roboré", capacidad:"30 personas", recomendacion:"Menú económico y completo. Buena sazón." },
   { id:63, item:"Sabores C&L", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:40, precioCena:35, tipo:"Casera", horario:"07:30-20:00", especialidad:"Comida casera y snacks.", wifi:false, imagen:"https://tse3.mm.bing.net/th/id/OIP.Q_Ku9yBZe0mVKjLvNJXvvgAAAA?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", googleMaps:"https://maps.app.goo.gl/hZUMu4AaegAivVjS6", facebook:"https://www.facebook.com/people/Sabores-CL-Roboré/100050914211169/", direccion:"Zona norte, Roboré", capacidad:"25 personas", recomendacion:"Comida casera rápida. Buena atención." },
   { id:64, item:"Snack Barriga Llena", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:30, precioCena:25, tipo:"Snack", horario:"08:00-19:00", especialidad:"Snacks, jugos y meriendas.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGy67ZGK7dxk5ACm33-_v8FGROcnTLTNhwG6LF6u7QXxmhUTC7P8ARoZO7MkSyy1-BINbRjMNa6aX3WqZT_Zsr2bvXh_LcLLlT2UfZGwO-NutppWkoWhXHwO7FJ1g189YckKT9Z8g=w408-h544-k-no", googleMaps:"https://maps.app.goo.gl/tpjE1yiAmriGwUE66", facebook:"https://www.facebook.com/Barrigallenacorazoncontento07/", direccion:"Frente al mercado, Roboré", capacidad:"15 personas", recomendacion:"Jugos naturales y sándwiches. Económico y rápido." },
   { id:65, item:"Restaurante Pescadería Ruiz", ubicacion:"Roboré", precioDesayuno:0, precioAlmuerzo:55, precioCena:50, tipo:"Pescados", horario:"08:00-21:00", especialidad:"Pescados y mariscos frescos.", wifi:false, imagen:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAGz1QygErWPcnYYM0tuGg_tyNEjrIg4Z6eON3a4xX_roCGt9qeCU3LXFHR8TJsUkcsV_Z72CbchqC1BwD23epXtfnyWkF0K5vWDajs2GE5x30SMQoQWTpovglzE-TDc_XiPFbh4eIj3JvE=w426-h240-k-no", googleMaps:"https://maps.app.goo.gl/9kjYpsEqrjsCsx6M6", facebook:"https://www.facebook.com/people/Pescaderia-RUIZ/61560413805202/", direccion:"Calle del río, Roboré", capacidad:"25 personas", recomendacion:"Pacú frito con yuca. Pescado fresco del día." }
@@ -1055,32 +976,25 @@ let currentPanelSection = '';
 
 // ===== RESERVAS STATE =====
 let bookingState = {
-  step:1, lugar:null, fecha:'', personas:2,
-  visitorType:'local', nombre:'', tel:'', email:'', nota:''
+  step: 1,
+  serviceType: 'turismo', // 'turismo', 'hotel', 'restaurante'
+  item: null,
+  fecha: '',
+  personas: 2,
+  visitorType: 'local',
+  nombre: '',
+  tel: '',
+  email: '',
+  nota: ''
 };
 
-// ==================== CAMBIO #2: AUTH TOP-RIGHT ====================
-window.toggleAuthPanel = function() {
-  const panel = document.getElementById('authPanel');
-  panel.classList.toggle('open');
+// ==================== CAMBIO #2: REGISTRO EMBEBIDO ====================
+window.switchHeroTab = function(tab) {
+  document.querySelectorAll('.hero-reg-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('hero-form-register').style.display = tab === 'register' ? 'flex' : 'none';
+  document.getElementById('hero-form-login').style.display = tab === 'login' ? 'flex' : 'none';
 };
-
-window.switchAuthTab = function(tab, e) {
-  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
-  if(e && e.target) e.target.classList.add('active');
-  document.getElementById('auth-form-register').style.display = tab==='register'?'flex':'none';
-  document.getElementById('auth-form-login').style.display = tab==='login'?'flex':'none';
-};
-
-// Cerrar auth panel al hacer click fuera
-document.addEventListener('click', function(e) {
-  const panel = document.getElementById('authPanel');
-  const btn = document.getElementById('authToggleBtn');
-  const topRight = document.getElementById('authTopRight');
-  if(panel && panel.classList.contains('open') && !topRight.contains(e.target)) {
-    panel.classList.remove('open');
-  }
-});
 
 // ==================== REGISTRO / LOGIN ====================
 window.registerUser = async function() {
@@ -1097,7 +1011,9 @@ window.registerUser = async function() {
       localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
       updateUserUI();
       showToast('¡Bienvenido/a ' + name.split(' ')[0] + '!');
-      sendWelcomeEmail(name, email);
+      // El servidor envía el correo de bienvenida automáticamente
+    } else if (text === 'already_exists') {
+      showToast('Este correo ya está registrado. Inicia sesión.');
     } else {
       showToast('Error en el servidor: ' + text);
     }
@@ -1135,39 +1051,19 @@ function logout() {
 }
 
 function updateUserUI() {
-  const userBar = document.getElementById('userBar');
-  const authToggleBtn = document.getElementById('authToggleBtn');
-  const authPanel = document.getElementById('authPanel');
-  const heroLoggedButtons = document.getElementById('heroLoggedButtons');
-  const heroGuestMsg = document.getElementById('heroGuestMsg');
-
+  const bar = document.getElementById('userBar');
+  const heroReg = document.getElementById('heroRegisterPanel');
+  const heroLogged = document.getElementById('heroLoggedContent');
   if (currentUser) {
-    // Mostrar chip de usuario, ocultar botón de registro
-    userBar.style.display = 'flex';
-    authToggleBtn.style.display = 'none';
-    authPanel.classList.remove('open');
-    // Hero: mostrar botones de explorar
-    heroLoggedButtons.style.display = 'flex';
-    heroGuestMsg.style.display = 'none';
+    bar.style.display = 'flex';
     document.getElementById('userName').textContent = currentUser.name.split(' ')[0];
+    heroReg.style.display = 'none';
+    heroLogged.style.display = 'flex';
   } else {
-    userBar.style.display = 'none';
-    authToggleBtn.style.display = 'flex';
-    heroLoggedButtons.style.display = 'none';
-    heroGuestMsg.style.display = 'block';
+    bar.style.display = 'none';
+    heroReg.style.display = 'flex';
+    heroLogged.style.display = 'none';
   }
-}
-
-// ==================== WELCOME EMAIL ====================
-async function sendWelcomeEmail(name, email) {
-  const firstName = name.split(' ')[0];
-  const welcomeText = `Querido/a ${firstName},\n\n¡Bienvenido/a a Rojobore! 🌿\n\nEs un honor tenerte entre nosotros. Hoy das el primer paso para descubrir uno de los rincones más puros y auténticos de Bolivia: la Chiquitanía.\n\nCon mucho cariño,\nEl equipo de Rojobore 🗺️`;
-  try {
-    await fetch(GOOGLE_SHEETS_URL, {
-      method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body: new URLSearchParams({ type:'welcome_email', userName:name, userEmail:email, welcomeText }).toString()
-    });
-  } catch(e) { console.log('Welcome email queued'); }
 }
 
 // ==================== ENVÍO A SHEETS ====================
@@ -1176,21 +1072,23 @@ async function sendToSheets(data) {
     const formData = new URLSearchParams(data).toString();
     const response = await fetch(GOOGLE_SHEETS_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:formData });
     const text = await response.text();
-    return text === 'success';
+    if (text === 'success') { showToast('Datos guardados'); return true; }
+    return false;
   } catch (error) { return false; }
 }
 
 window.enviarPresupuesto = async function(planText, total, metodo) {
   if (!currentUser) { showToast('Regístrate primero'); return; }
-  const ok = await sendToSheets({ type:'plan', userName:currentUser.name, userEmail:currentUser.email, userPhone:currentUser.phone, planDetails:planText, total, metodoEnvio:metodo });
+  const ok = await sendToSheets({ type:'plan', userName:currentUser.name, userEmail:currentUser.email, userPhone:currentUser.phone, planDetails:planText, total:total, metodoEnvio:metodo });
   if (!ok) return;
   const body = `Hola ${currentUser.name},\n\n${planText}\n\n¡Disfruta tu viaje por la Chiquitanía boliviana!\n\nEquipo Rojobore\nhttps://rojobore.com`;
   if (metodo === 'email') {
-    window.open(`mailto:${currentUser.email}?subject=${encodeURIComponent('Tu plan de viaje · Rojobore')}&body=${encodeURIComponent(body)}`);
+    const subject = encodeURIComponent('Tu plan de viaje · Rojobore');
+    window.open(`mailto:${currentUser.email}?subject=${subject}&body=${encodeURIComponent(body)}`);
     showToast('Email enviado a ' + currentUser.email);
   } else {
-    let num = (currentUser.phone||'').replace(/\D/g,'');
-    if (num.length>=8) { window.open(`https://wa.me/${num}?text=${encodeURIComponent(body)}`); showToast('WhatsApp enviado'); }
+    let num = (currentUser.phone || '').replace(/\D/g, '');
+    if (num.length >= 8) { window.open(`https://wa.me/${num}?text=${encodeURIComponent(body)}`); showToast('WhatsApp enviado'); }
     else showToast('Número de WhatsApp inválido');
   }
 };
@@ -1204,7 +1102,7 @@ function toggleSidebar() {
 }
 
 function showSection(name) {
-  if(!currentUser && name!=='hero') { showToast('Regístrate para explorar'); return; }
+  if(!currentUser && name!=='hero') { showToast('Regístrate primero'); return; }
   document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
   const navEl=document.getElementById('nav-'+name);
   if(navEl) navEl.classList.add('active');
@@ -1346,7 +1244,10 @@ function renderTransCard(t) {
 }
 
 // ==================== DRAWER ====================
+let drawerCurrentType = '';
+
 function openDrawer(type, id) {
+  drawerCurrentType = type;
   let html='', titulo='', sub='', imagen='';
   const hdrEl = document.getElementById('drawerHeader');
   if(type==='turismo'){
@@ -1406,7 +1307,7 @@ function drawerTurismoHTML(l) {
   </div>
   <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
     <button onclick="toggleTurismo(${l.id})" class="drawer-btn ${sel?'drawer-btn-t sel':'drawer-btn-t'}">${sel?'✓ Agregado':'+ Agregar al plan'}</button>
-    <button onclick="openBookingForLugar(${l.id})" class="drawer-btn" style="background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.4);">🎟️ Reservar</button>
+    <button onclick="openBookingFor('turismo',${l.id})" class="drawer-btn" style="background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.4);">🎟️ Reservar</button>
     ${l.googleMaps?`<a href="${l.googleMaps}" target="_blank" class="drawer-btn drawer-btn-maps">Ver en Maps</a>`:''}
   </div>`;
 }
@@ -1429,6 +1330,7 @@ function drawerHotelHTML(h) {
   </div>
   <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
     <button onclick="toggleHotel(${h.id})" class="drawer-btn ${sel?'drawer-btn-h sel':'drawer-btn-h'}">${sel?'✓ Elegido':'+ Elegir hotel'}</button>
+    <button onclick="openBookingFor('hotel',${h.id})" class="drawer-btn" style="background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.4);">🎟️ Reservar</button>
     <button onclick="reservarDirecto('${h.nombre.replace(/'/g,"\\'")}','${h.telefono}')" class="drawer-btn drawer-btn-wa">Reservar WhatsApp</button>
     ${h.googleMaps?`<a href="${h.googleMaps}" target="_blank" class="drawer-btn drawer-btn-maps">Ver en Maps</a>`:''}
     ${h.facebook?`<a href="${h.facebook}" target="_blank" class="drawer-btn drawer-btn-fb">Facebook</a>`:''}
@@ -1452,6 +1354,7 @@ function drawerRestHTML(r) {
   </div>
   <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
     <button onclick="toggleRestaurante(${r.id})" class="drawer-btn ${sel?'drawer-btn-r sel':'drawer-btn-r'}">${sel?'✓ Elegido':'+ Elegir restaurante'}</button>
+    <button onclick="openBookingFor('restaurante',${r.id})" class="drawer-btn" style="background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.4);">🎟️ Reservar</button>
     ${r.googleMaps?`<a href="${r.googleMaps}" target="_blank" class="drawer-btn drawer-btn-maps">Maps</a>`:''}
     ${r.facebook?`<a href="${r.facebook}" target="_blank" class="drawer-btn drawer-btn-fb">F</a>`:''}
   </div>`;
@@ -1496,7 +1399,7 @@ function toggleTransporte(id) {
   document.getElementById('drawerBody').innerHTML=drawerTransHTML(transportes.find(x=>x.id===id));
 }
 
-// ==================== MAPA ====================
+// ==================== MAPA MEJORADO ====================
 function initFullMap() {
   if(fullMap){ setTimeout(()=>fullMap.invalidateSize(),200); return; }
   fullMap=L.map('fullMapContainer',{zoomControl:false}).setView([-18.26,-59.92],11);
@@ -1540,8 +1443,8 @@ function initFullMap() {
         <b style="font-size:13px;">${l.item}</b>
         <div style="font-size:11px;color:#666;margin:3px 0;">${l.municipio} · ★ ${l.rating}</div>
         <div style="font-size:11px;">Bs ${l.precioLocal} local · Bs ${l.precioExtranjero} extran.</div>
-        <div style="font-size:10px;color:#888;margin:3px 0;">${l.horario}</div>
-        <div style="display:flex;gap:4px;margin-top:6px;">
+        <div style="font-size:10px;color:#888;margin:3px 0;">${l.horario} · ${l.dificultad||'Fácil'}</div>
+        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;">
           <a href="${l.googleMaps||'#'}" target="_blank" style="background:#4285F4;color:#fff;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:700;text-decoration:none;">📍 Ver en Maps</a>
         </div>
       </div>
@@ -1562,7 +1465,14 @@ function initFullMap() {
       className:'', iconAnchor:[50,14]
     });
     const m = L.marker([s.lat,s.lng],{icon}).addTo(fullMap);
-    m.bindPopup(`<div class="surtidor-popup"><div class="sp-title">⛽ ${s.nombre}</div><div class="sp-tipo">Tipo: ${s.tipo}</div><div class="sp-dir">📍 ${s.direccion}</div><a href="${s.mapsUrl}" target="_blank" class="sp-maps-btn">📍 Abrir en Google Maps</a></div>`,{maxWidth:240});
+    m.bindPopup(`
+      <div class="surtidor-popup">
+        <div class="sp-title">⛽ ${s.nombre}</div>
+        <div class="sp-tipo">Tipo: ${s.tipo}</div>
+        <div class="sp-dir">📍 ${s.direccion}</div>
+        <a href="${s.mapsUrl}" target="_blank" class="sp-maps-btn">📍 Abrir en Google Maps</a>
+      </div>
+    `,{maxWidth:240});
   });
 
   document.getElementById('countTurismo').textContent = cntRobore;
@@ -1574,22 +1484,28 @@ function initFullMap() {
   legend.onAdd=function(){
     const d=L.DomUtil.create('div','');
     d.style.cssText='background:rgba(13,17,23,0.95);padding:10px 14px;border-radius:12px;border:1px solid #30363D;font-size:12px;color:#E6EDF3;max-width:180px;';
-    d.innerHTML=`<div style="font-weight:700;margin-bottom:8px;color:#39FF14;font-size:13px;">📋 Leyenda</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;"><span style="background:#39FF14;width:12px;height:12px;border-radius:50%;display:inline-block;"></span>Roboré (${cntRobore})</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;"><span style="background:#FFD700;width:12px;height:12px;border-radius:50%;display:inline-block;"></span>Chochís (${cntChochis})</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;"><span style="background:#38BDF8;width:12px;height:12px;border-radius:50%;display:inline-block;"></span>Aguas Cal. (${cntAC})</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;border-top:1px solid #30363D;padding-top:6px;"><span style="background:#FF8C00;width:12px;height:12px;border-radius:4px;display:inline-block;"></span>⛽ Surtidor (${surtidores.length})</div>`;
+    d.innerHTML=`
+      <div style="font-weight:700;margin-bottom:8px;color:#39FF14;font-size:13px;">📋 Leyenda</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;"><span style="background:#39FF14;width:12px;height:12px;border-radius:50%;display:inline-block;"></span>Roboré (${cntRobore} lugares)</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;"><span style="background:#FFD700;width:12px;height:12px;border-radius:50%;display:inline-block;"></span>Chochís (${cntChochis} lugares)</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;"><span style="background:#38BDF8;width:12px;height:12px;border-radius:50%;display:inline-block;"></span>Aguas Calientes (${cntAC})</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;border-top:1px solid #30363D;padding-top:6px;"><span style="background:#FF8C00;width:12px;height:12px;border-radius:4px;display:inline-block;"></span>⛽ Surtidor (${surtidores.length})</div>
+      <div style="margin-top:8px;color:#8B949E;font-size:10px;line-height:1.4;">Toca un punto para<br>ver la ruta desde Roboré</div>
+    `;
     return d;
   };
   legend.addTo(fullMap);
   setTimeout(()=>fullMap.invalidateSize(),200);
 }
 
-// ==================== RESERVAS ====================
-function openBookingModal(preSelectedId) {
-  if(!currentUser) { showToast('Regístrate para reservar'); return; }
-  bookingState = { step:1, lugar:null, fecha:'', personas:2, visitorType:'local',
-    nombre:currentUser.name||'', tel:currentUser.phone||'', email:currentUser.email||'', nota:'' };
+// ==================== SISTEMA DE RESERVAS AMPLIADO ====================
+function openBookingModal() {
+  if(!currentUser) { showToast('Regístrate primero'); return; }
+  bookingState = {
+    step: 1, serviceType: 'turismo', item: null,
+    fecha: '', personas: 2, visitorType: 'local',
+    nombre: currentUser.name||'', tel: currentUser.phone||'', email: currentUser.email||'', nota: ''
+  };
   document.getElementById('bookingModal').classList.remove('hidden');
   renderBookingPage(1);
   setTimeout(()=>{
@@ -1599,55 +1515,107 @@ function openBookingModal(preSelectedId) {
     const today = new Date().toISOString().split('T')[0];
     if(document.getElementById('bookingDate')) document.getElementById('bookingDate').min = today;
   },50);
-  renderBookingLugares();
-  if(preSelectedId) {
-    setTimeout(()=>{
-      const opts = document.querySelectorAll('.item-select-opt');
-      opts.forEach(o=>{ if(parseInt(o.getAttribute('data-id'))===preSelectedId) o.click(); });
-    },150);
-  }
+  switchBookingTab('turismo');
 }
 
-function openBookingForLugar(id) { openBookingModal(id); }
+function openBookingFor(type, id) {
+  openBookingModal();
+  setTimeout(()=>{
+    switchBookingTab(type);
+    const opts = document.querySelectorAll('.item-select-opt');
+    opts.forEach(o=>{
+      if(parseInt(o.getAttribute('data-id'))===id) o.click();
+    });
+  },100);
+}
 
-function closeBookingModal() { document.getElementById('bookingModal').classList.add('hidden'); }
+function closeBookingModal() {
+  document.getElementById('bookingModal').classList.add('hidden');
+}
 
-function renderBookingLugares() {
-  const list = document.getElementById('bookingLugaresList');
+function switchBookingTab(tab) {
+  bookingState.serviceType = tab;
+  document.querySelectorAll('.booking-tab').forEach(t=>t.classList.remove('active'));
+  const tabs = document.querySelectorAll('.booking-tab');
+  const map = { 'turismo':0, 'hotel':1, 'restaurante':2 };
+  if(tabs[map[tab]]) tabs[map[tab]].classList.add('active');
+
+  // Mostrar/ocultar selector de tipo visitante (solo para lugares)
+  const visitorDiv = document.getElementById('bookingTipoVisitante');
+  if(visitorDiv) visitorDiv.style.display = tab==='turismo'?'block':'none';
+
+  renderBookingItems(tab);
+}
+
+function renderBookingItems(tab) {
+  const list = document.getElementById('bookingItemsList');
   if(!list) return;
-  list.innerHTML = lugaresTuristicos.map(l=>`
-    <div class="item-select-opt ${bookingState.lugar&&bookingState.lugar.id===l.id?'selected':''}"
-      data-id="${l.id}" onclick="selectBookingLugar(${l.id})">
-      <img src="${l.imagen}" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=60'">
+  let items = [];
+  if(tab==='turismo') items = lugaresTuristicos;
+  else if(tab==='hotel') items = hoteles;
+  else if(tab==='restaurante') items = restaurantes;
+
+  list.innerHTML = items.map(item => {
+    const id = item.id;
+    const nombre = item.item || item.nombre;
+    const ubic = item.municipio || item.ubicacion || '';
+    let precio = '';
+    if(tab==='turismo') precio = `Bs ${item.precioLocal}`;
+    else if(tab==='hotel') precio = `Bs ${item.precioNoche}/noche`;
+    else if(tab==='restaurante') precio = `Alm. Bs ${item.precioAlmuerzo}`;
+    const img = item.imagen || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=60';
+    const isSelected = (bookingState.item && bookingState.item.id === id);
+    return `<div class="item-select-opt ${isSelected?'selected':''}"
+            data-id="${id}" onclick="selectBookingItem('${tab}',${id})">
+      <img src="${img}" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=60'">
       <div style="flex:1;min-width:0;">
-        <div style="font-weight:600;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.item}</div>
-        <div style="font-size:0.7rem;color:var(--text-soft);">${l.municipio} · Bs ${l.precioLocal}/pers · ${l.horario}</div>
+        <div style="font-weight:600;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nombre}</div>
+        <div style="font-size:0.7rem;color:var(--text-soft);">${ubic} · ${precio}</div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
-function selectBookingLugar(id) {
-  bookingState.lugar = lugaresTuristicos.find(l=>l.id===id);
-  document.querySelectorAll('#bookingLugaresList .item-select-opt').forEach(o=>{
+function selectBookingItem(tab, id) {
+  let item = null;
+  if(tab==='turismo') item = lugaresTuristicos.find(l=>l.id===id);
+  else if(tab==='hotel') item = hoteles.find(h=>h.id===id);
+  else if(tab==='restaurante') item = restaurantes.find(r=>r.id===id);
+  bookingState.item = item;
+  bookingState.serviceType = tab;
+  document.querySelectorAll('#bookingItemsList .item-select-opt').forEach(o=>{
     o.classList.toggle('selected', parseInt(o.getAttribute('data-id'))===id);
   });
+  // Actualizar preview de precio
+  if(bookingState.step===2) updatePricePreview();
 }
 
 function setVisitorType(type) {
   bookingState.visitorType = type;
-  document.getElementById('vtype-local').className = 'booking-select-btn'+(type==='local'?' chosen':'');
-  document.getElementById('vtype-extranjero').className = 'booking-select-btn'+(type==='extranjero'?' chosen':'');
-  updatePricePreview();
+  document.getElementById('vtype-local').className = 'booking-select-btn' + (type==='local'?' chosen':'');
+  document.getElementById('vtype-extranjero').className = 'booking-select-btn' + (type==='extranjero'?' chosen':'');
+  if(bookingState.step===2) updatePricePreview();
 }
 
 function updatePricePreview() {
-  if(!bookingState.lugar) return;
+  if(!bookingState.item) return;
   const p = document.getElementById('booking-price-preview');
   if(!p) return;
   const pers = parseInt(document.getElementById('bookingPersonas')?.value||2);
-  const precioUnit = bookingState.visitorType==='local' ? bookingState.lugar.precioLocal : bookingState.lugar.precioExtranjero;
-  p.innerHTML = `<span style="color:var(--neon);font-weight:700;font-size:1.1rem;">Bs ${precioUnit*pers}</span> <span style="color:var(--text-soft);font-size:0.8rem;">(${pers} × Bs ${precioUnit})</span>`;
+  let unit = 0;
+  const type = bookingState.serviceType;
+  if(type==='turismo') {
+    unit = bookingState.visitorType==='local' ? bookingState.item.precioLocal : bookingState.item.precioExtranjero;
+  } else if(type==='hotel') {
+    unit = bookingState.item.precioNoche;
+    // Para hoteles, el precio es por noche, lo multiplicamos por el número de noches (1 por defecto)
+    // Podríamos añadir un campo de noches, pero simplificamos a 1 noche.
+  } else if(type==='restaurante') {
+    // Tomamos precio almuerzo como referencia
+    unit = bookingState.item.precioAlmuerzo || 0;
+  }
+  const total = unit * pers;
+  p.innerHTML = `<span style="color:var(--neon);font-weight:700;font-size:1.1rem;">Bs ${total}</span> <span style="color:var(--text-soft);font-size:0.8rem;">(${pers} × Bs ${unit})</span>`;
 }
 
 function renderBookingPage(step) {
@@ -1655,11 +1623,11 @@ function renderBookingPage(step) {
     const el = document.getElementById('bpage'+i);
     if(el) el.style.display = i===step?'block':'none';
     const st = document.getElementById('bstep'+i);
-    if(st) st.className = 'booking-step'+(i===step?' active':i<step?' done':'');
+    if(st){ st.className = 'booking-step' + (i===step?' active': i<step?' done':''); }
   }
   const prev = document.getElementById('btnBookPrev');
   const next = document.getElementById('btnBookNext');
-  if(prev) prev.style.display = step>1&&step<4?'block':'none';
+  if(prev) prev.style.display = step>1&&step<4 ? 'block':'none';
   if(next){
     if(step===4){ next.textContent='Cerrar'; next.style.background='rgba(255,255,255,0.1)'; next.style.color='var(--text)'; }
     else if(step===3){ next.textContent='Generar Ticket ✓'; next.style.background='var(--neon)'; next.style.color='#0D1117'; }
@@ -1671,8 +1639,10 @@ function renderBookingPage(step) {
 function bookingNext() {
   const step = bookingState.step;
   if(step===1){
-    if(!bookingState.lugar){ showToast('Selecciona un lugar'); return; }
-    bookingState.step=2; renderBookingPage(2); setTimeout(updatePricePreview,50);
+    if(!bookingState.item){ showToast('Selecciona un elemento'); return; }
+    bookingState.step=2;
+    renderBookingPage(2);
+    setTimeout(updatePricePreview,50);
   } else if(step===2){
     const fecha = document.getElementById('bookingDate')?.value;
     const pers = parseInt(document.getElementById('bookingPersonas')?.value||2);
@@ -1686,8 +1656,11 @@ function bookingNext() {
     const nota = document.getElementById('bookingNota')?.value.trim();
     if(!nombre||!tel||!email){ showToast('Completa nombre, teléfono y correo'); return; }
     bookingState.nombre=nombre; bookingState.tel=tel; bookingState.email=email; bookingState.nota=nota;
-    generateTicket(); bookingState.step=4; renderBookingPage(4);
-  } else if(step===4){ closeBookingModal(); }
+    generateTicket();
+    bookingState.step=4; renderBookingPage(4);
+  } else if(step===4){
+    closeBookingModal();
+  }
 }
 
 function bookingPrev() {
@@ -1695,70 +1668,114 @@ function bookingPrev() {
 }
 
 function generateTicket() {
-  const l = bookingState.lugar;
-  const precioUnit = bookingState.visitorType==='local'?l.precioLocal:l.precioExtranjero;
-  const total = precioUnit * bookingState.personas;
-  const ticketNum = 'ROJ-'+Date.now().toString(36).toUpperCase().slice(-6);
+  const item = bookingState.item;
+  const type = bookingState.serviceType;
+  let unit = 0;
+  let nombreItem = item.item || item.nombre;
+  let ubic = item.municipio || item.ubicacion || '';
+  let horario = item.horario || 'No especificado';
+  let tipoServicio = '';
+  if(type==='turismo') {
+    unit = bookingState.visitorType==='local' ? item.precioLocal : item.precioExtranjero;
+    tipoServicio = 'Lugar Turístico';
+  } else if(type==='hotel') {
+    unit = item.precioNoche;
+    tipoServicio = 'Hotel';
+    horario = 'Check-in 14:00';
+  } else if(type==='restaurante') {
+    unit = item.precioAlmuerzo || 0;
+    tipoServicio = 'Restaurante';
+  }
+  const total = unit * bookingState.personas;
+  const ticketNum = 'ROJ-' + Date.now().toString(36).toUpperCase().slice(-6);
   const fechaFormatted = new Date(bookingState.fecha+'T12:00:00').toLocaleDateString('es-BO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
   document.getElementById('ticketId').textContent = ticketNum;
-  document.getElementById('tk-lugar').textContent = l.item;
-  document.getElementById('tk-municipio').textContent = l.municipio;
+  document.getElementById('tk-tipo-servicio').textContent = tipoServicio;
+  document.getElementById('tk-lugar').textContent = nombreItem;
+  document.getElementById('tk-municipio').textContent = ubic;
   document.getElementById('tk-fecha').textContent = fechaFormatted;
-  document.getElementById('tk-horario').textContent = l.horario;
-  document.getElementById('tk-personas').textContent = bookingState.personas+' persona'+(bookingState.personas>1?'s':'');
-  document.getElementById('tk-tipo').textContent = bookingState.visitorType==='local'?'Visitante boliviano':'Turista extranjero';
-  document.getElementById('tk-precio-unit').textContent = 'Bs '+precioUnit+'/persona';
+  document.getElementById('tk-horario').textContent = horario;
+  document.getElementById('tk-personas').textContent = bookingState.personas + ' persona' + (bookingState.personas>1?'s':'');
+  document.getElementById('tk-precio-unit').textContent = 'Bs ' + unit + (type==='hotel'?'/noche':'');
   document.getElementById('tk-nombre').textContent = bookingState.nombre;
-  document.getElementById('tk-contacto').textContent = bookingState.tel+' · '+bookingState.email;
-  document.getElementById('tk-total').textContent = 'Bs '+total;
-  if(bookingState.nota){ document.getElementById('tk-nota-row').style.display='flex'; document.getElementById('tk-nota').textContent=bookingState.nota; }
-  sendToSheets({ type:'reservation', ticketNum,
+  document.getElementById('tk-contacto').textContent = bookingState.tel + ' · ' + bookingState.email;
+  document.getElementById('tk-total').textContent = 'Bs ' + total;
+  if(bookingState.nota){
+    document.getElementById('tk-nota-row').style.display='flex';
+    document.getElementById('tk-nota').textContent = bookingState.nota;
+  }
+
+  sendToSheets({
+    type:'reservation', ticketNum,
+    tipoReserva: type,
     userName:bookingState.nombre, userEmail:bookingState.email, userPhone:bookingState.tel,
-    lugar:l.item, municipio:l.municipio, fecha:bookingState.fecha,
-    personas:bookingState.personas, visitorType:bookingState.visitorType, total, nota:bookingState.nota||'' });
-  showToast('¡Ticket generado! '+ticketNum);
+    lugar:nombreItem, municipio:ubic, fecha:bookingState.fecha,
+    personas:bookingState.personas, visitorType:bookingState.visitorType,
+    total, nota:bookingState.nota||''
+  });
+  showToast('¡Ticket generado! ' + ticketNum);
 }
 
 function printTicket() {
   const content = document.getElementById('ticketWrap').outerHTML;
   const win = window.open('','_blank');
   win.document.write(`<html><head><title>Ticket Rojobore</title>
-  <style>body{font-family:system-ui;background:#0D1117;color:#E6EDF3;padding:20px;}
-  .ticket-wrap{background:linear-gradient(135deg,#0a1a05,#0d2a08);border:2px solid rgba(57,255,20,0.5);border-radius:16px;overflow:hidden;max-width:500px;margin:0 auto;}
-  .ticket-header{background:linear-gradient(135deg,#39FF14,#2dd410);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;}
-  .ticket-logo{font-size:1.2rem;font-weight:900;color:#0D1117;}.ticket-id{font-size:0.7rem;font-weight:700;color:rgba(0,0,0,0.6);}
-  .ticket-body{padding:16px;}.ticket-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed rgba(57,255,20,0.2);font-size:13px;}
-  .ticket-label{color:rgba(255,255,255,0.5);}.ticket-val{color:#fff;font-weight:600;text-align:right;max-width:60%;}
-  .ticket-total-row{background:rgba(57,255,20,0.1);border-radius:8px;padding:8px 12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
-  .ticket-total-label{font-size:12px;color:rgba(255,255,255,0.6);}.ticket-total-val{font-size:1.3rem;font-weight:900;color:#39FF14;}
-  .ticket-qr-area{background:rgba(0,0,0,0.3);padding:12px;display:flex;gap:10px;align-items:center;}
-  .ticket-qr-box{width:56px;height:56px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#000;text-align:center;font-weight:700;flex-shrink:0;}
-  .ticket-qr-text{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;}</style></head><body>${content}</body></html>`);
-  win.document.close(); win.print();
+  <style>
+    body{font-family:system-ui;background:#0D1117;color:#E6EDF3;padding:20px;}
+    .ticket-wrap{background:linear-gradient(135deg,#0a1a05,#0d2a08);border:2px solid rgba(57,255,20,0.5);border-radius:16px;overflow:hidden;max-width:500px;margin:0 auto;}
+    .ticket-header{background:linear-gradient(135deg,#39FF14,#2dd410);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;}
+    .ticket-logo{font-size:1.2rem;font-weight:900;color:#0D1117;}
+    .ticket-id{font-size:0.7rem;font-weight:700;color:rgba(0,0,0,0.6);}
+    .ticket-body{padding:16px;}
+    .ticket-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed rgba(57,255,20,0.2);font-size:13px;}
+    .ticket-label{color:rgba(255,255,255,0.5);}
+    .ticket-val{color:#fff;font-weight:600;text-align:right;max-width:60%;}
+    .ticket-total-row{background:rgba(57,255,20,0.1);border-radius:8px;padding:8px 12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
+    .ticket-total-label{font-size:12px;color:rgba(255,255,255,0.6);}
+    .ticket-total-val{font-size:1.3rem;font-weight:900;color:#39FF14;}
+    .ticket-qr-area{background:rgba(0,0,0,0.3);padding:12px;display:flex;gap:10px;align-items:center;}
+    .ticket-qr-box{width:56px;height:56px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#000;text-align:center;font-weight:700;flex-shrink:0;}
+    .ticket-qr-text{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;}
+  </style></head><body>${content}</body></html>`);
+  win.document.close();
+  win.print();
 }
 
 function sendTicketWA() {
-  const l=bookingState.lugar;
-  const precioUnit=bookingState.visitorType==='local'?l.precioLocal:l.precioExtranjero;
-  const total=precioUnit*bookingState.personas;
-  const tid=document.getElementById('ticketId').textContent;
-  const msg=`🎟️ *TICKET ROJOBORE* — ${tid}\n\n📍 *Lugar:* ${l.item}\n🏘️ *Municipio:* ${l.municipio}\n📅 *Fecha:* ${bookingState.fecha}\n🕐 *Horario:* ${l.horario}\n👥 *Personas:* ${bookingState.personas}\n💰 *Total:* Bs ${total}\n\n👤 *Nombre:* ${bookingState.nombre}\n📱 *Tel:* ${bookingState.tel}\n\n¡Que disfrutes la Chiquitanía! 🌿\nRojobore`;
-  let num=bookingState.tel.replace(/\D/g,'');
+  const item = bookingState.item;
+  const type = bookingState.serviceType;
+  let unit = 0;
+  if(type==='turismo') unit = bookingState.visitorType==='local' ? item.precioLocal : item.precioExtranjero;
+  else if(type==='hotel') unit = item.precioNoche;
+  else unit = item.precioAlmuerzo || 0;
+  const total = unit * bookingState.personas;
+  const tid = document.getElementById('ticketId').textContent;
+  const nombreItem = item.item || item.nombre;
+  const tipoServicio = type==='turismo'?'Lugar Turístico':type==='hotel'?'Hotel':'Restaurante';
+  const msg = `🎟️ *TICKET ROJOBORE* — ${tid}\n\n📌 *Tipo:* ${tipoServicio}\n📍 *Nombre:* ${nombreItem}\n🏘️ *Ubicación:* ${item.municipio||item.ubicacion||''}\n📅 *Fecha:* ${bookingState.fecha}\n🕐 *Horario:* ${item.horario||'No especificado'}\n👥 *Personas:* ${bookingState.personas}\n💰 *Total:* Bs ${total}\n\n👤 *Nombre:* ${bookingState.nombre}\n📱 *Tel:* ${bookingState.tel}\n\n¡Que disfrutes la Chiquitanía boliviana! 🌿\nRojobore — Guía oficial de Roboré`;
+  let num = bookingState.tel.replace(/\D/g,'');
   if(num.length>=8) window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`,'_blank');
   else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
 function sendTicketEmail() {
-  const l=bookingState.lugar;
-  const precioUnit=bookingState.visitorType==='local'?l.precioLocal:l.precioExtranjero;
-  const total=precioUnit*bookingState.personas;
-  const tid=document.getElementById('ticketId').textContent;
-  const subject=encodeURIComponent(`Tu ticket Rojobore — ${tid}`);
-  const body=encodeURIComponent(`TICKET ROJOBORE\nN°: ${tid}\n\nLugar: ${l.item}\nMunicipio: ${l.municipio}\nFecha: ${bookingState.fecha}\nPersonas: ${bookingState.personas}\nTotal: Bs ${total}\n\nNombre: ${bookingState.nombre}\nTeléfono: ${bookingState.tel}\nCorreo: ${bookingState.email}\n${bookingState.nota?'Nota: '+bookingState.nota:''}\n\nEquipo Rojobore`);
+  const item = bookingState.item;
+  const type = bookingState.serviceType;
+  let unit = 0;
+  if(type==='turismo') unit = bookingState.visitorType==='local' ? item.precioLocal : item.precioExtranjero;
+  else if(type==='hotel') unit = item.precioNoche;
+  else unit = item.precioAlmuerzo || 0;
+  const total = unit * bookingState.personas;
+  const tid = document.getElementById('ticketId').textContent;
+  const nombreItem = item.item || item.nombre;
+  const tipoServicio = type==='turismo'?'Lugar Turístico':type==='hotel'?'Hotel':'Restaurante';
+  const subject = encodeURIComponent(`Tu ticket Rojobore — ${tid}`);
+  const body = encodeURIComponent(`TICKET ROJOBORE\nTicket N°: ${tid}\n\nTipo: ${tipoServicio}\nNombre: ${nombreItem}\nUbicación: ${item.municipio||item.ubicacion||''}\nFecha: ${bookingState.fecha}\nHorario: ${item.horario||'No especificado'}\nPersonas: ${bookingState.personas}\nTotal: Bs ${total}\n\nNombre: ${bookingState.nombre}\nTeléfono: ${bookingState.tel}\nCorreo: ${bookingState.email}\n${bookingState.nota?'Nota: '+bookingState.nota:''}\n\nEquipo Rojobore\nhttps://rojobore.com`);
   window.open(`mailto:${bookingState.email}?subject=${subject}&body=${body}`);
 }
 
-// ==================== MAPS CALC ====================
+// ==================== MAPS Y PLAN (sin cambios) ====================
 function calcularDistancia(lat1,lng1,lat2,lng2) {
   const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lng2-lng1)*Math.PI/180;
   const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
@@ -1834,7 +1851,7 @@ function onTransportChange() {
   }
 }
 
-// ==================== PLAN AUTOMÁTICO ====================
+// ==================== PLAN / ROULETTE ====================
 function generateQuickPlan() {
   const pres=parseFloat(document.getElementById('planBudget').value),per=parseInt(document.getElementById('planPeople').value),d=parseInt(document.getElementById('planDays').value);
   if(pres<500) return showToast('Presupuesto mínimo Bs 500');
@@ -1860,7 +1877,7 @@ function generateQuickPlan() {
     if(sobrante>0) mejora=`Te sobran Bs ${Math.round(sobrante)} para souvenirs o extras.`;
   }
   const planText=buildPlanText('Plan Automático',t,h,r,acts,ct,ch,cr,ca,per,d,noches,pres,mejora);
-  document.getElementById('planResult').innerHTML=buildResultHTML(planText,pres,'auto_'+Date.now(),mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,'neon',pres,acts[0]);
+  document.getElementById('planResult').innerHTML=buildResultHTML(planText,pres,'auto_'+Date.now(),mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,'neon',pres);
 }
 
 function calculateWithSelections() {
@@ -1877,35 +1894,19 @@ function calculateWithSelections() {
   const ca=acts.reduce((s,a)=>s+a.precioLocal*p,0);
   const total=ct+ch+cr+ca;
   const planText=buildPlanText('Plan Manual',t,h,r,acts,ct,ch,cr,ca,p,d,noches,total,'');
-  document.getElementById('calcResult').innerHTML=buildResultHTML(planText,total,'manual_'+Date.now(),'',t,h,r,acts,ct,ch,cr,ca,p,d,noches,'gold',null,acts[0]);
+  document.getElementById('calcResult').innerHTML=buildResultHTML(planText,total,'manual_'+Date.now(),'',t,h,r,acts,ct,ch,cr,ca,p,d,noches,'gold');
 }
 
 function buildPlanText(tipo,t,h,r,acts,ct,ch,cr,ca,per,d,noches,total,mejora) {
-  const actsList=acts.map(a=>`  • ${a.item}\n      ${a.municipio} | ${a.horario} | Bs ${a.precioLocal}/pers`).join('\n');
-  const transLinks=t.esVehiculoPropio?`  Gasolina est.: Bs ${t.costoBs}`:`  Compra online: ${t.compraOnline||'N/D'}`;
-  return `ROJOBORE · ${tipo}\nPersonas: ${per} | Días: ${d} | Noches: ${noches}\n\nTRANSPORTE\n${t.empresa} | ${t.tipo} | ${t.ruta}\nHorarios: ${t.horario}\n${transLinks}\n\nALOJAMIENTO\n${h.nombre} | ${h.ubicacion} | ★${h.rating}\nNoches: ${noches} × Bs ${h.precioNoche} = Bs ${ch}\n\nRESTAURANTE\n${r.item} | ${r.tipo} | ${r.horario}\nAlm Bs ${r.precioAlmuerzo} + Cena Bs ${r.precioCena} × ${per} × ${d}d = Bs ${cr}\n\nACTIVIDADES (${acts.length})\n${actsList||'  Ninguna'}\nTotal actividades: Bs ${ca}\n\nTOTAL ESTIMADO: Bs ${total}\n${mejora||''}\n\n¡Que disfrutes la Chiquitanía boliviana!\nRojobore — https://rojobore.com`.trim();
+  const actsList=acts.map(a=>`  • ${a.item}\n      ${a.municipio} | ${a.horario} | ${a.transporte||''}\n      Bs ${a.precioLocal}/pers | Maps: ${a.googleMaps||'N/D'}`).join('\n');
+  const transLinks=t.esVehiculoPropio?`  Gasolina est.: Bs ${t.costoBs} (${t.kmIyV} km i/v)`:`  Compra online: ${t.compraOnline||'N/D'}\n  Facebook: ${t.facebook||'N/D'}`;
+  return `ROJOBORE · ${tipo}\nPersonas: ${per} | Días: ${d} | Noches: ${noches}\n\nTRANSPORTE\n${t.empresa} | ${t.tipo} | ${t.ruta}\nHorarios: ${t.horario}\n${transLinks}\n\nALOJAMIENTO\n${h.nombre} | ${h.ubicacion} | ★${h.rating}\nNoches: ${noches} × Bs ${h.precioNoche} = Bs ${ch}\nMaps: ${h.googleMaps||'N/D'}\n\nRESTAURANTE\n${r.item} | ${r.tipo} | ${r.horario}\nAlm Bs ${r.precioAlmuerzo} + Cena Bs ${r.precioCena} × ${per} × ${d}d = Bs ${cr}\nMaps: ${r.googleMaps||'N/D'}\n\nACTIVIDADES (${acts.length})\n${actsList||'  Ninguna'}\nTotal actividades: Bs ${ca}\n\nTOTAL ESTIMADO: Bs ${total}\n${mejora?mejora:''}\n\n¡Que disfrutes la Chiquitanía boliviana!\nRojobore — https://rojobore.com`.trim();
 }
 
-// CAMBIO #3: buildResultHTML incluye botón "Reservar primer lugar del plan"
-function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,colorKey,presupuesto,primerActo) {
+function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,colorKey,presupuesto) {
   const c=colorKey==='neon'?'var(--c-turismo)':'var(--gold)';
   const sobrante=presupuesto?presupuesto-total:0;
-  const sobranteBlock=presupuesto&&sobrante>0?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.6rem;">
-    <div style="background:rgba(57,255,20,0.12);border:1.5px solid rgba(57,255,20,0.4);border-radius:10px;padding:0.7rem;text-align:center;">
-      <div style="font-size:0.7rem;color:var(--text-soft);">GASTO</div>
-      <div style="font-size:1.3rem;font-weight:900;color:var(--c-turismo);">Bs ${total}</div>
-    </div>
-    <div style="background:rgba(255,215,0,0.12);border:1.5px solid rgba(255,215,0,0.4);border-radius:10px;padding:0.7rem;text-align:center;">
-      <div style="font-size:0.7rem;color:var(--text-soft);">TE SOBRA</div>
-      <div style="font-size:1.3rem;font-weight:900;color:var(--gold);">Bs ${sobrante}</div>
-    </div>
-  </div>`:'';
-
-  // Botón de reserva para el primer lugar turístico del plan
-  const reservarBtn = primerActo
-    ? `<button class="btn-send reservar" onclick="closeModals();openBookingForLugar(${primerActo.id})">🎟️ Reservar "${primerActo.item.length>22?primerActo.item.substring(0,20)+'…':primerActo.item}"</button>`
-    : '';
-
+  const sobranteBlock=presupuesto&&sobrante>0?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.6rem;"><div style="background:rgba(57,255,20,0.12);border:1.5px solid rgba(57,255,20,0.4);border-radius:10px;padding:0.7rem;text-align:center;"><div style="font-size:0.7rem;color:var(--text-soft);">GASTO</div><div style="font-size:1.3rem;font-weight:900;color:var(--c-turismo);">Bs ${total}</div></div><div style="background:rgba(255,215,0,0.12);border:1.5px solid rgba(255,215,0,0.4);border-radius:10px;padding:0.7rem;text-align:center;"><div style="font-size:0.7rem;color:var(--text-soft);">TE SOBRA</div><div style="font-size:1.3rem;font-weight:900;color:var(--gold);">Bs ${sobrante}</div></div></div>`:'';
   return `<div class="result-box" style="margin-top:0.8rem;">
     <div style="font-weight:700;font-size:0.8rem;color:${c};margin-bottom:0.5rem;">Desglose · ${per} pers · ${d} días (${noches}n)</div><hr>
     <div style="margin:0.4rem 0;font-size:0.78rem;"><strong style="color:${c};">Transporte:</strong> ${t.empresa} · <strong>Bs ${ct}</strong>${t.googleMaps?` <a href="${t.googleMaps}" target="_blank" style="color:var(--c-transporte);font-size:0.7rem;">Maps</a>`:''}</div>
@@ -1913,15 +1914,13 @@ function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per
     <div style="margin:0.4rem 0;font-size:0.78rem;"><strong style="color:${c};">Restaurante:</strong> ${r.item} · <strong>Bs ${cr}</strong></div>
     <div style="margin:0.4rem 0;font-size:0.78rem;"><strong style="color:${c};">Actividades:</strong> ${acts.map(a=>a.item).join(', ')||'Ninguna'} · <strong>Bs ${ca}</strong></div>
   </div>
-  <div class="result-total"><div style="font-size:0.72rem;color:var(--text-soft);">TOTAL ESTIMADO</div><div class="big">Bs ${presupuesto||total}</div></div>
+  <div class="result-total"><div style="font-size:0.72rem;color:var(--text-soft);">TOTAL</div><div class="big">Bs ${presupuesto||total}</div></div>
   ${sobranteBlock}
-  ${reservarBtn}
   <button class="btn-send email" onclick="enviarPresupuesto(\`${planText.replace(/`/g,'\\`')}\`,${total},'email')">📧 Enviar por Email</button>
   <button class="btn-send whatsapp" onclick="enviarPresupuesto(\`${planText.replace(/`/g,'\\`')}\`,${total},'whatsapp')">💬 Enviar por WhatsApp</button>
   ${generateReviewSection(planId)}`;
 }
 
-// ==================== ROULETTE ====================
 function runRoulette() {
   if(!currentUser){showToast('Regístrate primero');return;}
   closeChoiceModal();
@@ -1958,7 +1957,7 @@ function runRoulette() {
         const ct=tF.precio*per*2,ch=hF.precioNoche*noches,cr=((rF.precioAlmuerzo||0)+(rF.precioCena||0))*per*d,ca=actsF.reduce((s,a)=>s+a.precioLocal*per,0);
         const total=ct+ch+cr+ca;
         const planText=buildPlanText('Ruta Sorpresa',tF,hF,rF,actsF,ct,ch,cr,ca,per,d,noches,total,'¡Aventura aleatoria!');
-        document.getElementById('surpriseResult').innerHTML=buildResultHTML(planText,total,'sorpresa_'+Date.now(),'¡Ruta aleatoria!',tF,hF,rF,actsF,ct,ch,cr,ca,per,d,noches,'gold',null,actsF[0]);
+        document.getElementById('surpriseResult').innerHTML=buildResultHTML(planText,total,'sorpresa_'+Date.now(),'¡Ruta aleatoria!',tF,hF,rF,actsF,ct,ch,cr,ca,per,d,noches,'gold');
         document.getElementById('surpriseModal').classList.remove('hidden');
       },1500);
     }
@@ -1969,9 +1968,12 @@ function reservarDirecto(n,t) {
   if(!t||t==='N/A'){showToast('Teléfono no disponible');return;}
   window.open(`https://wa.me/${t.replace(/[^0-9+]/g,'')}?text=${encodeURIComponent('Hola! Vi '+n+' en Rojobore y quisiera más información.')}`, '_blank');
 }
-function contactSupport() { window.open('https://wa.me/59171607412?text=Hola Rojobore!', '_blank'); }
+function contactSupport() {
+  window.open('https://wa.me/59171607412?text=Hola Rojobore!', '_blank');
+}
 
 function openChoiceModalSafe(){ if(!currentUser){showToast('Regístrate primero');return;} document.getElementById('choiceModal').classList.remove('hidden'); }
+function openChoiceModal(){ if(!currentUser){showToast('Regístrate primero');return;} document.getElementById('choiceModal').classList.remove('hidden'); }
 function closeChoiceModal(){ document.getElementById('choiceModal').classList.add('hidden'); }
 function closeModals(){ ['planModal','calcModal','choiceModal','surpriseModal'].forEach(id=>document.getElementById(id).classList.add('hidden')); }
 function openPlanModal(){ closeModals(); document.getElementById('planModal').classList.remove('hidden'); document.getElementById('planResult').innerHTML=''; document.getElementById('planRouteInfo').textContent='Selecciona origen y destino'; }
