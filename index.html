@@ -130,8 +130,7 @@
       filter:drop-shadow(0 0 30px rgba(57,255,20,0.4)) drop-shadow(0 6px 12px rgba(0,0,0,0.6));
       letter-spacing:-0.01em;
     }
-    .hero-sub { font-size:1.1rem; margin:0.5rem 0 2rem; color:rgba(255,255,255,0.8); text-shadow:0 4px 10px rgba(0,0,0,0.6); font-weight:300; letter-spacing:0.1em; text-transform:uppercase; font-size:0.85rem; }
-    .hero-buttons { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+    .hero-buttons { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:0.5rem; }
     .btn-hero {
       flex:1; min-width:160px; padding:1rem 1.8rem; border-radius:30px;
       font-weight:700; font-size:0.88rem; cursor:pointer; border:none;
@@ -143,53 +142,108 @@
     .btn-plan { background:rgba(255,215,0,0.15); color:var(--gold); border:1px solid rgba(255,215,0,0.4); box-shadow:0 8px 25px rgba(255,215,0,0.15); }
     .btn-hero:hover { transform:translateY(-2px); filter:brightness(1.1); }
 
-    .user-bar { position:absolute; top:1rem; right:1rem; z-index:10; display:flex; gap:0.5rem; align-items:center; }
-    .user-chip { background:rgba(57,255,20,0.15); border:1px solid rgba(57,255,20,0.3); padding:0.4rem 0.8rem; border-radius:20px; font-size:0.7rem; font-weight:600; color:var(--neon); }
-    .btn-logout { background:none; border:1px solid rgba(255,255,255,0.3); padding:0.2rem 0.5rem; border-radius:12px; font-size:0.6rem; cursor:pointer; color:rgba(255,255,255,0.6); }
-
-    /* ===== REGISTRO COMO MODAL OVERLAY (antes era panel fijo en el hero) ===== */
-    .hero-register-panel {
-      position:fixed; inset:0; z-index:3800;
-      background:rgba(0,0,0,0.85);
-      padding:1.5rem 2rem 2rem;
-      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem;
+    /* ===== BARRA DE USUARIO (SIEMPRE VISIBLE) ===== */
+    .user-bar {
+      position:absolute; top:1rem; right:1rem; z-index:10;
+      display:flex; gap:0.5rem; align-items:center;
     }
-    .hero-register-panel .hero-reg-close {
+    .user-chip {
+      background:rgba(57,255,20,0.15);
+      border:1px solid rgba(57,255,20,0.3);
+      padding:0.4rem 0.8rem;
+      border-radius:20px;
+      font-size:0.7rem;
+      font-weight:600;
+      color:var(--neon);
+    }
+    .btn-login-top {
+      background:rgba(57,255,20,0.12);
+      border:1px solid rgba(57,255,20,0.4);
+      padding:0.3rem 0.9rem;
+      border-radius:20px;
+      font-size:0.7rem;
+      font-weight:700;
+      cursor:pointer;
+      color:var(--neon);
+      transition:0.2s;
+      font-family:var(--font);
+      letter-spacing:0.04em;
+    }
+    .btn-login-top:hover {
+      background:rgba(57,255,20,0.25);
+      transform:scale(1.02);
+    }
+    .btn-logout-top {
+      background:none;
+      border:1px solid rgba(255,255,255,0.2);
+      padding:0.2rem 0.6rem;
+      border-radius:12px;
+      font-size:0.6rem;
+      cursor:pointer;
+      color:rgba(255,255,255,0.6);
+      font-family:var(--font);
+    }
+    .btn-logout-top:hover { background:rgba(255,255,255,0.05); }
+
+    /* ===== MODAL DE AUTENTICACIÓN GLOBAL ===== */
+    .auth-modal {
+      position:fixed; inset:0; z-index:6000;
+      background:rgba(0,0,0,0.88);
+      padding:1.5rem 2rem 2rem;
+      display:none;
+      flex-direction:column; align-items:center; justify-content:center; gap:1rem;
+    }
+    .auth-modal.visible { display:flex; }
+    .auth-modal-close {
       position:absolute; top:16px; right:16px;
       background:rgba(255,255,255,0.1); border:none; color:#fff;
       width:36px; height:36px; border-radius:8px; cursor:pointer; font-size:1.1rem;
     }
-    .hero-reg-title {
+    .auth-modal-title {
       font-family:var(--font-display); color:#fff; font-size:1.3rem; font-weight:700;
       text-align:center; text-shadow:0 2px 8px rgba(0,0,0,0.6);
     }
-    .hero-reg-sub { font-size:0.8rem; color:rgba(255,255,255,0.55); text-align:center; }
-    .hero-reg-tabs { display:flex; background:rgba(255,255,255,0.08); border-radius:12px; padding:3px; gap:2px; }
-    .hero-reg-tab { flex:1; padding:0.45rem 1.2rem; border:none; background:transparent; border-radius:9px; font-family:var(--font); font-size:0.78rem; font-weight:600; cursor:pointer; color:rgba(255,255,255,0.5); transition:0.2s; white-space:nowrap; }
-    .hero-reg-tab.active { background:var(--card); color:var(--neon); box-shadow:0 2px 8px rgba(0,0,0,0.3); }
-    .hero-reg-form { width:100%; max-width:480px; display:flex; flex-direction:column; gap:0.65rem; }
-    .hero-reg-row { display:flex; gap:0.6rem; }
-    .hero-input-group { position:relative; flex:1; }
-    .hero-input-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.4); font-size:0.85rem; pointer-events:none; }
-    .hero-input {
+    .auth-modal-sub { font-size:0.8rem; color:rgba(255,255,255,0.55); text-align:center; }
+    .auth-modal-tabs { display:flex; background:rgba(255,255,255,0.08); border-radius:12px; padding:3px; gap:2px; }
+    .auth-modal-tab { flex:1; padding:0.45rem 1.2rem; border:none; background:transparent; border-radius:9px; font-family:var(--font); font-size:0.78rem; font-weight:600; cursor:pointer; color:rgba(255,255,255,0.5); transition:0.2s; white-space:nowrap; }
+    .auth-modal-tab.active { background:var(--card); color:var(--neon); box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+    .auth-modal-form { width:100%; max-width:480px; display:flex; flex-direction:column; gap:0.65rem; }
+    .auth-modal-row { display:flex; gap:0.6rem; }
+    .auth-input-group { position:relative; flex:1; }
+    .auth-input-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.4); font-size:0.85rem; pointer-events:none; }
+    .auth-input {
       width:100%; padding:0.75rem 0.9rem 0.75rem 2.5rem; border-radius:10px;
       border:1.5px solid rgba(255,255,255,0.12); font-family:var(--font); font-size:0.85rem;
       background:rgba(255,255,255,0.07); color:#fff; transition:all 0.2s;
     }
-    .hero-input:focus { outline:none; border-color:var(--neon); background:rgba(57,255,20,0.05); }
-    .hero-input::placeholder { color:rgba(255,255,255,0.35); }
-    .btn-register-hero {
+    .auth-input:focus { outline:none; border-color:var(--neon); background:rgba(57,255,20,0.05); }
+    .auth-input::placeholder { color:rgba(255,255,255,0.35); }
+    .auth-btn-primary {
       width:100%; background:var(--neon); color:#0D1117; border:none;
       padding:0.85rem; border-radius:10px; font-weight:700; font-size:0.9rem;
       cursor:pointer; letter-spacing:0.04em; text-transform:uppercase;
       transition:all 0.3s; box-shadow:0 6px 20px rgba(57,255,20,0.3);
       font-family:var(--font);
     }
-    .btn-register-hero:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(57,255,20,0.4); }
-    .btn-login-hero { background:transparent; color:var(--neon); border:1.5px solid var(--neon); box-shadow:none; }
-    .btn-login-hero:hover { background:rgba(57,255,20,0.1); }
-    .hero-reg-footer { font-size:0.68rem; color:rgba(255,255,255,0.3); text-align:center; }
-    .hero-reg-footer span { color:rgba(57,255,20,0.7); cursor:pointer; }
+    .auth-btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(57,255,20,0.4); }
+    .auth-btn-secondary { background:transparent; color:var(--neon); border:1.5px solid var(--neon); box-shadow:none; }
+    .auth-btn-secondary:hover { background:rgba(57,255,20,0.1); }
+    .auth-modal-footer { font-size:0.68rem; color:rgba(255,255,255,0.3); text-align:center; }
+    .auth-modal-footer span { color:rgba(57,255,20,0.7); cursor:pointer; }
+    .auth-context-msg {
+      background:rgba(255,215,0,0.08);
+      border-left:4px solid var(--gold);
+      padding:0.6rem 1rem;
+      border-radius:6px;
+      font-size:0.85rem;
+      color:rgba(255,255,255,0.9);
+      text-align:center;
+      line-height:1.5;
+      max-width:480px;
+      width:100%;
+      margin-bottom:0.2rem;
+    }
+    .auth-context-msg strong { color:var(--gold); }
 
     /* ===== PANELS ===== */
     .panel-header-turismo { background:linear-gradient(135deg, #0a1a05 0%, #0d2a08 100%); border-bottom:1px solid rgba(57,255,20,0.3); }
@@ -473,7 +527,7 @@
       padding:0.9rem 1.2rem; display:flex; justify-content:space-between; align-items:center;
     }
     .ticket-logo { font-family:var(--font-display); font-size:1.2rem; font-weight:900; color:#0D1117; }
-    .ticket-id { font-size:0.65rem; font-weight:700; color:rgba(0,0,0,0.6); }
+    .ticket-id { font-size:0.65rem; font-weight:700; color:#0D1117; }
     .ticket-body { padding:1rem 1.2rem; }
     .ticket-row { display:flex; justify-content:space-between; padding:0.35rem 0; border-bottom:1px dashed rgba(57,255,20,0.2); font-size:0.8rem; }
     .ticket-row:last-child { border-bottom:none; }
@@ -498,6 +552,69 @@
     .ticket-btn-wa { background:#25D366; color:#fff; }
     .ticket-btn-email { background:rgba(255,255,255,0.08); color:var(--text); border:1px solid var(--border); }
     .ticket-btn:hover { filter:brightness(1.1); transform:translateY(-1px); }
+
+    /* Estilo para el sobrante (más visible) */
+    .sobrante-destacado {
+      background:rgba(255,215,0,0.12);
+      border:2px solid var(--gold);
+      border-radius:12px;
+      padding:0.7rem 1rem;
+      margin-top:0.6rem;
+      display:flex;
+      align-items:center;
+      gap:0.6rem;
+      font-weight:700;
+      color:var(--gold);
+      box-shadow:0 0 20px rgba(255,215,0,0.15);
+    }
+    .sobrante-destacado .icono { font-size:1.4rem; }
+    .sobrante-destacado .monto { font-size:1.3rem; }
+
+    /* Estilo específico para el ticket de plan (fondo claro, texto oscuro) */
+    .plan-ticket-wrap {
+      background:linear-gradient(145deg, #f8f9fa, #e9ecef) !important;
+      border:2px solid #0a2463 !important;
+    }
+    .plan-ticket-wrap .ticket-header {
+      background:linear-gradient(135deg, #0a2463, #1a3a7a) !important;
+    }
+    .plan-ticket-wrap .ticket-logo {
+      color: #fff !important;
+    }
+    .plan-ticket-wrap .ticket-id {
+      color: #fff !important;
+    }
+    .plan-ticket-wrap .ticket-body .ticket-label {
+      color: #2c3e50 !important;
+    }
+    .plan-ticket-wrap .ticket-body .ticket-val {
+      color: #0a2463 !important;
+    }
+    .plan-ticket-wrap .ticket-row {
+      border-bottom: 1px dashed rgba(10,36,99,0.2) !important;
+    }
+    .plan-ticket-wrap .ticket-total-row {
+      background: rgba(10,36,99,0.08) !important;
+      border-radius: 8px;
+    }
+    .plan-ticket-wrap .ticket-total-label {
+      color: #2c3e50 !important;
+    }
+    .plan-ticket-wrap .ticket-total-val {
+      color: #0a2463 !important;
+    }
+    .plan-ticket-wrap .ticket-qr-area {
+      background: rgba(10,36,99,0.05) !important;
+    }
+    .plan-ticket-wrap .ticket-qr-text {
+      color: #2c3e50 !important;
+    }
+
+    .plan-ticket-id {
+      color: #fff !important;
+      font-size:0.65rem;
+      font-weight:700;
+    }
   </style>
 </head>
 <body>
@@ -543,6 +660,11 @@
       <select id="planOrigin"><option value="">Origen</option><option value="santa-cruz">Santa Cruz</option><option value="cochabamba">Cochabamba</option><option value="la-paz">La Paz</option><option value="sucre">Sucre</option><option value="tarija">Tarija</option><option value="potosi">Potosí</option><option value="oruro">Oruro</option><option value="trinidad">Trinidad</option></select>
       <select id="planDest"><option value="">Destino</option><option value="roboré">Roboré</option><option value="chochis">Chochís</option><option value="aguascalientes">Aguas Calientes</option></select>
       <button onclick="calcularPlanRoute()">Calcular</button>
+    </div>
+    <!-- Checkbox para forzar vehículo propio -->
+    <div style="margin:0.3rem 0; display:flex; align-items:center; gap:0.5rem;">
+      <input type="checkbox" id="planUseOwnCar" style="width:18px;height:18px;cursor:pointer;">
+      <label for="planUseOwnCar" style="font-size:0.78rem;color:var(--text-soft);cursor:pointer;">Usar vehículo propio (ignorar transporte público)</label>
     </div>
     <div id="planRouteInfo" class="tarifa-info" style="margin:0.3rem 0;">Selecciona origen y destino</div>
     <button class="btn-hero-modal btn-modal-green" onclick="generateQuickPlan()">Generar plan</button>
@@ -719,6 +841,39 @@
   </div>
 </div>
 
+<!-- ===== TICKET PARA PLAN COMPLETO (modal independiente) ===== -->
+<div class="booking-modal hidden" id="planTicketModal">
+  <div class="booking-card">
+    <div class="booking-header" style="background:linear-gradient(135deg, #1a2a0d, #2a4a18);">
+      <span style="font-size:1.4rem;">📋</span>
+      <div style="flex:1;">
+        <div style="font-family:var(--font-display);color:var(--gold);font-size:1.05rem;font-weight:700;">Resumen de tu plan</div>
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);margin-top:2px;">Todos los ítems en un solo ticket</div>
+      </div>
+      <button onclick="closePlanTicket()" style="background:rgba(255,255,255,0.08);border:none;color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;">✕</button>
+    </div>
+    <div class="booking-body">
+      <div class="ticket-wrap plan-ticket-wrap" id="planTicketWrap">
+        <div class="ticket-header">
+          <span class="ticket-logo">🗺 Rojobore</span>
+          <div style="text-align:right;">
+            <div class="plan-ticket-id">RESERVA DE PLAN</div>
+            <div id="planTicketId" style="font-size:0.8rem;font-weight:900;color:#fff;"></div>
+          </div>
+        </div>
+        <div class="ticket-body" id="planTicketBody">
+          <!-- Se llena dinámicamente -->
+        </div>
+        <div class="ticket-actions">
+          <button class="ticket-btn ticket-btn-print" onclick="printPlanTicket()">🖨️ Imprimir</button>
+          <button class="ticket-btn ticket-btn-wa" onclick="sendPlanTicketWA()">💬 WhatsApp</button>
+          <button class="ticket-btn ticket-btn-email" onclick="sendPlanTicketEmail()">📧 Email</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===== SIDEBAR ===== -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo">R</div>
@@ -765,61 +920,15 @@
     <div class="hero-full">
       <div class="clouds-container" id="cloudsContainer"></div>
 
-      <div class="user-bar" id="userBar" style="display:none;">
-        <span class="user-chip" id="userName">Usuario</span>
-        <button class="btn-logout" onclick="logout()">Salir</button>
+      <!-- BARRA DE USUARIO SIEMPRE VISIBLE -->
+      <div class="user-bar" id="userBar">
+        <span class="user-chip" id="userName" style="display:none;">Usuario</span>
+        <button class="btn-login-top" id="btnLoginTop" onclick="abrirLoginModal()">Iniciar sesión</button>
+        <button class="btn-logout-top" id="btnLogoutTop" style="display:none;" onclick="logout()">Cerrar sesión</button>
       </div>
 
-      <!-- ✅ CORRECCIÓN PUNTO 2: el registro ahora es un modal oculto por defecto (style="display:none"),
-           ya no se muestra automáticamente al cargar la página. Se abre solo con openRegisterModal(). -->
-      <div id="heroRegisterPanel" class="hero-register-panel" style="display:none;">
-        <button class="hero-reg-close" onclick="closeRegisterModal()">✕</button>
-        <div style="text-align:center;">
-          <div class="hero-title" style="font-size:clamp(2rem,6vw,3.5rem);margin-bottom:0.3rem;">Rojobore</div>
-          <p class="hero-sub">Chiquitanía · Bolivia · Aventura</p>
-        </div>
-
-        <div class="hero-reg-tabs">
-          <button class="hero-reg-tab active" onclick="switchHeroTab('register')">Crear cuenta</button>
-          <button class="hero-reg-tab" onclick="switchHeroTab('login')">Ya tengo cuenta</button>
-        </div>
-
-        <!-- Registro -->
-        <div id="hero-form-register" class="hero-reg-form">
-          <div class="hero-reg-row">
-            <div class="hero-input-group">
-              <span class="hero-input-icon">👤</span>
-              <input class="hero-input" type="text" id="regName" placeholder="Nombre completo" required>
-            </div>
-          </div>
-          <div class="hero-reg-row">
-            <div class="hero-input-group" style="flex:1.2;">
-              <span class="hero-input-icon">📧</span>
-              <input class="hero-input" type="email" id="regEmail" placeholder="Correo electrónico" required>
-            </div>
-            <div class="hero-input-group" style="flex:1;">
-              <span class="hero-input-icon">📱</span>
-              <input class="hero-input" type="tel" id="regPhone" placeholder="+591 71607412" required>
-            </div>
-          </div>
-          <button class="btn-register-hero" onclick="registerUser()">Registrarme gratis</button>
-        </div>
-
-        <!-- Login -->
-        <div id="hero-form-login" class="hero-reg-form" style="display:none;">
-          <div class="hero-input-group">
-            <span class="hero-input-icon">📧</span>
-            <input class="hero-input" type="email" id="loginEmail" placeholder="Correo electrónico registrado" required>
-          </div>
-          <button class="btn-register-hero btn-login-hero" onclick="loginUser()">Ingresar a mi cuenta</button>
-        </div>
-
-        <div class="hero-reg-footer">Al registrarte aceptas nuestros <span>términos</span> y <span>política de privacidad</span></div>
-      </div>
-
-      <!-- ✅ CORRECCIÓN PUNTO 2: ahora siempre visible (display:flex), con o sin usuario registrado -->
-      <div class="hero-content" id="heroLoggedContent" style="display:flex;">
-        <p class="hero-sub">Chiquitanía · Bolivia · Aventura</p>
+      <!-- CONTENIDO DEL HERO (sin mensaje de bienvenida) -->
+      <div class="hero-content" id="heroLoggedContent" style="display:flex; flex-direction:column; align-items:center;">
         <div class="hero-buttons">
           <button class="btn-hero btn-explore" onclick="showSection('turismo')">Explorar lugares</button>
           <button class="btn-hero btn-plan" onclick="openChoiceModalSafe()">Planificar viaje</button>
@@ -878,6 +987,58 @@
 
 </div>
 
+<!-- ===== MODAL DE AUTENTICACIÓN GLOBAL ===== -->
+<div id="authModal" class="auth-modal">
+  <button class="auth-modal-close" onclick="closeAuthModal()">✕</button>
+  <div style="text-align:center;">
+    <div class="hero-title" style="font-size:clamp(2rem,6vw,3.5rem);margin-bottom:0.3rem;">Rojobore</div>
+  </div>
+
+  <!-- Mensaje contextual -->
+  <div id="authContextMsg" class="auth-context-msg" style="display:none;">
+    <strong>🔐 Para realizar esta reserva, necesitas una cuenta.</strong><br>
+    <span id="authContextDetail">Es rápido, gratuito y te permite gestionar todas tus reservas.</span>
+  </div>
+
+  <div class="auth-modal-tabs">
+    <button class="auth-modal-tab active" onclick="switchAuthTab('register')">Crear cuenta</button>
+    <button class="auth-modal-tab" onclick="switchAuthTab('login')">Ya tengo cuenta</button>
+  </div>
+
+  <!-- Registro -->
+  <div id="auth-form-register" class="auth-modal-form">
+    <div class="auth-modal-row">
+      <div class="auth-input-group">
+        <span class="auth-input-icon">👤</span>
+        <input class="auth-input" type="text" id="regName" placeholder="Nombre completo" required>
+      </div>
+    </div>
+    <div class="auth-modal-row">
+      <div class="auth-input-group" style="flex:1.2;">
+        <span class="auth-input-icon">📧</span>
+        <input class="auth-input" type="email" id="regEmail" placeholder="Correo electrónico" required>
+      </div>
+      <div class="auth-input-group" style="flex:1;">
+        <span class="auth-input-icon">📱</span>
+        <input class="auth-input" type="tel" id="regPhone" placeholder="+591 71607412" required>
+      </div>
+    </div>
+    <button class="auth-btn-primary" onclick="registerUser()">Registrarme gratis</button>
+  </div>
+
+  <!-- Login -->
+  <div id="auth-form-login" class="auth-modal-form" style="display:none;">
+    <div class="auth-input-group">
+      <span class="auth-input-icon">📧</span>
+      <input class="auth-input" type="email" id="loginEmail" placeholder="Correo electrónico registrado" required>
+    </div>
+    <button class="auth-btn-primary auth-btn-secondary" onclick="loginUser()">Ingresar a mi cuenta</button>
+  </div>
+
+  <div class="auth-modal-footer">Al registrarte aceptas nuestros <span>términos</span> y <span>política de privacidad</span></div>
+</div>
+
+<!-- ===== WHATSAPP FLOTANTE ===== -->
 <button class="whatsapp-float" onclick="contactSupport()">💬</button>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -998,23 +1159,45 @@ let bookingState = {
   nota: ''
 };
 
-// ==================== REGISTRO COMO MODAL (PUNTO 2) ====================
-// El panel de registro ya no se muestra automáticamente en el hero.
-// Estas dos funciones lo abren/cierran como un modal flotante,
-// que se invoca desde showSection(), openChoiceModalSafe() y openBookingModal()
-// cuando el usuario intenta usar una función sin estar registrado.
-function openRegisterModal() {
-  document.getElementById('heroRegisterPanel').style.display = 'flex';
-}
-function closeRegisterModal() {
-  document.getElementById('heroRegisterPanel').style.display = 'none';
+// ==================== MODAL DE AUTENTICACIÓN (FUNCIONES GLOBALES) ====================
+function openAuthModal(mensaje) {
+  // Cerrar drawer y modales de reserva para que el registro sea el foco principal
+  closeDrawer();
+  document.getElementById('bookingModal').classList.add('hidden');
+  document.getElementById('planTicketModal').classList.add('hidden');
+  document.getElementById('authModal').classList.add('visible');
+  
+  const ctx = document.getElementById('authContextMsg');
+  const detail = document.getElementById('authContextDetail');
+  if (mensaje) {
+    ctx.style.display = 'block';
+    detail.textContent = mensaje;
+  } else {
+    ctx.style.display = 'none';
+  }
 }
 
-window.switchHeroTab = function(tab) {
-  document.querySelectorAll('.hero-reg-tab').forEach(t => t.classList.remove('active'));
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('visible');
+}
+
+// Alias para mantener compatibilidad con código existente
+function openRegisterModal(mensaje) { openAuthModal(mensaje); }
+function closeRegisterModal() { closeAuthModal(); }
+
+function abrirLoginModal() {
+  openAuthModal(); // sin mensaje específico
+  document.querySelectorAll('.auth-modal-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.auth-modal-tab:last-child').classList.add('active');
+  document.getElementById('auth-form-register').style.display = 'none';
+  document.getElementById('auth-form-login').style.display = 'flex';
+}
+
+window.switchAuthTab = function(tab) {
+  document.querySelectorAll('.auth-modal-tab').forEach(t => t.classList.remove('active'));
   event.target.classList.add('active');
-  document.getElementById('hero-form-register').style.display = tab === 'register' ? 'flex' : 'none';
-  document.getElementById('hero-form-login').style.display = tab === 'login' ? 'flex' : 'none';
+  document.getElementById('auth-form-register').style.display = tab === 'register' ? 'flex' : 'none';
+  document.getElementById('auth-form-login').style.display = tab === 'login' ? 'flex' : 'none';
 };
 
 // ==================== REGISTRO / LOGIN ====================
@@ -1031,9 +1214,8 @@ window.registerUser = async function() {
       currentUser = { name, email, phone };
       localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
       updateUserUI();
-      closeRegisterModal();
+      closeAuthModal();
       showToast('¡Bienvenido/a ' + name.split(' ')[0] + '!');
-      // El servidor envía el correo de bienvenida automáticamente
     } else if (text === 'already_exists') {
       showToast('Este correo ya está registrado. Inicia sesión.');
     } else {
@@ -1055,7 +1237,7 @@ window.loginUser = async function() {
       currentUser = data.user;
       localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
       updateUserUI();
-      closeRegisterModal();
+      closeAuthModal();
       showToast('¡Hola de nuevo, ' + currentUser.name.split(' ')[0] + '!');
     } else {
       showToast('Correo no encontrado. Regístrate primero.');
@@ -1073,18 +1255,21 @@ function logout() {
   showSection('hero');
 }
 
-// ✅ CORRECCIÓN PUNTO 2: ya no controla heroRegisterPanel (ahora es modal independiente).
-// El hero siempre muestra heroLoggedContent, con o sin usuario.
 function updateUserUI() {
-  const bar = document.getElementById('userBar');
-  const heroLogged = document.getElementById('heroLoggedContent');
+  const chip = document.getElementById('userName');
+  const btnLogin = document.getElementById('btnLoginTop');
+  const btnLogout = document.getElementById('btnLogoutTop');
   if (currentUser) {
-    bar.style.display = 'flex';
-    document.getElementById('userName').textContent = currentUser.name.split(' ')[0];
+    chip.style.display = 'inline-block';
+    chip.textContent = currentUser.name.split(' ')[0];
+    btnLogin.style.display = 'none';
+    btnLogout.style.display = 'inline-block';
   } else {
-    bar.style.display = 'none';
+    chip.style.display = 'none';
+    btnLogin.style.display = 'inline-block';
+    btnLogout.style.display = 'none';
   }
-  heroLogged.style.display = 'flex';
+  document.getElementById('heroLoggedContent').style.display = 'flex';
 }
 
 // ==================== ENVÍO A SHEETS ====================
@@ -1099,7 +1284,10 @@ async function sendToSheets(data) {
 }
 
 window.enviarPresupuesto = async function(planText, total, metodo) {
-  if (!currentUser) { openRegisterModal(); return; }
+  if (!currentUser) { 
+    openAuthModal('Para guardar y enviar tu plan de viaje, necesitas crear una cuenta. Es rápido y gratuito.');
+    return;
+  }
   const ok = await sendToSheets({ type:'plan', userName:currentUser.name, userEmail:currentUser.email, userPhone:currentUser.phone, planDetails:planText, total:total, metodoEnvio:metodo });
   if (!ok) return;
   const body = `Hola ${currentUser.name},\n\n${planText}\n\n¡Disfruta tu viaje por la Chiquitanía boliviana!\n\nEquipo Rojobore\nhttps://rojobore.com`;
@@ -1108,9 +1296,15 @@ window.enviarPresupuesto = async function(planText, total, metodo) {
     window.open(`mailto:${currentUser.email}?subject=${subject}&body=${encodeURIComponent(body)}`);
     showToast('Email enviado a ' + currentUser.email);
   } else {
-    let num = (currentUser.phone || '').replace(/\D/g, '');
-    if (num.length >= 8) { window.open(`https://wa.me/${num}?text=${encodeURIComponent(body)}`); showToast('WhatsApp enviado'); }
-    else showToast('Número de WhatsApp inválido');
+    let phoneStr = String(currentUser.phone || '');
+    let num = phoneStr.replace(/\D/g, '');
+    if (num.length >= 8) {
+      window.open(`https://wa.me/${num}?text=${encodeURIComponent(body)}`);
+      showToast('WhatsApp enviado');
+    } else {
+      window.open(`https://wa.me/59171607412?text=${encodeURIComponent(body)}`);
+      showToast('WhatsApp abierto (contacto de soporte)');
+    }
   }
 };
 
@@ -1122,10 +1316,7 @@ function toggleSidebar() {
   if(fullMap) setTimeout(()=>fullMap.invalidateSize(),350);
 }
 
-// ✅ CORRECCIÓN PUNTO 2: en vez de solo avisar con un toast, ahora abre
-// directamente el modal de registro cuando el usuario no está logueado.
 function showSection(name) {
-  if(!currentUser && name!=='hero') { openRegisterModal(); return; }
   document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
   const navEl=document.getElementById('nav-'+name);
   if(navEl) navEl.classList.add('active');
@@ -1522,9 +1713,11 @@ function initFullMap() {
 }
 
 // ==================== SISTEMA DE RESERVAS AMPLIADO ====================
-// ✅ CORRECCIÓN PUNTO 2: ahora abre el modal de registro en vez de solo avisar.
 function openBookingModal() {
-  if(!currentUser) { openRegisterModal(); return; }
+  if(!currentUser) {
+    openAuthModal('Para hacer una reserva, necesitas crear una cuenta en Rojobore. Es rápido, gratuito y te permite gestionar todas tus reservas en un solo lugar.');
+    return;
+  }
   bookingState = {
     step: 1, serviceType: 'turismo', item: null,
     fecha: '', personas: 2, visitorType: 'local',
@@ -1544,6 +1737,7 @@ function openBookingModal() {
 
 function openBookingFor(type, id) {
   openBookingModal();
+  if (!currentUser) return;
   setTimeout(()=>{
     switchBookingTab(type);
     const opts = document.querySelectorAll('.item-select-opt');
@@ -1564,7 +1758,6 @@ function switchBookingTab(tab) {
   const map = { 'turismo':0, 'hotel':1, 'restaurante':2 };
   if(tabs[map[tab]]) tabs[map[tab]].classList.add('active');
 
-  // Mostrar/ocultar selector de tipo visitante (solo para lugares)
   const visitorDiv = document.getElementById('bookingTipoVisitante');
   if(visitorDiv) visitorDiv.style.display = tab==='turismo'?'block':'none';
 
@@ -1610,7 +1803,6 @@ function selectBookingItem(tab, id) {
   document.querySelectorAll('#bookingItemsList .item-select-opt').forEach(o=>{
     o.classList.toggle('selected', parseInt(o.getAttribute('data-id'))===id);
   });
-  // Actualizar preview de precio
   if(bookingState.step===2) updatePricePreview();
 }
 
@@ -1632,10 +1824,7 @@ function updatePricePreview() {
     unit = bookingState.visitorType==='local' ? bookingState.item.precioLocal : bookingState.item.precioExtranjero;
   } else if(type==='hotel') {
     unit = bookingState.item.precioNoche;
-    // Para hoteles, el precio es por noche, lo multiplicamos por el número de noches (1 por defecto)
-    // Podríamos añadir un campo de noches, pero simplificamos a 1 noche.
   } else if(type==='restaurante') {
-    // Tomamos precio almuerzo como referencia
     unit = bookingState.item.precioAlmuerzo || 0;
   }
   const total = unit * pers;
@@ -1778,7 +1967,7 @@ function sendTicketWA() {
   const nombreItem = item.item || item.nombre;
   const tipoServicio = type==='turismo'?'Lugar Turístico':type==='hotel'?'Hotel':'Restaurante';
   const msg = `🎟️ *TICKET ROJOBORE* — ${tid}\n\n📌 *Tipo:* ${tipoServicio}\n📍 *Nombre:* ${nombreItem}\n🏘️ *Ubicación:* ${item.municipio||item.ubicacion||''}\n📅 *Fecha:* ${bookingState.fecha}\n🕐 *Horario:* ${item.horario||'No especificado'}\n👥 *Personas:* ${bookingState.personas}\n💰 *Total:* Bs ${total}\n\n👤 *Nombre:* ${bookingState.nombre}\n📱 *Tel:* ${bookingState.tel}\n\n¡Que disfrutes la Chiquitanía boliviana! 🌿\nRojobore — Guía oficial de Roboré`;
-  let num = bookingState.tel.replace(/\D/g,'');
+  let num = String(bookingState.tel).replace(/\D/g,'');
   if(num.length>=8) window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`,'_blank');
   else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
 }
@@ -1799,7 +1988,141 @@ function sendTicketEmail() {
   window.open(`mailto:${bookingState.email}?subject=${subject}&body=${body}`);
 }
 
-// ==================== MAPS Y PLAN (sin cambios) ====================
+// ==================== PLAN COMPLETO: TICKET ÚNICO ====================
+function reservarPlanCompleto(planId) {
+  if (!currentUser) {
+    openAuthModal('Para reservar todo tu plan, necesitas tener una cuenta en Rojobore. Te llevará solo un minuto y podrás acceder a todas tus reservas.');
+    return;
+  }
+  const plan = window._planesGenerados[planId];
+  if (!plan) { showToast('No se encontró el plan'); return; }
+
+  const fecha = new Date().toISOString().split('T')[0];
+  const ticketNum = 'PLAN-' + Date.now().toString(36).toUpperCase().slice(-8);
+  const items = [];
+
+  if (!plan.t.esVehiculoPropio) {
+    items.push({ tipo:'transporte', lugar: plan.t.empresa, municipio: plan.t.ruta||'', total: plan.ct });
+  }
+  items.push({ tipo:'hotel', lugar: plan.h.nombre, municipio: plan.h.ubicacion||'', total: plan.ch });
+  items.push({ tipo:'restaurante', lugar: plan.r.item, municipio: plan.r.ubicacion||'', total: plan.cr });
+  plan.acts.forEach(a => {
+    items.push({ tipo:'turismo', lugar: a.item, municipio: a.municipio||'', total: a.precioLocal*plan.per });
+  });
+
+  let ok = 0;
+  for (const it of items) {
+    sendToSheets({
+      type: 'reservation',
+      ticketNum: ticketNum,
+      tipoReserva: it.tipo,
+      userName: currentUser.name,
+      userEmail: currentUser.email,
+      userPhone: currentUser.phone,
+      lugar: it.lugar,
+      municipio: it.municipio || '',
+      fecha: fecha,
+      personas: plan.per,
+      visitorType: 'local',
+      total: it.total,
+      nota: 'Reserva agrupada (plan completo)'
+    });
+    ok++;
+  }
+
+  mostrarPlanTicket(ticketNum, items, plan);
+}
+
+function mostrarPlanTicket(ticketNum, items, plan) {
+  const total = items.reduce((sum, i) => sum + i.total, 0);
+  const body = document.getElementById('planTicketBody');
+  document.getElementById('planTicketId').textContent = ticketNum;
+
+  let rows = items.map((it, idx) => `
+    <div class="ticket-row">
+      <span class="ticket-label">${idx+1}. ${it.tipo.charAt(0).toUpperCase()+it.tipo.slice(1)}</span>
+      <span class="ticket-val" style="font-weight:400;">${it.lugar} · Bs ${it.total}</span>
+    </div>
+  `).join('');
+
+  body.innerHTML = `
+    <div class="ticket-row"><span class="ticket-label">Plan completo</span><span class="ticket-val">${items.length} ítems</span></div>
+    ${rows}
+    <div class="ticket-row"><span class="ticket-label">Fecha estimada</span><span class="ticket-val">${new Date().toLocaleDateString('es-BO')}</span></div>
+    <div class="ticket-row"><span class="ticket-label">Personas</span><span class="ticket-val">${plan.per}</span></div>
+    <div class="ticket-total-row">
+      <span class="ticket-total-label">TOTAL ESTIMADO</span>
+      <span class="ticket-total-val">Bs ${total}</span>
+    </div>
+    <div class="ticket-qr-area">
+      <div class="ticket-qr-box"><span>QR<br>Válido<br>72h</span></div>
+      <div class="ticket-qr-text">
+        Este ticket agrupa todas las reservas de tu plan.<br>
+        Preséntalo al llegar a cada lugar.<br>
+        Válido 72 horas desde emisión.
+      </div>
+    </div>
+  `;
+
+  window._planTicketData = { ticketNum, items, total, plan };
+  document.getElementById('planTicketModal').classList.remove('hidden');
+  showToast('¡Plan reservado! Ticket: ' + ticketNum);
+}
+
+function closePlanTicket() {
+  document.getElementById('planTicketModal').classList.add('hidden');
+}
+
+function printPlanTicket() {
+  const content = document.getElementById('planTicketWrap').outerHTML;
+  const win = window.open('','_blank');
+  win.document.write(`<html><head><title>Ticket Plan Rojobore</title>
+  <style>
+    body{font-family:system-ui;background:#0D1117;color:#E6EDF3;padding:20px;}
+    .plan-ticket-wrap{background:linear-gradient(145deg, #f8f9fa, #e9ecef) !important;border:2px solid #0a2463 !important;border-radius:16px;overflow:hidden;max-width:500px;margin:0 auto;}
+    .plan-ticket-wrap .ticket-header{background:linear-gradient(135deg, #0a2463, #1a3a7a) !important;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;}
+    .plan-ticket-wrap .ticket-logo{color:#fff !important;font-size:1.2rem;font-weight:900;}
+    .plan-ticket-wrap .ticket-id{color:#fff !important;font-size:0.7rem;font-weight:700;}
+    .plan-ticket-wrap .ticket-body{padding:16px;}
+    .plan-ticket-wrap .ticket-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed rgba(10,36,99,0.2);font-size:13px;}
+    .plan-ticket-wrap .ticket-label{color:#2c3e50 !important;}
+    .plan-ticket-wrap .ticket-val{color:#0a2463 !important;font-weight:600;text-align:right;max-width:60%;}
+    .plan-ticket-wrap .ticket-total-row{background:rgba(10,36,99,0.08);border-radius:8px;padding:8px 12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
+    .plan-ticket-wrap .ticket-total-label{color:#2c3e50 !important;font-size:12px;}
+    .plan-ticket-wrap .ticket-total-val{color:#0a2463 !important;font-size:1.3rem;font-weight:900;}
+    .plan-ticket-wrap .ticket-qr-area{background:rgba(10,36,99,0.05);padding:12px;display:flex;gap:10px;align-items:center;}
+    .plan-ticket-wrap .ticket-qr-box{width:56px;height:56px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#000;text-align:center;font-weight:700;flex-shrink:0;}
+    .plan-ticket-wrap .ticket-qr-text{color:#2c3e50 !important;font-size:11px;line-height:1.5;}
+  </style></head><body>${content}</body></html>`);
+  win.document.close();
+  win.print();
+}
+
+function sendPlanTicketWA() {
+  const data = window._planTicketData;
+  if (!data) return;
+  const ticket = data.ticketNum;
+  const total = data.total;
+  const itemsList = data.items.map((it, idx) => `${idx+1}. ${it.lugar} (${it.tipo}) · Bs ${it.total}`).join('\n');
+  const msg = `🎟️ *PLAN ROJOBORE* — ${ticket}\n\n${itemsList}\n\n👥 Personas: ${data.plan.per}\n💰 *Total estimado: Bs ${total}*\n\n¡Que disfrutes la Chiquitanía boliviana! 🌿\nRojobore — Guía oficial de Roboré`;
+  let phoneStr = String(currentUser.phone || '');
+  let num = phoneStr.replace(/\D/g, '');
+  if (num.length >= 8) window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`,'_blank');
+  else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function sendPlanTicketEmail() {
+  const data = window._planTicketData;
+  if (!data) return;
+  const ticket = data.ticketNum;
+  const total = data.total;
+  const itemsList = data.items.map((it, idx) => `${idx+1}. ${it.lugar} (${it.tipo}) · Bs ${it.total}`).join('\n');
+  const subject = encodeURIComponent(`Ticket plan Rojobore — ${ticket}`);
+  const body = encodeURIComponent(`PLAN ROJOBORE\nTicket: ${ticket}\n\n${itemsList}\n\nPersonas: ${data.plan.per}\nTotal estimado: Bs ${total}\n\nEquipo Rojobore\nhttps://rojobore.com`);
+  window.open(`mailto:${currentUser.email}?subject=${subject}&body=${body}`);
+}
+
+// ==================== MAPS Y PLAN ====================
 function calcularDistancia(lat1,lng1,lat2,lng2) {
   const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lng2-lng1)*Math.PI/180;
   const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
@@ -1880,28 +2203,83 @@ function generateQuickPlan() {
   const pres=parseFloat(document.getElementById('planBudget').value),per=parseInt(document.getElementById('planPeople').value),d=parseInt(document.getElementById('planDays').value);
   if(pres<500) return showToast('Presupuesto mínimo Bs 500');
   const noches=Math.max(0,d-1);
-  const bus=transportes.filter(x=>!x.esVehiculoPropio).sort((a,b)=>a.precio-b.precio)[0];
-  let t=bus, ct=bus.precio*per*2;
-  if(planRutaDist&&Math.round(planRutaTarifa*2)<ct){t=transportes.find(x=>x.id===461);ct=Math.round(planRutaTarifa*2);}
-  let h=hoteles.sort((a,b)=>a.precioNoche-b.precioNoche)[0],ch=noches?h.precioNoche*noches:0;
-  let r=restaurantes.filter(x=>x.precioAlmuerzo>0).sort((a,b)=>a.precioAlmuerzo-b.precioAlmuerzo)[0];
-  let cr=((r.precioAlmuerzo||0)+(r.precioCena||0))*per*d;
-  let acts=lugaresTuristicos.sort((a,b)=>a.precioLocal-b.precioLocal).slice(0,Math.min(d*2,5));
-  let ca=acts.reduce((s,a)=>s+a.precioLocal*per,0);
-  let usado=ct+ch+cr+ca,sobrante=pres-usado,mejora='';
-  if(usado>pres){
-    while(acts.length>1&&(ct+ch+cr+acts.reduce((s,a)=>s+a.precioLocal*per,0))>pres) acts.pop();
-    ca=acts.reduce((s,a)=>s+a.precioLocal*per,0); usado=ct+ch+cr+ca;
-    if(usado>pres) return showToast('Presupuesto insuficiente para el plan básico');
+  
+  const useOwnCar = document.getElementById('planUseOwnCar').checked;
+  const destKey = document.getElementById('planDest').value;
+  
+  let t, ct;
+  if (useOwnCar) {
+    if (!destKey || !planRutaDist) {
+      showToast('Primero selecciona origen y destino y calcula la ruta');
+      return;
+    }
+    const ownCar = transportes.find(x => x.esVehiculoPropio && x.destinoKey === destKey);
+    if (!ownCar) {
+      showToast('No hay vehículo propio disponible para este destino');
+      return;
+    }
+    t = ownCar;
+    ct = Math.round(planRutaTarifa * 2);
   } else {
-    for(let hm of hoteles.sort((a,b)=>b.precioNoche-a.precioNoche)){if(noches===0)break;let nc=hm.precioNoche*noches;if(ct+nc+cr+ca<=pres&&hm.precioNoche>h.precioNoche){sobrante-=(nc-ch);ch=nc;h=hm;break;}}
-    sobrante=pres-ct-ch-cr-ca;
-    for(let extra of lugaresTuristicos.filter(l=>!acts.find(a=>a.id===l.id)).sort((a,b)=>a.precioLocal-b.precioLocal)){let ce=extra.precioLocal*per;if(ce<=sobrante&&acts.length<5){acts.push(extra);ca+=ce;sobrante-=ce;}}
-    sobrante=pres-ct-ch-cr-ca;
-    if(sobrante>0) mejora=`Te sobran Bs ${Math.round(sobrante)} para souvenirs o extras.`;
+    const bus = transportes.filter(x => !x.esVehiculoPropio).sort((a,b)=>a.precio-b.precio)[0];
+    t = bus;
+    ct = bus.precio * per * 2;
+    if (planRutaDist && Math.round(planRutaTarifa * 2) < ct) {
+      const ownCar = transportes.find(x => x.esVehiculoPropio && x.destinoKey === destKey);
+      if (ownCar) {
+        t = ownCar;
+        ct = Math.round(planRutaTarifa * 2);
+      }
+    }
   }
-  const planText=buildPlanText('Plan Automático',t,h,r,acts,ct,ch,cr,ca,per,d,noches,pres,mejora);
-  document.getElementById('planResult').innerHTML=buildResultHTML(planText,pres,'auto_'+Date.now(),mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,'neon',pres);
+  
+  let h = hoteles.sort((a,b)=>a.precioNoche-b.precioNoche)[0];
+  let ch = noches ? h.precioNoche * noches : 0;
+  let r = restaurantes.filter(x=>x.precioAlmuerzo>0).sort((a,b)=>a.precioAlmuerzo-b.precioAlmuerzo)[0];
+  let cr = ((r.precioAlmuerzo||0)+(r.precioCena||0))*per*d;
+  let acts = lugaresTuristicos.sort((a,b)=>a.precioLocal-b.precioLocal).slice(0, Math.min(d*2,5));
+  let ca = acts.reduce((s,a)=>s+a.precioLocal*per,0);
+  let usado = ct + ch + cr + ca;
+  let sobrante = pres - usado;
+  let mejora = '';
+  
+  if (usado > pres) {
+    while (acts.length > 1 && (ct + ch + cr + acts.reduce((s,a)=>s+a.precioLocal*per,0)) > pres) {
+      acts.pop();
+    }
+    ca = acts.reduce((s,a)=>s+a.precioLocal*per,0);
+    usado = ct + ch + cr + ca;
+    sobrante = pres - usado;
+    if (usado > pres) {
+      showToast('Presupuesto insuficiente para el plan básico');
+      return;
+    }
+  } else {
+    for (let hm of hoteles.sort((a,b)=>b.precioNoche-a.precioNoche)) {
+      if (noches === 0) break;
+      let nc = hm.precioNoche * noches;
+      if (ct + nc + cr + ca <= pres && hm.precioNoche > h.precioNoche) {
+        sobrante -= (nc - ch);
+        ch = nc;
+        h = hm;
+        break;
+      }
+    }
+    sobrante = pres - ct - ch - cr - ca;
+    for (let extra of lugaresTuristicos.filter(l=>!acts.find(a=>a.id===l.id)).sort((a,b)=>a.precioLocal-b.precioLocal)) {
+      let ce = extra.precioLocal * per;
+      if (ce <= sobrante && acts.length < 5) {
+        acts.push(extra);
+        ca += ce;
+        sobrante -= ce;
+      }
+    }
+    sobrante = pres - ct - ch - cr - ca;
+    if (sobrante > 0) mejora = `Te sobran Bs ${Math.round(sobrante)} para souvenirs o extras.`;
+  }
+  
+  const planText = buildPlanText('Plan Automático', t, h, r, acts, ct, ch, cr, ca, per, d, noches, pres, mejora);
+  document.getElementById('planResult').innerHTML = buildResultHTML(planText, usado, 'auto_'+Date.now(), mejora, t, h, r, acts, ct, ch, cr, ca, per, d, noches, 'neon', pres);
 }
 
 function calculateWithSelections() {
@@ -1927,16 +2305,16 @@ function buildPlanText(tipo,t,h,r,acts,ct,ch,cr,ca,per,d,noches,total,mejora) {
   return `ROJOBORE · ${tipo}\nPersonas: ${per} | Días: ${d} | Noches: ${noches}\n\nTRANSPORTE\n${t.empresa} | ${t.tipo} | ${t.ruta}\nHorarios: ${t.horario}\n${transLinks}\n\nALOJAMIENTO\n${h.nombre} | ${h.ubicacion} | ★${h.rating}\nNoches: ${noches} × Bs ${h.precioNoche} = Bs ${ch}\nMaps: ${h.googleMaps||'N/D'}\n\nRESTAURANTE\n${r.item} | ${r.tipo} | ${r.horario}\nAlm Bs ${r.precioAlmuerzo} + Cena Bs ${r.precioCena} × ${per} × ${d}d = Bs ${cr}\nMaps: ${r.googleMaps||'N/D'}\n\nACTIVIDADES (${acts.length})\n${actsList||'  Ninguna'}\nTotal actividades: Bs ${ca}\n\nTOTAL ESTIMADO: Bs ${total}\n${mejora?mejora:''}\n\n¡Que disfrutes la Chiquitanía boliviana!\nRojobore — https://santacruzrojobore-sys.github.io/santarojobore/`.trim();
 }
 
-// ✅ CORRECCIÓN PUNTO 3: agregados botones de "Reservar" individuales para
-// transporte, hotel, restaurante y cada actividad, además del botón
-// general "¡Reservar todo este plan!". El plan se guarda en
-// window._planesGenerados[planId] para que los botones puedan recuperarlo.
 function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per,d,noches,colorKey,presupuesto) {
   const c=colorKey==='neon'?'var(--c-turismo)':'var(--gold)';
-  const sobrante=presupuesto?presupuesto-total:0;
-  const sobranteBlock=presupuesto&&sobrante>0?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.6rem;"><div style="background:rgba(57,255,20,0.12);border:1.5px solid rgba(57,255,20,0.4);border-radius:10px;padding:0.7rem;text-align:center;"><div style="font-size:0.7rem;color:var(--text-soft);">GASTO</div><div style="font-size:1.3rem;font-weight:900;color:var(--c-turismo);">Bs ${total}</div></div><div style="background:rgba(255,215,0,0.12);border:1.5px solid rgba(255,215,0,0.4);border-radius:10px;padding:0.7rem;text-align:center;"><div style="font-size:0.7rem;color:var(--text-soft);">TE SOBRA</div><div style="font-size:1.3rem;font-weight:900;color:var(--gold);">Bs ${sobrante}</div></div></div>`:'';
+  const sobrante=presupuesto ? presupuesto - total : 0;
+  const sobranteBlock = (presupuesto && sobrante >= 0) ? `
+    <div class="sobrante-destacado">
+      <span class="icono">💰</span>
+      <span>Te sobra <span class="monto">Bs ${sobrante}</span> para souvenirs, comida extra o imprevistos</span>
+    </div>
+  ` : '';
 
-  // Guardamos el plan completo en memoria para que el botón "Reservar todo" pueda usarlo
   window._planesGenerados = window._planesGenerados || {};
   window._planesGenerados[planId] = { t, h, r, acts, ct, ch, cr, ca, per, d, noches };
 
@@ -1962,12 +2340,11 @@ function buildResultHTML(planText,total,planId,mejora,t,h,r,acts,ct,ch,cr,ca,per
   ${generateReviewSection(planId)}`;
 }
 
-// ==================== RESERVAR DESDE EL DESGLOSE DEL PLAN (PUNTO 3) ====================
-
-// Botón individual: abre el modal de reserva ya con ese ítem específico elegido,
-// y salta directo al paso de fecha/personas (paso 2) para ahorrarle clics al usuario.
 function reservarItemDePlan(planId, tipo, id) {
-  if (!currentUser) { openRegisterModal(); return; }
+  if (!currentUser) {
+    openAuthModal('Para reservar este ítem de tu plan, primero necesitas crear una cuenta en Rojobore. Es gratis y te permitirá gestionar todas tus reservas.');
+    return;
+  }
   const plan = window._planesGenerados[planId];
   if (!plan) { showToast('No se encontró el plan'); return; }
 
@@ -1978,50 +2355,11 @@ function reservarItemDePlan(planId, tipo, id) {
     const persInput = document.getElementById('bookingPersonas');
     if (persInput) persInput.value = plan.per;
     bookingState.personas = plan.per;
-    bookingNext(); // avanza automáticamente del paso 1 al paso 2
+    bookingNext();
   }, 120);
 }
 
-// Botón general: crea de una vez una reserva por cada componente del plan
-// (transporte si no es vehículo propio, hotel, restaurante, y cada actividad),
-// usando los datos de contacto del usuario ya registrado.
-async function reservarPlanCompleto(planId) {
-  if (!currentUser) { openRegisterModal(); return; }
-  const plan = window._planesGenerados[planId];
-  if (!plan) { showToast('No se encontró el plan'); return; }
-
-  const fecha = new Date().toISOString().split('T')[0];
-  const items = [];
-
-  if (!plan.t.esVehiculoPropio) {
-    items.push({ tipo:'transporte', lugar: plan.t.empresa, municipio: plan.t.ruta||'', total: plan.ct });
-  }
-  items.push({ tipo:'hotel', lugar: plan.h.nombre, municipio: plan.h.ubicacion||'', total: plan.ch });
-  items.push({ tipo:'restaurante', lugar: plan.r.item, municipio: plan.r.ubicacion||'', total: plan.cr });
-  plan.acts.forEach(a => {
-    items.push({ tipo:'turismo', lugar: a.item, municipio: a.municipio||'', total: a.precioLocal*plan.per });
-  });
-
-  showToast('Generando reservas...');
-  let ok = 0;
-  for (const it of items) {
-    const ticketNum = 'ROJ-' + Date.now().toString(36).toUpperCase() + '-' + Math.floor(Math.random()*900+100);
-    const sent = await sendToSheets({
-      type: 'reservation',
-      ticketNum,
-      tipoReserva: it.tipo,
-      userName: currentUser.name, userEmail: currentUser.email, userPhone: currentUser.phone,
-      lugar: it.lugar, municipio: it.municipio, fecha: fecha,
-      personas: plan.per, visitorType: 'local',
-      total: it.total, nota: 'Reserva generada desde plan completo'
-    });
-    if (sent) ok++;
-  }
-  showToast(`¡${ok} de ${items.length} reservas generadas! Revisa tu correo o contáctanos para confirmar.`);
-}
-
 function runRoulette() {
-  if(!currentUser){openRegisterModal();return;}
   closeChoiceModal();
   const overlay=document.getElementById('rouletteOverlay');
   overlay.classList.remove('hidden');
@@ -2071,9 +2409,8 @@ function contactSupport() {
   window.open('https://wa.me/59171607412?text=Hola Rojobore!', '_blank');
 }
 
-// ✅ CORRECCIÓN PUNTO 2: ahora abre el modal de registro en vez de solo avisar.
-function openChoiceModalSafe(){ if(!currentUser){openRegisterModal();return;} document.getElementById('choiceModal').classList.remove('hidden'); }
-function openChoiceModal(){ if(!currentUser){openRegisterModal();return;} document.getElementById('choiceModal').classList.remove('hidden'); }
+function openChoiceModalSafe(){ document.getElementById('choiceModal').classList.remove('hidden'); }
+function openChoiceModal(){ document.getElementById('choiceModal').classList.remove('hidden'); }
 function closeChoiceModal(){ document.getElementById('choiceModal').classList.add('hidden'); }
 function closeModals(){ ['planModal','calcModal','choiceModal','surpriseModal'].forEach(id=>document.getElementById(id).classList.add('hidden')); }
 function openPlanModal(){ closeModals(); document.getElementById('planModal').classList.remove('hidden'); document.getElementById('planResult').innerHTML=''; document.getElementById('planRouteInfo').textContent='Selecciona origen y destino'; }
@@ -2127,6 +2464,8 @@ function createClouds() {
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this) this.classList.add('hidden');}));
 document.getElementById('choiceModal').addEventListener('click',function(e){if(e.target===this) this.classList.add('hidden');});
 document.getElementById('bookingModal').addEventListener('click',function(e){if(e.target===this) closeBookingModal();});
+document.getElementById('planTicketModal').addEventListener('click',function(e){if(e.target===this) closePlanTicket();});
+document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this) closeAuthModal();});
 
 updateUserUI();
 createClouds();
