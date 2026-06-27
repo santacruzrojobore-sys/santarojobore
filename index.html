@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
+    /* ===== TODO EL CSS ORIGINAL SE MANTIENE IDÉNTICO ===== */
     :root {
       --bg: #0D1117;
       --bg2: #161B22;
@@ -772,17 +773,17 @@
       <div id="bpage3" style="display:none;">
         <div class="booking-section">
           <div class="booking-section-title">Tus datos de contacto</div>
-          <div class="hero-input-group" style="margin-bottom:0.5rem;">
+          <div class="hero-input-group" style="margin-bottom:0.5rem;position:relative;">
             <span class="hero-input-icon" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);">👤</span>
-            <input class="hero-input" type="text" id="bookingNombre" placeholder="Nombre completo" style="background:var(--bg2);border-color:var(--border);">
+            <input class="hero-input" type="text" id="bookingNombre" placeholder="Nombre completo" required style="background:var(--bg2);border-color:var(--border);padding-left:2.5rem;">
           </div>
-          <div class="hero-input-group" style="margin-bottom:0.5rem;">
+          <div class="hero-input-group" style="margin-bottom:0.5rem;position:relative;">
             <span class="hero-input-icon" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);">📱</span>
-            <input class="hero-input" type="tel" id="bookingTel" placeholder="WhatsApp (ej: +591 71607412)" style="background:var(--bg2);border-color:var(--border);">
+            <input class="hero-input" type="tel" id="bookingTel" placeholder="WhatsApp (ej: +591 71607412)" required style="background:var(--bg2);border-color:var(--border);padding-left:2.5rem;">
           </div>
-          <div class="hero-input-group">
+          <div class="hero-input-group" style="position:relative;">
             <span class="hero-input-icon" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);">📧</span>
-            <input class="hero-input" type="email" id="bookingEmail" placeholder="Correo electrónico" style="background:var(--bg2);border-color:var(--border);">
+            <input class="hero-input" type="email" id="bookingEmail" placeholder="Correo electrónico" required style="background:var(--bg2);border-color:var(--border);padding-left:2.5rem;">
           </div>
           <textarea id="bookingNota" placeholder="Nota especial (opcional)..." style="margin-top:0.5rem;min-height:60px;background:var(--bg2);border-color:var(--border);color:var(--text);border-radius:8px;padding:0.6rem;font-size:0.8rem;font-family:var(--font);resize:vertical;"></textarea>
         </div>
@@ -1136,7 +1137,8 @@ const ROBORE_LAT = -18.3328, ROBORE_LNG = -59.7583;
 const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbz1PreQrYLi0cBcbSrP8M5VcJNZULhGvQDAL9jJTjtVBrU7zeZcUAfdyHFNbQXK_W3s/exec';
 
 let selectedItems = { turismo:[], restaurante:null, hotel:null, transporte:null };
-let currentUser = JSON.parse(localStorage.getItem('rojobore_user')||'null');
+// Cambio de localStorage a sessionStorage para no persistir datos sensibles
+let currentUser = JSON.parse(sessionStorage.getItem('rojobore_user')||'null');
 let calcMap = null, calcRouteLine = null;
 let userMarker = null;
 let planRutaDist = 0, planRutaTarifa = 0;
@@ -1181,12 +1183,8 @@ function closeAuthModal() {
   document.getElementById('authModal').classList.remove('visible');
 }
 
-// Alias para mantener compatibilidad con código existente
-function openRegisterModal(mensaje) { openAuthModal(mensaje); }
-function closeRegisterModal() { closeAuthModal(); }
-
 function abrirLoginModal() {
-  openAuthModal(); // sin mensaje específico
+  openAuthModal();
   document.querySelectorAll('.auth-modal-tab').forEach(t => t.classList.remove('active'));
   document.querySelector('.auth-modal-tab:last-child').classList.add('active');
   document.getElementById('auth-form-register').style.display = 'none';
@@ -1200,7 +1198,7 @@ window.switchAuthTab = function(tab) {
   document.getElementById('auth-form-login').style.display = tab === 'login' ? 'flex' : 'none';
 };
 
-// ==================== REGISTRO / LOGIN ====================
+// ==================== REGISTRO / LOGIN (AJUSTADOS PARA JSON) ====================
 window.registerUser = async function() {
   const name = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim();
@@ -1209,17 +1207,15 @@ window.registerUser = async function() {
   try {
     const formData = new URLSearchParams({ type:'new_user', userName:name, userEmail:email, userPhone:phone }).toString();
     const response = await fetch(GOOGLE_SHEETS_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:formData });
-    const text = await response.text();
-    if (text === 'success' || text.startsWith('success_sin_correo')) {
+    const data = await response.json();
+    if (data.ok) {
       currentUser = { name, email, phone };
-      localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
+      sessionStorage.setItem('rojobore_user', JSON.stringify(currentUser));
       updateUserUI();
       closeAuthModal();
-      showToast('¡Bienvenido/a ' + name.split(' ')[0] + '!');
-    } else if (text === 'already_exists') {
-      showToast('Este correo ya está registrado. Inicia sesión.');
+      showToast(data.mensaje || '¡Bienvenido/a ' + name.split(' ')[0] + '!');
     } else {
-      showToast('Error en el servidor: ' + text);
+      showToast(data.mensaje || 'Error en el registro');
     }
   } catch (error) {
     showToast('Error de conexión. Intenta de nuevo.');
@@ -1233,14 +1229,14 @@ window.loginUser = async function() {
     const url = `${GOOGLE_SHEETS_URL}?action=checkUser&email=${encodeURIComponent(email)}`;
     const response = await fetch(url);
     const data = await response.json();
-    if (data.success && data.user) {
+    if (data.ok && data.user) {
       currentUser = data.user;
-      localStorage.setItem('rojobore_user', JSON.stringify(currentUser));
+      sessionStorage.setItem('rojobore_user', JSON.stringify(currentUser));
       updateUserUI();
       closeAuthModal();
-      showToast('¡Hola de nuevo, ' + currentUser.name.split(' ')[0] + '!');
+      showToast(data.mensaje || '¡Hola de nuevo, ' + currentUser.name.split(' ')[0] + '!');
     } else {
-      showToast('Correo no encontrado. Regístrate primero.');
+      showToast(data.mensaje || 'Correo no encontrado. Regístrate primero.');
     }
   } catch (error) {
     showToast('Error de conexión. Intenta de nuevo.');
@@ -1249,7 +1245,7 @@ window.loginUser = async function() {
 
 function logout() {
   currentUser = null;
-  localStorage.removeItem('rojobore_user');
+  sessionStorage.removeItem('rojobore_user');
   updateUserUI();
   showToast('Sesión cerrada');
   showSection('hero');
@@ -1272,15 +1268,23 @@ function updateUserUI() {
   document.getElementById('heroLoggedContent').style.display = 'flex';
 }
 
-// ==================== ENVÍO A SHEETS ====================
+// ==================== ENVÍO A SHEETS (JSON) ====================
 async function sendToSheets(data) {
   try {
     const formData = new URLSearchParams(data).toString();
     const response = await fetch(GOOGLE_SHEETS_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:formData });
-    const text = await response.text();
-    if (text === 'success') { showToast('Datos guardados'); return true; }
+    const json = await response.json();
+    if (json.ok) {
+      showToast(json.mensaje || 'Datos guardados');
+      return true;
+    } else {
+      showToast(json.mensaje || 'Error al guardar');
+      return false;
+    }
+  } catch (error) {
+    showToast('Error de conexión');
     return false;
-  } catch (error) { return false; }
+  }
 }
 
 window.enviarPresupuesto = async function(planText, total, metodo) {
